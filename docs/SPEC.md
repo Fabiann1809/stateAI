@@ -323,7 +323,7 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 - [x] **T-4.5** One-tap feedback when closing a segment, saved. *Done when:* it is attached to the segment.
 - [x] **T-4.6** Daily summary screen with a **broken-down** score. *Done when:* it shows the 4 components.
 - [x] **T-4.7** Guided pause: breathing screen synchronized with vibration (4 s / 6 s). *Done when:* circle and haptics keep the same pace.
-- [ ] **T-4.8** Repository interfaces (segments, baselines, profiles); `:core-domain` only knows the interfaces. *Done when:* the domain is tested with in-memory repositories.
+- [x] **T-4.8** Repository interfaces (segments, baselines, profiles); `:core-domain` only knows the interfaces. *Done when:* the domain is tested with in-memory repositories.
 - [ ] **T-4.9** Export summaries (segments and profiles) to JSON or CSV from the watch, for analysis in Python. *Done when:* the file is generated and read from `/ml-python`.
 
 ### Phase 5: Learning (in `:core-domain`)
