@@ -392,7 +392,7 @@ The mascot changes expression only, never with energy. State engine, energy and 
 - [ ] **T-10.6** RECORD_AUDIO permission with an explanation; refusal falls back to the list. *Done when:* both answers are handled.
 - [ ] **T-10.7** `SpeechInput` with on-device recognizer, system recognizer (with consent) and text input for debug/emulator, in Spanish. *Done when:* the right one is chosen at run time.
 - [ ] **T-10.8** Listening flow: tap, "listening" + short vibration, result, "thinking"; timeout without speech. *Done when:* it works with the text input on the emulator.
-- [ ] **T-10.9** `IntentParser` in `:core-domain`: category, activity name and confidence, ignoring greetings. *Done when:* tests with example phrases pass.
+- [x] **T-10.9** `IntentParser` in `:core-domain`: category, activity name and confidence, ignoring greetings. *Done when:* tests with example phrases pass.
 - [ ] **T-10.10** Match existing activities (normalization and similar names); create when missing; low confidence opens "Nueva actividad" prefilled. *Done when:* tests cover exact, similar and new names.
 - [ ] **T-10.11** Confirmation card "¿Empezamos ...?" with a 3 s countdown, Cambiar and Cancelar. *Done when:* confirming starts the session with the existing flow.
 - [ ] **T-10.12** Errors (no permission, no recognizer, no network, silence, no match): short message and fallback to the list. *Done when:* each case is tested.
