@@ -61,4 +61,6 @@
     <string name="pause_inhale">Inhala</string>
     <string name="pause_exhale">Exhala</string>
     <string name="pause_finish">Volver</string>
+    <string name="debug_export">Exportar resúmenes</string>
+    <string name="debug_export_done">Exportado ✓</string>
 </resources>

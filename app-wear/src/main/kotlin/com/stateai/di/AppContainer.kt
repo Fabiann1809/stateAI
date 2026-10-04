@@ -23,6 +23,7 @@ import com.stateai.domain.session.SessionMonitor
 import com.stateai.domain.session.SessionTracker
 import com.stateai.domain.session.StartSession
 import com.stateai.domain.summary.ObserveDaySummary
+import com.stateai.export.SummaryExporter
 import com.stateai.haptics.VibratorHapticPlayer
 import com.stateai.sensors.health.HealthServicesSensorSource
 import com.stateai.sensors.simulation.SimulatedSensorSource
@@ -49,6 +50,8 @@ class AppContainer(context: Context) {
         StartSession(activityRepository, sessionTracker, profileProvider, segmentRecorder, endSession, clock)
 
     val observeDaySummary = ObserveDaySummary(segmentRepository, clock.withZone(ZoneId.systemDefault()))
+
+    val summaryExporter = SummaryExporter(context, segmentRepository)
 
     // Sensors
     val simulationController = SimulationController()

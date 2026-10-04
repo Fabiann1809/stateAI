@@ -1,0 +1,3 @@
+segment_id,category,activity_name,start,end,planned_s,low_s,medium_s,high_s,unknown_s,restless_s,pause_suggestions,pauses,pauses_improved,feedback,score_total,score_focus,score_recovery,score_load,score_consistency
+s1,STUDY,"Tesis ""cap 2""",2026-10-04T09:00:00Z,2026-10-04T09:40:00Z,2400,2400,0,0,0,0,0,0,0,GOOD,100.0,100.0,100.0,100.0,100.0
+s2,READING,"",2026-10-04T15:00:00Z,2026-10-04T15:30:00Z,2400,600,900,180,120,0,1,1,1,,61.2,35.7,100.0,89.3,75.0
