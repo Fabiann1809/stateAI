@@ -10,7 +10,10 @@ import kotlin.time.Duration.Companion.minutes
 class Scenarios(private val restingHeartRate: Double = DEFAULT_RESTING_HEART_RATE) {
     fun byId(id: ScenarioId): Scenario = when (id) {
         ScenarioId.DEEP_FOCUS -> Scenario(id, listOf(focus(30.minutes)))
-        ScenarioId.OVERLOAD -> Scenario(id, listOf(focus(5.minutes), overloadRamp(15.minutes)))
+        ScenarioId.OVERLOAD -> Scenario(
+            id,
+            listOf(focus(5.minutes), overloadRamp(10.minutes), overloadPlateau(5.minutes)),
+        )
         ScenarioId.FATIGUE -> Scenario(id, listOf(focus(20.minutes), restless(20.minutes)))
         ScenarioId.MIXED -> Scenario(
             id,
@@ -22,6 +25,9 @@ class Scenarios(private val restingHeartRate: Double = DEFAULT_RESTING_HEART_RAT
 
     private fun overloadRamp(duration: Duration) =
         phase(duration, OVERLOAD_START_OFFSET, OVERLOAD_PEAK_OFFSET, LOADED_JITTER, LIGHT_MOVEMENT, OCCASIONAL)
+
+    private fun overloadPlateau(duration: Duration) =
+        phase(duration, OVERLOAD_PEAK_OFFSET, OVERLOAD_PEAK_OFFSET, LOADED_JITTER, LIGHT_MOVEMENT, OCCASIONAL)
 
     private fun recovery(duration: Duration) =
         phase(duration, OVERLOAD_PEAK_OFFSET, FOCUS_OFFSET, LOADED_JITTER, STILL, RARE)
