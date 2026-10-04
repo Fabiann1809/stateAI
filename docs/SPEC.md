@@ -68,7 +68,7 @@ Gradle modules:
 | Module | Content | Depends on Android |
 |---|---|---|
 | `:core-domain` | Models, rule-based state engine, learning, energy, scoring | **No** (pure Kotlin) |
-| `:sensors` | `SensorSource`, `SimulatedSensorSource`, `HealthServicesSensorSource` | Yes |
+| `:sensors` | `SimulatedSensorSource`, `HealthServicesSensorSource` (the `SensorSource` interface lives in `:core-domain`) | Yes |
 | `:haptics` | Patterns and rate limiter | Yes |
 | `:data` | Room + DataStore | Yes |
 | `:ml` | TFLite wrapper | Yes |
@@ -300,7 +300,7 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 - [x] **T-1.8** "New activity" flow: choose category and optional name (standard Wear OS text input). *Done when:* the activity is created, appears in the picker, and "BD" and "bd " are unified as the same.
 
 ### Phase 2: Sensors and simulator
-- [ ] **T-2.1** Define `SensorSample` and the `SensorSource` interface (sample flow). *Done when:* it compiles and is documented.
+- [x] **T-2.1** Define `SensorSample` and the `SensorSource` interface (sample flow). *Done when:* it compiles and is documented.
 - [ ] **T-2.2** Implement `SimulatedSensorSource` that plays scripted scenarios. *Done when:* it emits samples at 1 Hz according to the scenario.
 - [ ] **T-2.3** Scenarios: deep focus, overload, fatigue and mixed session. *Done when:* each has signal-shape tests (HR and movement trends).
 - [ ] **T-2.4** Debug panel to choose a scenario and see live values (debug builds only). *Done when:* changing the scenario changes the live signal.
