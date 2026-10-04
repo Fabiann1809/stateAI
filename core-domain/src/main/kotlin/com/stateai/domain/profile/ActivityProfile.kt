@@ -3,8 +3,8 @@ package com.stateai.domain.profile
 import com.stateai.domain.activity.ActivityCategory
 import kotlin.time.Duration
 
-/** Default parameters of a base category, used until an activity learns its own. */
-data class CategoryProfile(
+/** Parameters that drive a session: category defaults, possibly blended with what an activity learned. */
+data class ActivityProfile(
     val category: ActivityCategory,
     val targetBlock: Duration,
     val sensitivity: Sensitivity,

@@ -3,7 +3,7 @@ package com.stateai.domain.state
 import com.stateai.domain.baseline.UserBaseline
 import com.stateai.domain.features.FeatureExtractor
 import com.stateai.domain.features.FeatureWindow
-import com.stateai.domain.profile.CategoryProfile
+import com.stateai.domain.profile.ActivityProfile
 import kotlin.time.Duration
 
 /**
@@ -23,7 +23,7 @@ class StateEngine(
     fun onWindow(
         window: FeatureWindow,
         baseline: UserBaseline,
-        profile: CategoryProfile,
+        profile: ActivityProfile,
         elapsedInSession: Duration,
     ): StateEstimate? = update(window, baseline, profile, elapsedInSession) ?: current
 
@@ -31,7 +31,7 @@ class StateEngine(
     fun update(
         window: FeatureWindow,
         baseline: UserBaseline,
-        profile: CategoryProfile,
+        profile: ActivityProfile,
         elapsedInSession: Duration,
     ): StateEstimate? = window
         .takeIf { extractor.isClean(it) }

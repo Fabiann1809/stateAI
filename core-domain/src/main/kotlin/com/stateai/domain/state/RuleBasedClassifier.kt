@@ -2,7 +2,7 @@ package com.stateai.domain.state
 
 import com.stateai.domain.baseline.UserBaseline
 import com.stateai.domain.features.FeatureWindow
-import com.stateai.domain.profile.CategoryProfile
+import com.stateai.domain.profile.ActivityProfile
 import kotlin.time.Duration
 
 /** Classifies a window with thresholds relative to the personal baseline (SPEC 6.4). */
@@ -11,7 +11,7 @@ class RuleBasedClassifier(private val thresholds: ClassifierThresholds = Classif
     fun classify(
         window: FeatureWindow,
         baseline: UserBaseline,
-        profile: CategoryProfile,
+        profile: ActivityProfile,
         elapsedInSession: Duration,
     ): StateEstimate? {
         val meanHeartRate = window.meanHeartRate ?: return null
