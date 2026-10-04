@@ -59,6 +59,9 @@ python -m stateai_ml.endtoend --days 14     # writes reports/endtoend_days.csv a
 
 Simulates the same days of every synthetic user with each policy, minute by minute, in a closed-loop
 version of the synthetic user where effort builds up with work and pauses recover it
-(`src/stateai_ml/endtoend/world.py`). The fixed timer works 25 minutes and pauses 5. Metrics come from
+(`src/stateai_ml/endtoend/world.py`). The fixed timer works 25 minutes and pauses 5. stateAI runs
+Python ports of the watch's pipeline (windows, rules, smoother, haptic policy, target-block cue and
+rate limiter) and the simulated person follows a played cue 80 % of the time, pausing 5 minutes.
+Metrics come from
 the ground-truth latent state: minutes worked, in focus (`LOW`), in overload (`HIGH`), restless, and
 the pauses taken.

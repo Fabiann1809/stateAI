@@ -15,13 +15,14 @@ CALIBRATION_MINUTES = 2
 
 
 @dataclass(frozen=True)
-class Calibration:
-    """Resting heart rate measured before the first period, available to the policy."""
+class DayStart:
+    """What a policy gets before the first period: the calibrated resting heart rate and a seed."""
 
     resting_heart_rate: float
+    seed: int
 
 
-def simulate_day(plan: DayPlan, make_policy: Callable[[Calibration], Policy]) -> pd.DataFrame:
+def simulate_day(plan: DayPlan, make_policy: Callable[[DayStart], Policy]) -> pd.DataFrame:
     """One row per minute of every work period: ``activity`` is ``work`` or ``pause``."""
     world = World(
         plan.user.resting_heart_rate,
@@ -29,7 +30,7 @@ def simulate_day(plan: DayPlan, make_policy: Callable[[Calibration], Policy]) ->
         np.random.default_rng(plan.world_seed),
     )
     calibration = np.concatenate([world.calibration_minute().heart_rate for _ in range(CALIBRATION_MINUTES)])
-    policy = make_policy(Calibration(float(np.nanmean(calibration))))
+    policy = make_policy(DayStart(float(np.nanmean(calibration)), plan.world_seed))
     rows = []
     for index, period in enumerate(plan.periods):
         world.start_period()

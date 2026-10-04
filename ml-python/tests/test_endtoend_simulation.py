@@ -18,14 +18,14 @@ def test_the_same_day_is_planned_identically() -> None:
 
 
 def test_the_same_day_and_policy_give_the_same_minutes() -> None:
-    first = simulate_day(plan_day(USER, 2), lambda calibration: FixedTimer())
-    second = simulate_day(plan_day(USER, 2), lambda calibration: FixedTimer())
+    first = simulate_day(plan_day(USER, 2), lambda start: FixedTimer())
+    second = simulate_day(plan_day(USER, 2), lambda start: FixedTimer())
 
     pd.testing.assert_frame_equal(first, second)
 
 
 def test_fixed_timer_pauses_after_every_block() -> None:
-    minutes = simulate_day(plan_day(USER, 0), lambda calibration: FixedTimer(work_minutes=25))
+    minutes = simulate_day(plan_day(USER, 0), lambda start: FixedTimer(work_minutes=25))
     metrics = day_metrics(minutes)
 
     pauses_per_period = PERIOD_MINUTES // (25 + PAUSE_MINUTES)
