@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 fun Mascot(
     expression: MascotExpression,
     modifier: Modifier = Modifier,
-    size: Dp = DEFAULT_SIZE,
+    size: Dp = MASCOT_SIZE,
     tipRotation: Float = 0f,
     contentDescription: String? = null,
 ) {
@@ -43,6 +43,7 @@ private fun Layer(drawable: Int, description: String?, modifier: Modifier = Modi
     Image(painterResource(drawable), contentDescription = description, modifier = modifier.fillMaxSize())
 }
 
-private val DEFAULT_SIZE = 120.dp
+/** Default mascot size: the drawables are 120 dp. */
+val MASCOT_SIZE = 120.dp
 private const val VIEWPORT = 256f
 private val TIP_PIVOT = TransformOrigin(pivotFractionX = 128f / VIEWPORT, pivotFractionY = 100f / VIEWPORT)
