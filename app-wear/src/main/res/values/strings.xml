@@ -9,6 +9,7 @@
 
     <string name="session_target">de %1$d min</string>
     <string name="session_stop">Terminar</string>
+    <string name="session_channel_name">Sesión en curso</string>
 
     <string name="category_deep_work">Trabajo profundo</string>
     <string name="category_study">Estudio</string>

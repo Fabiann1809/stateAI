@@ -293,7 +293,7 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 - [x] **T-1.1** Define `ActivityCategory` (5 base), `Activity` (normalized name + category) and `CategoryProfile` with the values of 6.3, in `:core-domain`. *Done when:* there are tests for the category profiles and for name normalization.
 - [x] **T-1.2** Picker screen: suggested first, then recent (max. 10 active) and "New" option (disabled with a message when 10 is reached). *Done when:* tapping an activity navigates to the session.
 - [x] **T-1.3** Session screen with a profile-based timer (elapsed time and target). *Done when:* time advances and survives rotation/ambient.
-- [ ] **T-1.4** Foreground service + Ongoing Activity for the session. *Done when:* the session continues with the screen off on the emulator.
+- [x] **T-1.4** Foreground service + Ongoing Activity for the session. *Done when:* the session continues with the screen off on the emulator.
 - [ ] **T-1.5** `:haptics` module with the 4 patterns of 6.2. *Done when:* each pattern is triggered from a debug button and logged.
 - [ ] **T-1.6** Vibration rate limiter (max. 1 every 5 min, hourly cap per profile). *Done when:* tests show that out-of-rule vibrations are blocked.
 - [ ] **T-1.7** End-of-block vibration when the profile's target is reached. *Done when:* it fires once when the time is met.

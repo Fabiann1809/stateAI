@@ -23,6 +23,7 @@ import com.stateai.di.appContainer
 import com.stateai.domain.activity.ActivityId
 import com.stateai.domain.session.SessionProgress
 import com.stateai.ui.ambient.LocalIsAmbient
+import com.stateai.ui.common.RequestNotificationPermission
 import com.stateai.ui.common.title
 import com.stateai.ui.common.toClockText
 
@@ -37,6 +38,7 @@ fun SessionRoute(activityId: ActivityId, onStopped: () -> Unit) {
         },
     )
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    RequestNotificationPermission()
     val onStop = {
         viewModel.stop()
         onStopped()

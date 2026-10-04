@@ -1,8 +1,9 @@
 package com.stateai.ui.common
 
+import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import com.stateai.R
 import com.stateai.domain.activity.Activity
 import com.stateai.domain.activity.ActivityCategory
@@ -17,5 +18,8 @@ fun ActivityCategory.labelRes(): Int = when (this) {
 }
 
 /** The activity's own name, or its category when it has none. */
+fun activityTitle(context: Context, activity: Activity): String =
+    activity.name?.display ?: context.getString(activity.category.labelRes())
+
 @Composable
-fun Activity.title(): String = name?.display ?: stringResource(category.labelRes())
+fun Activity.title(): String = activityTitle(LocalContext.current, this)
