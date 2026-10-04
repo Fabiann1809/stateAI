@@ -12,7 +12,7 @@ import kotlin.time.Duration
  * so the previous estimate is kept.
  */
 class StateEngine(
-    private val classifier: RuleBasedClassifier = RuleBasedClassifier(),
+    private val classifier: StateClassifier = RuleBasedClassifier(),
     private val extractor: FeatureExtractor = FeatureExtractor(),
     private val smoother: StateSmoother = StateSmoother(),
 ) {

@@ -6,9 +6,9 @@ import com.stateai.domain.profile.ActivityProfile
 import kotlin.time.Duration
 
 /** Classifies a window with thresholds relative to the personal baseline (SPEC 6.4). */
-class RuleBasedClassifier(private val thresholds: ClassifierThresholds = ClassifierThresholds()) {
+class RuleBasedClassifier(private val thresholds: ClassifierThresholds = ClassifierThresholds()) : StateClassifier {
     /** Returns null when the window has no heart rate. */
-    fun classify(
+    override fun classify(
         window: FeatureWindow,
         baseline: UserBaseline,
         profile: ActivityProfile,

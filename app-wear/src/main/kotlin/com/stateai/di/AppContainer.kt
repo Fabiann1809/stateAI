@@ -20,6 +20,7 @@ import com.stateai.domain.session.EndSession
 import com.stateai.domain.session.SessionMonitor
 import com.stateai.domain.session.SessionTracker
 import com.stateai.domain.session.StartSession
+import com.stateai.domain.state.StateEngine
 import java.time.Clock
 import java.time.ZoneId
 import java.util.UUID
@@ -55,5 +56,12 @@ class AppContainer(context: Context) {
     )
     val startSession =
         StartSession(activityRepository, sessionTracker, profileProvider, segmentRecorder, endSession, clock)
-    val sessionMonitor = SessionMonitor(sensors.source, baselineKeeper, haptics.sessionPlayer, segmentRecorder)
+    private val classifiers = ClassifierModule(context)
+    val sessionMonitor = SessionMonitor(
+        sensors.source,
+        baselineKeeper,
+        haptics.sessionPlayer,
+        segmentRecorder,
+        newEngine = { StateEngine(classifiers.classifier) },
+    )
 }
