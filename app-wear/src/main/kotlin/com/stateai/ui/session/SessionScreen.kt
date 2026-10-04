@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -36,6 +39,7 @@ import com.stateai.ui.common.RequestSessionPermissions
 import com.stateai.ui.common.title
 import com.stateai.ui.common.toClockText
 import com.stateai.ui.components.EnergyBadge
+import com.stateai.ui.components.PageIndicator
 import com.stateai.ui.components.ProgressRing
 import com.stateai.ui.components.RoundIconButton
 import com.stateai.ui.components.StateAiIcons
@@ -85,9 +89,34 @@ fun SessionScreen(state: SessionUiState, isAmbient: Boolean, actions: SessionAct
             if (isAmbient) {
                 AmbientSessionContent(progress, state.displayState, state.energy)
             } else {
-                ProgressRing(progress.fraction)
-                ActiveSessionContent(state, progress, actions)
+                SessionPages(state, progress, actions)
             }
+        }
+    }
+}
+
+/** Swipe left for the energy page; the session page keeps the progress ring. */
+@Composable
+private fun SessionPages(state: SessionUiState, progress: SessionProgress, actions: SessionActions) {
+    val energy = state.energy
+    val pagerState = rememberPagerState(pageCount = { if (energy == null) 1 else 2 })
+    Box(Modifier.fillMaxSize()) {
+        HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize()) { page ->
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                if (page == 0 || energy == null) {
+                    ProgressRing(progress.fraction)
+                    ActiveSessionContent(state, progress, actions)
+                } else {
+                    SessionEnergyPage(energy, state.displayState)
+                }
+            }
+        }
+        if (pagerState.pageCount > 1) {
+            PageIndicator(
+                count = pagerState.pageCount,
+                current = pagerState.currentPage,
+                modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = INDICATOR_BOTTOM),
+            )
         }
     }
 }
@@ -151,5 +180,6 @@ private fun AmbientSessionContent(progress: SessionProgress, displayState: Displ
 }
 
 private val BUTTON_SPACING = 11.dp
+private val INDICATOR_BOTTOM = 8.dp
 private val AMBIENT_TIMER = 48.sp
 private val ENERGY_REFRESH = 30.seconds
