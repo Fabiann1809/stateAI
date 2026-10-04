@@ -41,7 +41,7 @@ def _case(name: str, heart_rates: list, movements: list) -> dict:
 
 def main() -> None:
     CASES_FILE.parent.mkdir(parents=True, exist_ok=True)
-    CASES_FILE.write_text(json.dumps(build_cases(), indent=2) + "\n", encoding="utf-8")
+    CASES_FILE.write_text(json.dumps(build_cases(), indent=2) + "\n", encoding="utf-8", newline="\n")
     print(f"wrote {CASES_FILE}")
 
 
