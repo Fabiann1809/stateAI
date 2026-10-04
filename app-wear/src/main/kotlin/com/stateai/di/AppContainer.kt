@@ -22,6 +22,9 @@ import com.stateai.domain.session.SessionMonitor
 import com.stateai.domain.session.SessionTracker
 import com.stateai.domain.session.StartSession
 import com.stateai.domain.state.StateEngine
+import com.stateai.domain.voice.VoiceConsentRepository
+import com.stateai.voice.AndroidSpeechAvailability
+import com.stateai.voice.SpeechAvailability
 import java.time.Clock
 import java.time.ZoneId
 import java.util.UUID
@@ -35,6 +38,8 @@ class AppContainer(context: Context) {
     val activityRepository: ActivityRepository = storage.activities
     val segmentRepository: SegmentRepository = storage.segments
     val mascotRepository: MascotRepository = storage.mascot
+    val voiceConsent: VoiceConsentRepository = storage.voiceConsent
+    val speechAvailability: SpeechAvailability = AndroidSpeechAvailability(context)
     val sessionTracker = SessionTracker()
 
     val haptics = HapticsModule(context, clock, sessionTracker)

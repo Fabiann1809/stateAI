@@ -9,11 +9,13 @@ import com.stateai.data.room.RoomActivityRepository
 import com.stateai.data.room.RoomLearningRepository
 import com.stateai.data.room.RoomSegmentRepository
 import com.stateai.data.room.StateAiDatabase
+import com.stateai.data.voice.DataStoreVoiceConsentRepository
 import com.stateai.domain.activity.ActivityRepository
 import com.stateai.domain.baseline.BaselineRepository
 import com.stateai.domain.learning.LearningRepository
 import com.stateai.domain.mascot.MascotRepository
 import com.stateai.domain.segment.SegmentRepository
+import com.stateai.domain.voice.VoiceConsentRepository
 import java.time.Clock
 
 /** On-device storage. Callers only see domain repository interfaces, never Room or DataStore. */
@@ -29,9 +31,13 @@ class LocalStorage(context: Context, clock: Clock) {
     val mascot: MascotRepository = DataStoreMascotRepository(
         PreferenceDataStoreFactory.create { context.preferencesDataStoreFile(MASCOT_STORE) },
     )
+    val voiceConsent: VoiceConsentRepository = DataStoreVoiceConsentRepository(
+        PreferenceDataStoreFactory.create { context.preferencesDataStoreFile(VOICE_STORE) },
+    )
 
     private companion object {
         const val BASELINE_STORE = "baseline"
         const val MASCOT_STORE = "mascot"
+        const val VOICE_STORE = "voice"
     }
 }
