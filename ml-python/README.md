@@ -65,3 +65,13 @@ rate limiter) and the simulated person follows a played cue 80 % of the time, pa
 Metrics come from
 the ground-truth latent state: minutes worked, in focus (`LOW`), in overload (`HIGH`), restless, and
 the pauses taken.
+
+The report with charts is `notebooks/endtoend_report.ipynb` (committed with its outputs). To re-run it:
+
+```sh
+pip install -r requirements-notebook.txt
+jupyter execute --inplace notebooks/endtoend_report.ipynb   # or open it in any notebook editor
+```
+
+All of it is simulated: it shows the integrated system working, not that stateAI beats a fixed timer
+for real people.
