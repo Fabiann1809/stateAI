@@ -1,4 +1,4 @@
-package com.stateai.ui.session
+package com.stateai.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,8 +18,6 @@ import com.stateai.R
 import com.stateai.domain.energy.EnergyBand
 import com.stateai.domain.energy.EnergyBudget
 import com.stateai.domain.state.DisplayState
-import com.stateai.ui.components.EnergySilhouette
-import com.stateai.ui.components.StateIndicator
 import com.stateai.ui.theme.StateAiColors
 import com.stateai.ui.theme.StateAiDimens
 import com.stateai.ui.theme.color
@@ -29,11 +27,11 @@ import com.stateai.ui.theme.textColor
 import kotlin.math.roundToInt
 
 /**
- * Second page of the session: the large energy silhouette, its percentage and band, the current
- * state, and how much was spent and recovered today.
+ * The large energy silhouette with its percentage and band, the current state when there is one,
+ * and how much was spent and recovered today. Used in the session and in the day summary.
  */
 @Composable
-fun SessionEnergyPage(energy: EnergyBudget, displayState: DisplayState?) {
+fun EnergyOverview(energy: EnergyBudget, displayState: DisplayState?) {
     val percent = energy.level.roundToInt()
     Row(
         horizontalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceL),

@@ -1,6 +1,7 @@
 package com.stateai.di
 
 import android.content.Context
+import com.stateai.domain.cycles.ObserveCycle
 import com.stateai.domain.energy.ObserveEnergy
 import com.stateai.domain.haptics.HapticPlayer
 import com.stateai.domain.learning.FocusWindowNotifier
@@ -11,6 +12,7 @@ import com.stateai.domain.learning.ObserveSuggestedActivity
 import com.stateai.domain.segment.SegmentRecorder
 import com.stateai.domain.segment.SegmentRepository
 import com.stateai.domain.summary.ObserveDaySummary
+import com.stateai.domain.summary.ObserveRecentDays
 import com.stateai.export.SummaryExporter
 import java.time.Clock
 
@@ -23,8 +25,10 @@ class InsightsModule(
     localClock: Clock,
     player: HapticPlayer,
 ) {
-    private val observeFocusProfile = ObserveFocusProfile(segments, localClock)
+    val observeFocusProfile = ObserveFocusProfile(segments, localClock)
     val observeDaySummary = ObserveDaySummary(segments, localClock, LearningProgress(learning))
+    val observeRecentDays = ObserveRecentDays(segments, localClock)
+    val observeCycle = ObserveCycle(segments, localClock)
     val observeEnergy = ObserveEnergy(segments, observeFocusProfile, recorder, localClock)
     val observeSuggestedActivity = ObserveSuggestedActivity(segments, localClock)
     val focusWindowNotifier = FocusWindowNotifier(observeFocusProfile, player, localClock)

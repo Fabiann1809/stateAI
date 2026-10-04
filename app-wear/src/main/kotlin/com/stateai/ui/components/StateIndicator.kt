@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.vector.PathParser
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -59,10 +60,15 @@ fun StateIndicator(
         horizontalArrangement = Arrangement.spacedBy(size * LABEL_GAP),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Canvas(Modifier.size(size)) {
-            scale(this.size.width / VIEWPORT, pivot = Offset.Zero) { drawShape(state, color) }
-        }
+        Canvas(Modifier.size(size)) { drawStateShape(state, color, center, this.size.width) }
         label?.let { Text(it, color = textColor ?: color, fontSize = fontSize, fontWeight = FontWeight.Medium) }
+    }
+}
+
+/** Draws the shape of [state] (null: no data) centered on [center], [size] pixels wide. */
+fun DrawScope.drawStateShape(state: DisplayState?, color: Color, center: Offset, size: Float) {
+    translate(center.x - size / 2, center.y - size / 2) {
+        scale(size / VIEWPORT, pivot = Offset.Zero) { drawShape(state, color) }
     }
 }
 

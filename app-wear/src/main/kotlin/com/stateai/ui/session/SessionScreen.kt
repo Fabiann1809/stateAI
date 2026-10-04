@@ -39,6 +39,7 @@ import com.stateai.ui.common.RequestSessionPermissions
 import com.stateai.ui.common.title
 import com.stateai.ui.common.toClockText
 import com.stateai.ui.components.EnergyBadge
+import com.stateai.ui.components.EnergyOverview
 import com.stateai.ui.components.PageIndicator
 import com.stateai.ui.components.ProgressRing
 import com.stateai.ui.components.RoundIconButton
@@ -107,7 +108,7 @@ private fun SessionPages(state: SessionUiState, progress: SessionProgress, actio
                     ProgressRing(progress.fraction)
                     ActiveSessionContent(state, progress, actions)
                 } else {
-                    SessionEnergyPage(energy, state.displayState)
+                    EnergyOverview(energy, state.displayState)
                 }
             }
         }

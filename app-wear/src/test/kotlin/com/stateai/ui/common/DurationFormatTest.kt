@@ -21,4 +21,11 @@ class DurationFormatTest {
     fun `zero is shown as zero minutes`() {
         assertEquals("0:00", 0.seconds.toClockText())
     }
+
+    @Test
+    fun `hours and minutes text drops empty parts`() {
+        assertEquals("40 min", 40.minutes.toHoursMinutesText())
+        assertEquals("2 h", 2.hours.toHoursMinutesText())
+        assertEquals("1 h 40 min", (1.hours + 40.minutes).toHoursMinutesText())
+    }
 }

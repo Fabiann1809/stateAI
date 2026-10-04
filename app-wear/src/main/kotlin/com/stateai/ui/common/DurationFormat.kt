@@ -10,3 +10,12 @@ fun Duration.toClockText(): String = toComponents { hours, minutes, seconds, _ -
         "%d:%02d".format(minutes, seconds)
     }
 }
+
+/** Formats as "40 min" below one hour and "1 h 40 min" (or "2 h") from one hour on. */
+fun Duration.toHoursMinutesText(): String = toComponents { hours, minutes, _, _ ->
+    when {
+        hours == 0L -> "$minutes min"
+        minutes == 0 -> "$hours h"
+        else -> "$hours h $minutes min"
+    }
+}

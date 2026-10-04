@@ -49,24 +49,15 @@
     <string name="feedback_okay">Regular</string>
     <string name="feedback_bad">Mal</string>
     <string name="summary_open">Resumen del día</string>
-    <string name="summary_title">Resumen de hoy</string>
-    <string name="summary_empty">Aún no hay datos suficientes hoy</string>
-    <string name="summary_total">%1$d / 100</string>
-    <string name="summary_component">%1$s: %2$d</string>
     <string name="summary_focus">Foco</string>
     <string name="summary_recovery">Recuperación</string>
     <string name="summary_load">Carga sostenible</string>
     <string name="summary_consistency">Constancia</string>
-    <string name="summary_time">Tiempo registrado: %1$d min</string>
-    <string name="summary_best_hour">Mejor franja: %1$02d:00</string>
-    <string name="summary_disclaimer">Indicador estimado de enfoque y carga, no de trabajo producido.</string>
     <string name="pause_inhale">Inhala</string>
     <string name="pause_exhale">Exhala</string>
     <string name="pause_finish">Volver</string>
     <string name="debug_export">Exportar resúmenes</string>
     <string name="debug_export_done">Exportado ✓</string>
-    <string name="energy_level">Energía estimada: %1$d%%</string>
-    <string name="energy_low_suggestion">Te queda poca energía; quizá convenga dejar esto para después.</string>
     <string name="summary_learning">Aprendiendo tus patrones…</string>
     <string name="percent">%1$d%%</string>
     <string name="energy_estimated">Energía estimada</string>
@@ -85,4 +76,30 @@
     <string name="pauses_helped">te ayudaron</string>
     <string name="pauses_none">Sin pausas en esta sesión</string>
     <string name="summary_done">Listo</string>
+    <string name="summary_estimated">estimado</string>
+    <string name="score_description">Puntuación estimada %1$d de 100</string>
+    <string name="summary_disclaimer">Estimado a partir de tu pulso y movimiento. No es un dato médico.</string>
+    <string name="summary_no_sessions">Aún no hay sesiones hoy</string>
+    <string name="summary_missing_data">Faltan datos para mostrar esto</string>
+    <string name="summary_factors">Factores</string>
+    <string name="summary_today">Hoy · %1$s</string>
+    <string name="summary_focus_time">Foco: %1$s</string>
+    <string name="summary_states_estimated">Estados estimados</string>
+    <string name="summary_hour">%1$d:00</string>
+    <string name="cycle_title">Ciclo de foco</string>
+    <string name="cycle_value">~%1$d min</string>
+    <string name="cycle_detected">Tu ciclo de foco es de ~%1$d min</string>
+    <string name="cycle_none">Sin patrón claro</string>
+    <string name="cycle_none_detail">Aún no se detecta un patrón claro</string>
+    <string name="week_title">Tu semana</string>
+    <string name="hours_title">Foco por hora</string>
+    <string name="hours_best">Mejor franja: %1$d-%2$d</string>
+    <plurals name="days_support">
+        <item quantity="one">%d día lo respalda</item>
+        <item quantity="other">%d días lo respaldan</item>
+    </plurals>
+    <plurals name="days_of_data">
+        <item quantity="one">%d día de datos</item>
+        <item quantity="other">%d días de datos</item>
+    </plurals>
 </resources>
