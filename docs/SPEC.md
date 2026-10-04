@@ -398,7 +398,7 @@ The mascot changes expression only, never with energy. State engine, energy and 
 - [x] **T-10.12** Errors (no permission, no recognizer, no network, silence, no match): short message and fallback to the list. *Done when:* each case is tested.
 - [x] **T-10.13** Privacy: no audio stored; notice and consent before the system recognizer; "Voz y privacidad" in the README. *Done when:* consent is asked once and documented.
 - [ ] **T-10.14** (Optional) The mascot in the guided pause and in the feedback.
-- [ ] **T-10.15** Tests: at least 15 parser phrases, matching, and the fallback policy. *Done when:* they pass in CI.
+- [x] **T-10.15** Tests: at least 15 parser phrases, matching, and the fallback policy. *Done when:* they pass in CI.
 
 ---
 
