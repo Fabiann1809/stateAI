@@ -3,10 +3,11 @@ package com.stateai.domain.session
 import com.stateai.domain.activity.Activity
 import com.stateai.domain.activity.ActivityCategory
 import com.stateai.domain.activity.ActivityId
-import com.stateai.domain.profile.CategoryDefaultsProfileProvider
+import com.stateai.domain.profile.LearnedProfileProvider
 import com.stateai.domain.segment.SegmentId
 import com.stateai.domain.segment.SegmentRecorder
 import com.stateai.domain.testing.FakeActivityRepository
+import com.stateai.domain.testing.FakeLearningRepository
 import com.stateai.domain.testing.FakeSegmentRepository
 import com.stateai.domain.testing.MutableClock
 import kotlin.time.Duration.Companion.minutes
@@ -27,7 +28,7 @@ class StartSessionTest {
     private val recorder = SegmentRecorder { SegmentId("${nextSegment++}") }
     private val endSession = EndSession(tracker, recorder, segments, clock)
     private val startSession =
-        StartSession(repository, tracker, CategoryDefaultsProfileProvider(), recorder, endSession, clock)
+        StartSession(repository, tracker, LearnedProfileProvider(FakeLearningRepository()), recorder, endSession, clock)
 
     @Test
     fun `starts a session with the category target block`() = runTest {

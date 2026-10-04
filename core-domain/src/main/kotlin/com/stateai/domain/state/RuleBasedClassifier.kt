@@ -16,8 +16,9 @@ class RuleBasedClassifier(private val thresholds: ClassifierThresholds = Classif
     ): StateEstimate? {
         val meanHeartRate = window.meanHeartRate ?: return null
         val delta = meanHeartRate - baseline.restingHeartRate
-        val factor = thresholds.factorFor(profile.sensitivity)
-        val calm = window.meanMovement <= thresholds.movementLimitFor(profile.normalMovement)
+        val factor = thresholds.factorFor(profile.sensitivity) * (1 + profile.sensitivityAdjustment)
+        val movementLimit = profile.movementLimit ?: thresholds.movementLimitFor(profile.normalMovement)
+        val calm = window.meanMovement <= movementLimit
 
         val level = when {
             delta >= thresholds.highMinHeartRateDelta * factor -> ActivationLevel.HIGH

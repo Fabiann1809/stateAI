@@ -58,6 +58,26 @@ class RuleBasedClassifierTest {
     }
 
     @Test
+    fun `a learned movement limit replaces the category limit`() {
+        val tolerant = study.copy(movementLimit = 0.5)
+
+        assertEquals(
+            ActivationLevel.LOW,
+            classifier.classify(window(66.0, movement = 0.4), baseline, tolerant, 0.minutes)?.level,
+        )
+    }
+
+    @Test
+    fun `a negative sensitivity adjustment reacts to smaller elevations`() {
+        val sensitive = study.copy(sensitivityAdjustment = -0.2)
+
+        assertEquals(
+            ActivationLevel.HIGH,
+            classifier.classify(window(heartRate = 75.0), baseline, sensitive, 0.minutes)?.level,
+        )
+    }
+
+    @Test
     fun `fidgeting late in a session flags restlessness`() {
         assertTrue(classifier.classify(window(66.0, fidgets = 8), baseline, study, 20.minutes)!!.restless)
     }

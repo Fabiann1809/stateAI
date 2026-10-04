@@ -9,7 +9,7 @@ import com.stateai.domain.baseline.BaselineKeeper
 import com.stateai.domain.learning.ActivityProfileLearner
 import com.stateai.domain.learning.BaselineLearner
 import com.stateai.domain.pause.GuidedPause
-import com.stateai.domain.profile.CategoryDefaultsProfileProvider
+import com.stateai.domain.profile.LearnedProfileProvider
 import com.stateai.domain.profile.ProfileProvider
 import com.stateai.domain.segment.SegmentId
 import com.stateai.domain.segment.SegmentRecorder
@@ -37,7 +37,7 @@ class AppContainer(context: Context) {
     val insights = InsightsModule(context, segmentRepository, localClock, haptics.player)
 
     // Sessions
-    private val profileProvider: ProfileProvider = CategoryDefaultsProfileProvider()
+    private val profileProvider: ProfileProvider = LearnedProfileProvider(storage.learning)
     private val baselineKeeper = BaselineKeeper(storage.baseline)
     val segmentRecorder = SegmentRecorder { SegmentId(UUID.randomUUID().toString()) }
     val createActivity = CreateActivity(activityRepository) { ActivityId(UUID.randomUUID().toString()) }

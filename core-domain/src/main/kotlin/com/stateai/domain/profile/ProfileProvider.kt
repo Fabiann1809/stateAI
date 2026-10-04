@@ -1,13 +1,18 @@
 package com.stateai.domain.profile
 
 import com.stateai.domain.activity.Activity
+import com.stateai.domain.learning.LearningRepository
 
 /** Resolves the profile parameters that apply to an activity right now. */
 fun interface ProfileProvider {
-    fun profileFor(activity: Activity): ActivityProfile
+    suspend fun profileFor(activity: Activity): ActivityProfile
 }
 
-/** Uses the category defaults until learned activity profiles exist. */
-class CategoryDefaultsProfileProvider : ProfileProvider {
-    override fun profileFor(activity: Activity): ActivityProfile = DefaultCategoryProfiles.of(activity.category)
+/** Category defaults blended with what the activity has learned so far. */
+class LearnedProfileProvider(
+    private val learning: LearningRepository,
+    private val blender: ProfileBlender = ProfileBlender(),
+) : ProfileProvider {
+    override suspend fun profileFor(activity: Activity): ActivityProfile =
+        blender.blend(DefaultCategoryProfiles.of(activity.category), learning.load(activity.id))
 }

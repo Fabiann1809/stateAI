@@ -10,4 +10,8 @@ data class ActivityProfile(
     val sensitivity: Sensitivity,
     val normalMovement: MovementLevel,
     val maxVibrationsPerHour: Int,
+    /** Learned from feedback: relative widening (+) or narrowing (-) of the heart rate thresholds. */
+    val sensitivityAdjustment: Double = 0.0,
+    /** Learned movement limit in m/s²; null uses the limit of [normalMovement]. */
+    val movementLimit: Double? = null,
 )
