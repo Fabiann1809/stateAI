@@ -37,8 +37,9 @@ class StateEngineTest {
     }
 
     @Test
-    fun `clean windows update the estimate`() {
+    fun `clean windows update the estimate once confirmed`() {
         engine.feed(window(heartRate = 66.0))
+        engine.feed(window(heartRate = 85.0))
 
         assertEquals(ActivationLevel.HIGH, engine.feed(window(heartRate = 85.0))?.level)
     }

@@ -7,12 +7,14 @@ import com.stateai.domain.profile.CategoryProfile
 import kotlin.time.Duration
 
 /**
- * Turns feature windows into the session's current estimate. Windows that are not clean
- * (sustained movement or missing heart rate) carry no evidence, so the previous estimate is kept.
+ * Turns feature windows into the session's current estimate: clean windows are classified and
+ * smoothed; windows that are not clean (sustained movement or missing heart rate) carry no evidence,
+ * so the previous estimate is kept.
  */
 class StateEngine(
     private val classifier: RuleBasedClassifier = RuleBasedClassifier(),
     private val extractor: FeatureExtractor = FeatureExtractor(),
+    private val smoother: StateSmoother = StateSmoother(),
 ) {
     var current: StateEstimate? = null
         private set
@@ -24,7 +26,7 @@ class StateEngine(
         elapsedInSession: Duration,
     ): StateEstimate? {
         if (!extractor.isClean(window)) return current
-        classifier.classify(window, baseline, profile, elapsedInSession)?.let { current = it }
+        classifier.classify(window, baseline, profile, elapsedInSession)?.let { current = smoother.update(it) }
         return current
     }
 }
