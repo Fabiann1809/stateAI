@@ -78,4 +78,11 @@
     <string name="energy_band_low">Energía baja</string>
     <string name="energy_spent_recovered">Gastaste %1$d\nRecuperaste %2$d</string>
     <string name="feedback_skip">Omitir</string>
+    <string name="state_no_data">Sin dato</string>
+    <string name="minutes_value">%1$d min</string>
+    <string name="session_not_counted">Sesión corta: no cuenta para aprender</string>
+    <string name="pauses_helped_count">%1$d de %2$d pausas</string>
+    <string name="pauses_helped">te ayudaron</string>
+    <string name="pauses_none">Sin pausas en esta sesión</string>
+    <string name="summary_done">Listo</string>
 </resources>

@@ -6,8 +6,6 @@ import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.stateai.domain.activity.ActivityId
-import com.stateai.domain.segment.SegmentId
-import com.stateai.ui.feedback.FeedbackRoute
 import com.stateai.ui.newactivity.NewActivityRoute
 import com.stateai.ui.pause.PauseRoute
 import com.stateai.ui.picker.PickerRoute
@@ -46,13 +44,11 @@ fun StateAiNavHost() {
                 },
             )
         }
-        composable(Routes.FEEDBACK) { entry ->
-            FeedbackRoute(segmentId = SegmentId(entry.idArgument()), onDone = { backToPicker() })
-        }
+        sessionEndDestinations(navController)
         composable(Routes.SUMMARY) { SummaryRoute() }
         composable(Routes.PAUSE) { PauseRoute(onFinished = { navController.popBackStack() }) }
         debugDestinations(navController)
     }
 }
 
-private fun NavBackStackEntry.idArgument(): String = arguments?.getString(Routes.ARG_ID).orEmpty()
+internal fun NavBackStackEntry.idArgument(): String = arguments?.getString(Routes.ARG_ID).orEmpty()

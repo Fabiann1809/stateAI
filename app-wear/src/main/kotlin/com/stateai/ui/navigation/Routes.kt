@@ -15,8 +15,11 @@ object Routes {
     const val ARG_ID = "id"
     const val SESSION = "session/{$ARG_ID}"
     const val FEEDBACK = "feedback/{$ARG_ID}"
+    const val SESSION_SUMMARY = "summary/session/{$ARG_ID}"
 
     fun session(activityId: ActivityId): String = "session/${activityId.value}"
 
     fun feedback(segmentId: SegmentId): String = "feedback/${segmentId.value}"
+
+    fun sessionSummary(segmentId: SegmentId): String = "summary/session/${segmentId.value}"
 }
