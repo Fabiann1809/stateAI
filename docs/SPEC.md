@@ -301,7 +301,7 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 
 ### Phase 2: Sensors and simulator
 - [x] **T-2.1** Define `SensorSample` and the `SensorSource` interface (sample flow). *Done when:* it compiles and is documented.
-- [ ] **T-2.2** Implement `SimulatedSensorSource` that plays scripted scenarios. *Done when:* it emits samples at 1 Hz according to the scenario.
+- [x] **T-2.2** Implement `SimulatedSensorSource` that plays scripted scenarios. *Done when:* it emits samples at 1 Hz according to the scenario.
 - [ ] **T-2.3** Scenarios: deep focus, overload, fatigue and mixed session. *Done when:* each has signal-shape tests (HR and movement trends).
 - [ ] **T-2.4** Debug panel to choose a scenario and see live values (debug builds only). *Done when:* changing the scenario changes the live signal.
 - [ ] **T-2.5** Implement `HealthServicesSensorSource` (HR and movement) as the real adapter, per the findings of T-0.4. *Done when:* it compiles and can be switched by configuration, even if not tested on a real watch.
