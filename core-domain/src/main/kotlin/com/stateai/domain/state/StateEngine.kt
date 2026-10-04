@@ -19,14 +19,22 @@ class StateEngine(
     var current: StateEstimate? = null
         private set
 
+    /** Returns the current estimate after this window (unchanged when the window is not usable). */
     fun onWindow(
         window: FeatureWindow,
         baseline: UserBaseline,
         profile: CategoryProfile,
         elapsedInSession: Duration,
-    ): StateEstimate? {
-        if (!extractor.isClean(window)) return current
-        classifier.classify(window, baseline, profile, elapsedInSession)?.let { current = smoother.update(it) }
-        return current
-    }
+    ): StateEstimate? = update(window, baseline, profile, elapsedInSession) ?: current
+
+    /** Returns the new estimate, or null when the window was not usable and nothing changed. */
+    fun update(
+        window: FeatureWindow,
+        baseline: UserBaseline,
+        profile: CategoryProfile,
+        elapsedInSession: Duration,
+    ): StateEstimate? = window
+        .takeIf { extractor.isClean(it) }
+        ?.let { classifier.classify(it, baseline, profile, elapsedInSession) }
+        ?.let { raw -> smoother.update(raw).also { current = it } }
 }

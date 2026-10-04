@@ -6,6 +6,7 @@ import com.stateai.domain.activity.ActivityId
 import com.stateai.domain.activity.ActivityName
 import com.stateai.domain.segment.Feedback
 import com.stateai.domain.segment.LevelDurations
+import com.stateai.domain.segment.LevelTrace
 import com.stateai.domain.segment.PauseRecord
 import com.stateai.domain.segment.Segment
 import com.stateai.domain.segment.SegmentId
@@ -29,7 +30,13 @@ internal fun Segment.toEntity(): SegmentEntity = SegmentEntity(
     restlessSeconds = restlessTime.inWholeSeconds,
     pauseSuggestions = pauseSuggestions,
     feedback = feedback?.name,
+    traceSymbols = trace.symbols,
+    cueMinutes = cueMinutes.joinToString(CUE_SEPARATOR),
+    calmHeartRate = calmHeartRate,
+    cleanMovement = cleanMovement,
 )
+
+private const val CUE_SEPARATOR = ","
 
 internal fun PauseRecord.toEntity(segmentId: String): PauseEntity = PauseEntity(
     segmentId = segmentId,
@@ -61,6 +68,10 @@ internal fun SegmentWithPauses.toDomain(): Segment = Segment(
     pauseSuggestions = segment.pauseSuggestions,
     pauses = pauses.sortedBy { it.startMillis }.map { it.toDomain() },
     feedback = segment.feedback?.let(Feedback::valueOf),
+    trace = LevelTrace(segment.traceSymbols),
+    cueMinutes = segment.cueMinutes.split(CUE_SEPARATOR).filter { it.isNotBlank() }.map { it.toInt() },
+    calmHeartRate = segment.calmHeartRate,
+    cleanMovement = segment.cleanMovement,
 )
 
 private fun PauseEntity.toDomain(): PauseRecord = PauseRecord(

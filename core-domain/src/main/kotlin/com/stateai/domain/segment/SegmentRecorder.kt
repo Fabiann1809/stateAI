@@ -1,6 +1,8 @@
 package com.stateai.domain.segment
 
+import com.stateai.domain.features.FeatureWindow
 import com.stateai.domain.session.ActiveSession
+import com.stateai.domain.state.ActivationLevel
 import com.stateai.domain.state.StateEstimate
 import java.time.Instant
 import kotlin.time.Duration
@@ -8,7 +10,7 @@ import kotlin.time.toKotlinDuration
 
 /**
  * Accumulates the summary of the running session: time per level (each stretch is attributed to the
- * estimate in force), restless time, pause suggestions and guided pauses.
+ * estimate in force), restless time, pauses, the per-window trace and the calm and movement means.
  */
 class SegmentRecorder(private val newId: () -> SegmentId) {
     private var session: ActiveSession? = null
@@ -18,6 +20,10 @@ class SegmentRecorder(private val newId: () -> SegmentId) {
     private var restlessTime = Duration.ZERO
     private var pauseSuggestions = 0
     private val pauses = mutableListOf<PauseRecord>()
+    private var trace = LevelTrace()
+    private val cueMinutes = mutableListOf<Int>()
+    private val calmHeartRates = mutableListOf<Double>()
+    private val cleanMovements = mutableListOf<Double>()
 
     val latestEstimate: StateEstimate? get() = currentEstimate
 
@@ -29,11 +35,32 @@ class SegmentRecorder(private val newId: () -> SegmentId) {
         restlessTime = Duration.ZERO
         pauseSuggestions = 0
         pauses.clear()
+        trace = LevelTrace()
+        cueMinutes.clear()
+        calmHeartRates.clear()
+        cleanMovements.clear()
+    }
+
+    /** Records one feature window; [estimate] is null when the window gave no usable estimate. */
+    fun onWindow(window: FeatureWindow, estimate: StateEstimate?) {
+        if (session == null) return
+        trace = trace.plus(estimate?.level)
+        if (estimate == null) return
+        cleanMovements += window.meanMovement
+        val calm = estimate.level == ActivationLevel.LOW && !estimate.restless
+        if (calm) window.meanHeartRate?.let { calmHeartRates += it }
+        onEstimate(estimate, window.end)
     }
 
     fun onEstimate(estimate: StateEstimate, at: Instant) {
         advanceTo(at)
         currentEstimate = estimate
+    }
+
+    /** Marks a time cue played by the app, so cycle detection can discount it. */
+    fun onCue(at: Instant) {
+        val running = session ?: return
+        cueMinutes += java.time.Duration.between(running.startedAt, at).toMinutes().toInt()
     }
 
     fun onPauseSuggested() {
@@ -59,6 +86,10 @@ class SegmentRecorder(private val newId: () -> SegmentId) {
             restlessTime = restlessTime,
             pauseSuggestions = pauseSuggestions,
             pauses = pauses.toList(),
+            trace = trace,
+            cueMinutes = cueMinutes.toList(),
+            calmHeartRate = calmHeartRates.takeIf { it.isNotEmpty() }?.average(),
+            cleanMovement = cleanMovements.takeIf { it.isNotEmpty() }?.average(),
         )
     }
 

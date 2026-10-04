@@ -1,5 +1,6 @@
 package com.stateai.data.room
 
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -24,6 +25,11 @@ data class SegmentEntity(
     val restlessSeconds: Long,
     val pauseSuggestions: Int,
     val feedback: String?,
+    @ColumnInfo(defaultValue = "") val traceSymbols: String,
+    /** Comma-separated minutes from the start at which the app played a time cue. */
+    @ColumnInfo(defaultValue = "") val cueMinutes: String,
+    val calmHeartRate: Double?,
+    val cleanMovement: Double?,
 )
 
 @Entity(

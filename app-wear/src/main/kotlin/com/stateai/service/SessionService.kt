@@ -20,7 +20,9 @@ import kotlinx.coroutines.launch
 class SessionService : LifecycleService() {
     private val container by lazy { (application as StateAiApplication).container }
     private val notifications by lazy { SessionNotificationFactory(this, container.clock) }
-    private val hapticCues by lazy { SessionHapticCues(container.sessionHapticPlayer) }
+    private val hapticCues by lazy {
+        SessionHapticCues(container.sessionHapticPlayer, onCue = container.segmentRecorder::onCue)
+    }
 
     override fun onCreate() {
         super.onCreate()

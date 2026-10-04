@@ -42,6 +42,13 @@ data class Segment(
     val pauseSuggestions: Int,
     val pauses: List<PauseRecord>,
     val feedback: Feedback? = null,
+    val trace: LevelTrace = LevelTrace(),
+    /** Minutes from the start at which the app played a time cue (block start or end). */
+    val cueMinutes: List<Int> = emptyList(),
+    /** Mean heart rate of the calm windows (`LOW`, not restless), used to refine the baseline. */
+    val calmHeartRate: Double? = null,
+    /** Mean movement of the clean windows, used to learn the activity's normal movement. */
+    val cleanMovement: Double? = null,
 ) {
     val duration: Duration get() = java.time.Duration.between(start, end).toKotlinDuration()
 }

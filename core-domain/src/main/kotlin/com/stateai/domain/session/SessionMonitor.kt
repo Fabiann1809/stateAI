@@ -55,9 +55,10 @@ class SessionMonitor(
             if (progress is CalibrationProgress.Done) current.value = MonitorStatus.Waiting
         }
         windowStream.windows(samples).collect { window ->
-            estimate(window, session, engine)?.let { estimate ->
+            val estimate = estimate(window, session, engine)
+            recorder.onWindow(window, estimate)
+            estimate?.let {
                 current.value = MonitorStatus.Estimating(estimate)
-                recorder.onEstimate(estimate, window.end)
                 policy.onEstimate(estimate)?.let { event ->
                     if (event == HapticEvent.PAUSE_SUGGESTED) recorder.onPauseSuggested()
                     player.play(event)
@@ -69,6 +70,6 @@ class SessionMonitor(
     private suspend fun estimate(window: FeatureWindow, session: ActiveSession, engine: StateEngine): StateEstimate? {
         val baseline = baselineKeeper.current() ?: return null
         val elapsed = java.time.Duration.between(session.startedAt, window.end).toKotlinDuration()
-        return engine.onWindow(window, baseline, session.profile, elapsed)
+        return engine.update(window, baseline, session.profile, elapsed)
     }
 }

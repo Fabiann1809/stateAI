@@ -6,6 +6,7 @@ import com.stateai.domain.activity.ActivityId
 import com.stateai.domain.activity.ActivityName
 import com.stateai.domain.segment.Feedback
 import com.stateai.domain.segment.LevelDurations
+import com.stateai.domain.segment.LevelTrace
 import com.stateai.domain.segment.PauseRecord
 import com.stateai.domain.segment.Segment
 import com.stateai.domain.segment.SegmentId
@@ -39,6 +40,10 @@ class SegmentMapperTest {
                 ),
             ),
             feedback = Feedback.OKAY,
+            trace = LevelTrace("LLM-H"),
+            cueMinutes = listOf(0, 40),
+            calmHeartRate = 66.5,
+            cleanMovement = 0.12,
         )
 
         val row = SegmentWithPauses(segment.toEntity(), segment.pauses.map { it.toEntity("s1") })

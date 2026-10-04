@@ -3,6 +3,7 @@ package com.stateai.domain.segment
 import com.stateai.domain.activity.Activity
 import com.stateai.domain.activity.ActivityCategory
 import com.stateai.domain.activity.ActivityId
+import com.stateai.domain.features.FeatureWindow
 import com.stateai.domain.profile.DefaultCategoryProfiles
 import com.stateai.domain.session.ActiveSession
 import com.stateai.domain.state.ActivationLevel
@@ -59,6 +60,30 @@ class SegmentRecorderTest {
     }
 
     @Test
+    fun `records the window trace, calm heart rate and clean movement`() {
+        recorder.start(session)
+        recorder.onWindow(window(at(1), heartRate = 66.0, movement = 0.1), StateEstimate(ActivationLevel.LOW, false))
+        recorder.onWindow(window(at(2), heartRate = 90.0, movement = 1.5), estimate = null)
+        recorder.onWindow(window(at(3), heartRate = 80.0, movement = 0.3), StateEstimate(ActivationLevel.HIGH, false))
+        recorder.onWindow(window(at(4), heartRate = 68.0, movement = 0.2), StateEstimate(ActivationLevel.LOW, false))
+
+        val segment = recorder.finish(at(5))!!
+
+        assertEquals("L-HL", segment.trace.symbols)
+        assertEquals(67.0, segment.calmHeartRate!!, 1e-9)
+        assertEquals(0.2, segment.cleanMovement!!, 1e-9)
+    }
+
+    @Test
+    fun `records time cues as minutes from the start`() {
+        recorder.start(session)
+        recorder.onCue(at(0))
+        recorder.onCue(at(40))
+
+        assertEquals(listOf(0, 40), recorder.finish(at(45))!!.cueMinutes)
+    }
+
+    @Test
     fun `finishing without a session gives nothing`() {
         assertNull(recorder.finish(at(1)))
     }
@@ -76,4 +101,17 @@ class SegmentRecorderTest {
     }
 
     private fun at(minute: Long): Instant = start.plusSeconds(minute * 60)
+
+    private fun window(end: Instant, heartRate: Double, movement: Double) = FeatureWindow(
+        start = end.minusSeconds(180),
+        end = end,
+        sampleCount = 180,
+        heartRateCount = 180,
+        meanHeartRate = heartRate,
+        heartRateStdDev = 1.0,
+        heartRateMeanAbsDiff = 1.0,
+        meanMovement = movement,
+        fidgetCount = 0,
+        highMovementShare = 0.0,
+    )
 }

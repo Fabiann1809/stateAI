@@ -6,6 +6,7 @@ import com.stateai.domain.activity.ActivityId
 import com.stateai.domain.haptics.HapticEvent
 import com.stateai.domain.profile.DefaultCategoryProfiles
 import com.stateai.domain.testing.MutableClock
+import java.time.Instant
 import kotlin.time.Duration.Companion.minutes
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -13,7 +14,8 @@ import org.junit.jupiter.api.Test
 class SessionHapticCuesTest {
     private val clock = MutableClock()
     private val played = mutableListOf<HapticEvent>()
-    private val cues = SessionHapticCues { played += it }
+    private val cues = SessionHapticCues(player = { played += it }, onCue = { cueTimes += it })
+    private val cueTimes = mutableListOf<Instant>()
     private val study = Activity(ActivityId("study"), ActivityCategory.STUDY, name = null)
     private val session = ActiveSession(study, DefaultCategoryProfiles.STUDY, startedAt = clock.instant())
 
@@ -35,6 +37,7 @@ class SessionHapticCuesTest {
         cues.onTick(session, clock.instant())
 
         assertEquals(listOf(HapticEvent.BLOCK_START, HapticEvent.PAUSE_SUGGESTED), played)
+        assertEquals(2, cueTimes.size)
     }
 
     @Test

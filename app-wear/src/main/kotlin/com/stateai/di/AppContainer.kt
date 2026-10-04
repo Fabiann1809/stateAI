@@ -43,7 +43,7 @@ class AppContainer(context: Context) {
     private val profileProvider: ProfileProvider = CategoryDefaultsProfileProvider()
     val createActivity = CreateActivity(activityRepository) { ActivityId(UUID.randomUUID().toString()) }
     val segmentRepository: SegmentRepository = storage.segments
-    private val segmentRecorder = SegmentRecorder { SegmentId(UUID.randomUUID().toString()) }
+    val segmentRecorder = SegmentRecorder { SegmentId(UUID.randomUUID().toString()) }
     val guidedPause = GuidedPause(segmentRecorder, clock)
     val endSession = EndSession(sessionTracker, segmentRecorder, segmentRepository, clock)
     val startSession =
