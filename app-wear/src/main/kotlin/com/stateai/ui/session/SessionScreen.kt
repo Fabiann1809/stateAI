@@ -1,5 +1,6 @@
 package com.stateai.ui.session
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,9 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -71,7 +75,18 @@ fun SessionRoute(activityId: ActivityId, onPause: () -> Unit, onStopped: (Segmen
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     RequestSessionPermissions()
     val actions = SessionActions(onPause = onPause, onStop = { viewModel.stop(onStopped) })
+    var confirmingEnd by remember { mutableStateOf(false) }
+    // Back never ends a session by accident: it asks first (the session keeps running meanwhile).
+    BackHandler { confirmingEnd = true }
     SessionScreen(state = state, isAmbient = LocalIsAmbient.current, actions = actions)
+    EndSessionDialog(
+        visible = confirmingEnd,
+        onConfirm = {
+            confirmingEnd = false
+            actions.onStop()
+        },
+        onDismiss = { confirmingEnd = false },
+    )
 }
 
 /** User actions available during a session. */
