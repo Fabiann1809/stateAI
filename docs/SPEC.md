@@ -350,7 +350,7 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 - [ ] **T-6.3** (Optional) Pipeline for a public stress dataset (check license and labels). *Done when:* it produces the same feature format as `FeatureWindow`.
 - [x] **T-6.4** Feature engineering identical to Kotlin's (same definition of mean HR, HR variability proxy, etc.). *Done when:* there is a parity test with shared sample values.
 - [x] **T-6.5** Train a simple classifier with the states decided in 6.4.1 and evaluate it (confusion matrix). *Done when:* there is a report with metrics comparing it with the rule engine and stating that, with synthetic data, a similar result is expected.
-- [ ] **T-6.6** Export to TFLite and verify the model with a script. *Done when:* Python inference with the `.tflite` matches the original model.
+- [x] **T-6.6** Export to TFLite and verify the model with a script. *Done when:* Python inference with the `.tflite` matches the original model.
 - [ ] **T-6.7** Include custom activities with few and many sessions in the generator. *Done when:* the dataset allows testing category/activity blending.
 
 ### Phase 7: Model integration

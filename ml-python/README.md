@@ -30,3 +30,17 @@ adb exec-out run-as com.stateai cat files/exports/segments.csv > data/segments.c
 
 Load it with `stateai_ml.watch_export.load_segments("data/segments.csv")`. The columns are defined by
 `SegmentCsv` in `core-domain`.
+
+## Model pipeline
+
+```sh
+python -m stateai_ml.synthetic --out data/generated       # synthetic users (latent-state generator)
+python -m stateai_ml.evaluate_classifier                    # trains, compares with the rules, writes
+                                                            # reports/classifier.md and models/state_classifier.json
+pip install -r requirements-export.txt                     # TensorFlow, only needed to export
+python -m stateai_ml.export_tflite                          # writes models/state_classifier.tflite and
+                                                            # checks it matches the original model
+```
+
+CI installs only `requirements.txt`; the TFLite comparison test is skipped there and runs locally
+when TensorFlow is installed.
