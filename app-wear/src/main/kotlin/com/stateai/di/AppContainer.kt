@@ -2,7 +2,9 @@ package com.stateai.di
 
 import android.content.Context
 import com.stateai.data.memory.InMemoryActivityRepository
+import com.stateai.domain.activity.ActivityId
 import com.stateai.domain.activity.ActivityRepository
+import com.stateai.domain.activity.CreateActivity
 import com.stateai.domain.haptics.HapticPlayer
 import com.stateai.domain.haptics.HapticRateLimiter
 import com.stateai.domain.haptics.RateLimitedHapticPlayer
@@ -13,6 +15,7 @@ import com.stateai.domain.session.SessionTracker
 import com.stateai.domain.session.StartSession
 import com.stateai.haptics.VibratorHapticPlayer
 import java.time.Clock
+import java.util.UUID
 
 /** Creates and holds the app-wide dependencies (manual dependency injection). */
 class AppContainer(context: Context) {
@@ -34,5 +37,6 @@ class AppContainer(context: Context) {
     )
     private val profileProvider: ProfileProvider = CategoryDefaultsProfileProvider()
 
+    val createActivity = CreateActivity(activityRepository) { ActivityId(UUID.randomUUID().toString()) }
     val startSession = StartSession(activityRepository, sessionTracker, profileProvider, clock)
 }

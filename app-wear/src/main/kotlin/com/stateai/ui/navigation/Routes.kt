@@ -6,6 +6,7 @@ import com.stateai.domain.activity.ActivityId
 object Routes {
     const val PICKER = "picker"
     const val DEBUG_HAPTICS = "debug/haptics"
+    const val NEW_ACTIVITY = "activity/new"
     const val SESSION_ARG_ACTIVITY_ID = "activityId"
     const val SESSION = "session/{$SESSION_ARG_ACTIVITY_ID}"
 

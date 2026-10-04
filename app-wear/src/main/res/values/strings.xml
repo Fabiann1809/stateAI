@@ -7,6 +7,11 @@
     <string name="picker_new">Nueva</string>
     <string name="picker_limit_reached">Máximo 10 actividades</string>
 
+    <string name="new_activity_category_title">Categoría</string>
+    <string name="new_activity_add_name">Ponerle nombre</string>
+    <string name="new_activity_without_name">Sin nombre</string>
+    <string name="new_activity_name_label">Nombre de la actividad</string>
+
     <string name="session_target">de %1$d min</string>
     <string name="session_stop">Terminar</string>
     <string name="session_channel_name">Sesión en curso</string>

@@ -27,7 +27,7 @@ import com.stateai.ui.common.labelRes
 import com.stateai.ui.common.title
 
 @Composable
-fun PickerRoute(onActivitySelected: (ActivityId) -> Unit, onOpenDebug: () -> Unit) {
+fun PickerRoute(onActivitySelected: (ActivityId) -> Unit, onNewActivity: () -> Unit, onOpenDebug: () -> Unit) {
     val container = appContainer()
     val viewModel: PickerViewModel = viewModel(
         factory = viewModelFactory { initializer { PickerViewModel(container.activityRepository) } },
@@ -36,7 +36,7 @@ fun PickerRoute(onActivitySelected: (ActivityId) -> Unit, onOpenDebug: () -> Uni
     PickerScreen(
         state = state,
         onActivitySelected = onActivitySelected,
-        onNewActivity = {},
+        onNewActivity = onNewActivity,
         onOpenDebug = onOpenDebug.takeIf { BuildConfig.DEBUG },
     )
 }

@@ -297,7 +297,7 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 - [x] **T-1.5** `:haptics` module with the 4 patterns of 6.2. *Done when:* each pattern is triggered from a debug button and logged.
 - [x] **T-1.6** Vibration rate limiter (max. 1 every 5 min, hourly cap per profile). *Done when:* tests show that out-of-rule vibrations are blocked.
 - [x] **T-1.7** End-of-block vibration when the profile's target is reached. *Done when:* it fires once when the time is met.
-- [ ] **T-1.8** "New activity" flow: choose category and optional name (standard Wear OS text input). *Done when:* the activity is created, appears in the picker, and "BD" and "bd " are unified as the same.
+- [x] **T-1.8** "New activity" flow: choose category and optional name (standard Wear OS text input). *Done when:* the activity is created, appears in the picker, and "BD" and "bd " are unified as the same.
 
 ### Phase 2: Sensors and simulator
 - [ ] **T-2.1** Define `SensorSample` and the `SensorSource` interface (sample flow). *Done when:* it compiles and is documented.

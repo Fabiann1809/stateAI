@@ -16,6 +16,7 @@ dependencies {
     implementation(libs.wear.compose.navigation)
     implementation(libs.wear)
     implementation(libs.wear.ongoing)
+    implementation(libs.wear.input)
     implementation(libs.androidx.lifecycle.service)
     testImplementation(libs.kotlinx.coroutines.test)
 }
