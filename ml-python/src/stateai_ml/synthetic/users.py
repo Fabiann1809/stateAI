@@ -6,4 +6,7 @@ USERS: dict[str, UserSpec] = {
     "cycle60": UserSpec("cycle60", RhythmSpec(60.0), seed=60, resting_heart_rate=63.0),
     "cycle90": UserSpec("cycle90", RhythmSpec(90.0), seed=90, resting_heart_rate=66.0),
     "cycle110": UserSpec("cycle110", RhythmSpec(110.0), seed=110, resting_heart_rate=68.0),
+    "no_cycle": UserSpec("no_cycle", RhythmSpec(None), seed=7, resting_heart_rate=64.0),
+    # Period changes every day between 75 and 115 minutes.
+    "irregular": UserSpec("irregular", RhythmSpec(95.0, drift_minutes=20.0), seed=95, resting_heart_rate=67.0),
 }

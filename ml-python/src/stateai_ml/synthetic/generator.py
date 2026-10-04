@@ -24,7 +24,7 @@ class SyntheticUser:
 def generate_user(spec: UserSpec) -> SyntheticUser:
     """Same spec (including seed) always gives exactly the same data."""
     rng = np.random.default_rng(spec.seed)
-    periods = _daily_periods(spec, rng)
+    periods = daily_periods(spec, rng)
     phases = rng.uniform(0, 2 * np.pi, spec.days)
     sessions, minutes, samples = [], [], []
     for planned in plan_sessions(spec, rng):
@@ -51,7 +51,7 @@ def write_user(user: SyntheticUser, directory: Path, name: str) -> None:
     user.samples.to_csv(directory / f"{name}_samples.csv", index=False, float_format="%.3f")
 
 
-def _daily_periods(spec: UserSpec, rng: np.random.Generator) -> list[float | None]:
+def daily_periods(spec: UserSpec, rng: np.random.Generator) -> list[float | None]:
     period = spec.rhythm.period_minutes
     if period is None:
         return [None] * spec.days

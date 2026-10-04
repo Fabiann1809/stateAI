@@ -5,7 +5,7 @@ from dataclasses import replace
 import numpy as np
 import pytest
 
-from stateai_ml.synthetic.generator import generate_user
+from stateai_ml.synthetic.generator import daily_periods, generate_user
 from stateai_ml.synthetic.latent import CALM, simulate_session
 from stateai_ml.synthetic.spec import RhythmSpec, UserSpec
 from stateai_ml.synthetic.users import USERS
@@ -67,3 +67,15 @@ def test_dataset_has_users_with_known_cycles() -> None:
     periods = {spec.rhythm.period_minutes for spec in USERS.values()}
 
     assert {60.0, 90.0, 110.0} <= periods
+
+
+def test_dataset_has_a_user_without_cycle_and_an_irregular_one() -> None:
+    assert USERS["no_cycle"].rhythm.period_minutes is None
+    assert USERS["irregular"].rhythm.drift_minutes > 0
+
+
+def test_irregular_user_changes_period_every_day() -> None:
+    periods = daily_periods(USERS["irregular"], np.random.default_rng(1))
+
+    assert len(set(periods)) == len(periods)
+    assert all(75.0 <= period <= 115.0 for period in periods)

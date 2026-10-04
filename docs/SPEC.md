@@ -345,7 +345,7 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 
 ### Phase 6: Offline ML (Python)
 - [x] **T-6.1** Synthetic user generator: multi-day routine with known cycles and noise. Physiology is generated with a mechanism **different** from the rule engine (latent state with its own transitions), so the rules are not validated against themselves. *Done when:* it produces reproducible CSVs with a seed and the generator's README explains how it differs from the rule engine.
-- [ ] **T-6.2** Include a user without a cycle and one with an irregular cycle. *Done when:* they are in the evaluation dataset.
+- [x] **T-6.2** Include a user without a cycle and one with an irregular cycle. *Done when:* they are in the evaluation dataset.
 - [ ] **T-6.3** (Optional) Pipeline for a public stress dataset (check license and labels). *Done when:* it produces the same feature format as `FeatureWindow`.
 - [ ] **T-6.4** Feature engineering identical to Kotlin's (same definition of mean HR, HR variability proxy, etc.). *Done when:* there is a parity test with shared sample values.
 - [ ] **T-6.5** Train a simple classifier with the states decided in 6.4.1 and evaluate it (confusion matrix). *Done when:* there is a report with metrics comparing it with the rule engine and stating that, with synthetic data, a similar result is expected.
