@@ -268,7 +268,7 @@ Out of the MVP: on-watch LLM, natural-language summaries via API.
 - **Weak signals**: wrist HR separates focus from normal poorly. Mitigation: 3 activation levels instead of 4 states (6.4.1).
 - **Self-induced periodicity** in cycle detection: see section 7, item 4.
 - **Circular evaluation**: see section 8.
-- **Fragile calibration** (found in the ML evaluation, `ml-python/reports/classifier.md`): one 2-minute calibration records whatever state the person is in; on a synthetic user it landed 5 bpm high and dropped rule accuracy from 0.73 to 0.49. The baseline EMA (T-5.1) only partly corrects it. Candidate fix: re-check the baseline against the lowest calm windows of the first sessions.
+- **Fragile calibration** (found in the ML evaluation, `ml-python/reports/classifier.md`): one 2-minute calibration records whatever state the person is in; on a synthetic user it landed 5 bpm high and dropped rule accuracy from 0.72 to 0.52. The baseline EMA (T-5.1) only partly corrects it. Candidate fix: re-check the baseline against the lowest calm windows of the first sessions.
 - **Watch battery**: a foreground service with continuous HR for hours drains a real watch noticeably. Measure consumption if tested on hardware (T-9.1) and consider intermittent sampling outside sessions.
 - **Noisy wrist signal** with movement: weight by movement.
 - **Circular synthetic data**: the model may "discover" what the generator put in. Declare it.
@@ -351,7 +351,7 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 - [x] **T-6.4** Feature engineering identical to Kotlin's (same definition of mean HR, HR variability proxy, etc.). *Done when:* there is a parity test with shared sample values.
 - [x] **T-6.5** Train a simple classifier with the states decided in 6.4.1 and evaluate it (confusion matrix). *Done when:* there is a report with metrics comparing it with the rule engine and stating that, with synthetic data, a similar result is expected.
 - [x] **T-6.6** Export to TFLite and verify the model with a script. *Done when:* Python inference with the `.tflite` matches the original model.
-- [ ] **T-6.7** Include custom activities with few and many sessions in the generator. *Done when:* the dataset allows testing category/activity blending.
+- [x] **T-6.7** Include custom activities with few and many sessions in the generator. *Done when:* the dataset allows testing category/activity blending.
 
 ### Phase 7: Model integration
 - [ ] **T-7.1** `:ml` module that loads the `.tflite` and classifies a `FeatureWindow`. *Done when:* it returns an `ActivationLevel` on the emulator.

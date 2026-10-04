@@ -18,11 +18,12 @@ class RhythmSpec:
 
 @dataclass(frozen=True)
 class ActivitySpec:
-    """A custom activity and how often the user picks it, relative to the others."""
+    """A custom activity, how often the user picks it (relative weight) and its typical session length."""
 
     name: str
     category: str
     weight: float
+    typical_minutes: float
 
 
 @dataclass(frozen=True)
@@ -37,9 +38,9 @@ class UserSpec:
     sessions_per_day: int = 4
     activities: tuple[ActivitySpec, ...] = field(
         default=(
-            ActivitySpec("tesis", "DEEP_WORK", 6.0),
-            ActivitySpec("bases de datos", "STUDY", 3.0),
-            ActivitySpec("novela", "READING", 1.0),
-            ActivitySpec("idiomas", "STUDY", 0.3),
+            ActivitySpec("tesis", "DEEP_WORK", 6.0, typical_minutes=60.0),
+            ActivitySpec("bases de datos", "STUDY", 3.0, typical_minutes=55.0),
+            ActivitySpec("novela", "READING", 1.0, typical_minutes=35.0),
+            ActivitySpec("idiomas", "STUDY", 0.3, typical_minutes=25.0),
         )
     )
