@@ -17,6 +17,7 @@ object Routes {
     const val NEW_ACTIVITY = "activity/new?$ARG_CATEGORY={$ARG_CATEGORY}&$ARG_NAME={$ARG_NAME}"
     const val SUMMARY = "summary"
     const val PAUSE = "pause"
+    const val VOICE = "voice"
     const val ARG_ID = "id"
     const val SESSION = "session/{$ARG_ID}"
     const val FEEDBACK = "feedback/{$ARG_ID}"

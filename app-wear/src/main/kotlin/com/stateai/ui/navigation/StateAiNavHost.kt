@@ -19,13 +19,12 @@ import com.stateai.ui.summary.SummaryRoute
 @Composable
 fun StateAiNavHost() {
     val navController = rememberSwipeDismissableNavController()
-    val backToPicker = { navController.popBackStack(Routes.HOME, inclusive = false) }
+    val backToHome = { navController.popBackStack(Routes.HOME, inclusive = false) }
 
     SwipeDismissableNavHost(navController = navController, startDestination = Routes.HOME) {
         composable(Routes.HOME) {
             HomeRoute(
-                // Voice entry is wired in the listening flow; until then the list is the way in.
-                onTalk = {},
+                onTalk = { navController.navigate(Routes.VOICE) },
                 onActivitySelected = { navController.navigate(Routes.session(it)) },
                 onNewActivity = { navController.navigate(Routes.newActivity()) },
                 onOpenSummary = { navController.navigate(Routes.SUMMARY) },
@@ -43,7 +42,7 @@ fun StateAiNavHost() {
                 onPause = { navController.navigate(Routes.PAUSE) },
                 onStopped = { segmentId ->
                     if (segmentId == null) {
-                        backToPicker()
+                        backToHome()
                     } else {
                         navController.navigate(Routes.feedback(segmentId)) { popUpTo(Routes.HOME) }
                     }
@@ -52,6 +51,7 @@ fun StateAiNavHost() {
         }
         sessionEndDestinations(navController)
         composable(Routes.SUMMARY) { SummaryRoute() }
+        voiceDestination(navController)
         composable(Routes.PAUSE) { PauseRoute(onFinished = { navController.popBackStack() }) }
         debugDestinations(navController)
     }

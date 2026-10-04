@@ -109,4 +109,27 @@
     <string name="mascot_name_skip">Ahora no</string>
     <string name="mascot_name_label">Nombre de la mascota</string>
     <string name="new_activity_use_name">Usar «%1$s»</string>
+    <string name="voice_listening">Te escucho…</string>
+    <string name="voice_thinking">Pensando…</string>
+    <string name="voice_text_label">¿Qué vas a hacer?</string>
+    <string name="voice_confirm_title">¿Empezamos?</string>
+    <string name="voice_activity_label">%1$s: %2$s</string>
+    <string name="voice_confirm_countdown">Empieza en %1$d s</string>
+    <string name="voice_change">Cambiar</string>
+    <string name="voice_cancel">Cancelar</string>
+    <string name="voice_use_list">Usar la lista</string>
+    <string name="voice_mic_title">¿Uso el micrófono?</string>
+    <string name="voice_mic_body">Solo escucho cuando me tocas, nunca de fondo. No se guarda audio.</string>
+    <string name="voice_mic_accept">Permitir</string>
+    <string name="voice_consent_title">Reconocimiento de voz</string>
+    <string name="voice_consent_body">Para entenderte, el reconocedor del sistema puede enviar tu voz a un servidor (por ejemplo, de Google). stateAI no guarda audio: solo usa el texto un momento.</string>
+    <string name="voice_consent_accept">Aceptar</string>
+    <string name="voice_failure_no_permission">Sin micrófono no puedo escucharte. Elige en la lista.</string>
+    <string name="voice_failure_no_recognizer">Este reloj no tiene reconocimiento de voz. Elige en la lista.</string>
+    <string name="voice_failure_no_network">Sin conexión no pude entenderte. Elige en la lista.</string>
+    <string name="voice_failure_silence">No te escuché. Tócame otra vez o elige en la lista.</string>
+    <string name="voice_failure_not_understood">No te entendí. Elige en la lista.</string>
+    <string name="voice_failure_no_consent">Sin reconocimiento de voz, elige en la lista.</string>
+    <string name="voice_failure_activity_limit">Ya tienes 10 actividades. Elige una en la lista.</string>
+    <string name="voice_failure_error">Algo falló. Elige en la lista.</string>
 </resources>
