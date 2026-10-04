@@ -3,25 +3,30 @@ package com.stateai.domain.activity
 import java.text.Normalizer
 
 /**
- * Free activity name in normalized form: lowercase, without accents and with single spaces.
- * Two raw names that normalize to the same value refer to the same activity ("BD" and "bd ").
+ * Free activity name. [normalized] (lowercase, no accents, single spaces) is the identity:
+ * two names with the same normalized form are the same activity ("BD" and "bd ").
+ * [display] keeps the text as first typed, trimmed, for the UI.
  */
-@JvmInline
-value class ActivityName private constructor(val value: String) {
+class ActivityName private constructor(val normalized: String, val display: String) {
+    override fun equals(other: Any?): Boolean = other is ActivityName && other.normalized == normalized
+
+    override fun hashCode(): Int = normalized.hashCode()
+
+    override fun toString(): String = display
+
     companion object {
         private val DIACRITICS = Regex("\\p{Mn}+")
         private val WHITESPACE = Regex("\\s+")
 
-        /** Returns the normalized name, or null when the raw text has no visible characters. */
+        /** Returns the name, or null when the raw text has no visible characters. */
         fun of(raw: String): ActivityName? {
-            val normalized = normalize(raw)
-            return if (normalized.isEmpty()) null else ActivityName(normalized)
+            val display = raw.replace(WHITESPACE, " ").trim()
+            if (display.isEmpty()) return null
+            return ActivityName(normalize(display), display)
         }
 
-        private fun normalize(raw: String): String = Normalizer.normalize(raw, Normalizer.Form.NFD)
+        private fun normalize(text: String): String = Normalizer.normalize(text, Normalizer.Form.NFD)
             .replace(DIACRITICS, "")
-            .replace(WHITESPACE, " ")
-            .trim()
             .lowercase()
     }
 }

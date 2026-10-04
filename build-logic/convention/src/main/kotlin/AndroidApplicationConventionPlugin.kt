@@ -8,6 +8,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
         pluginManager.apply("com.android.application")
         configureQuality()
+        configureUnitTesting()
 
         extensions.configure<ApplicationExtension> {
             namespace = BASE_NAMESPACE

@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">stateAI</string>
-    <string name="home_placeholder">Listo para enfocarte</string>
+
+    <string name="picker_title">¿Qué vas a hacer?</string>
+    <string name="picker_empty">Crea tu primera actividad</string>
+    <string name="picker_new">Nueva</string>
+    <string name="picker_limit_reached">Máximo 10 actividades</string>
+
+    <string name="category_deep_work">Trabajo profundo</string>
+    <string name="category_study">Estudio</string>
+    <string name="category_reading">Lectura</string>
+    <string name="category_collab">Reuniones</string>
+    <string name="category_other">Otra</string>
 </resources>

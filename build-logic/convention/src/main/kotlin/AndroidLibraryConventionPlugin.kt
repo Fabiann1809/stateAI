@@ -8,6 +8,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
         pluginManager.apply("com.android.library")
         configureQuality()
+        configureUnitTesting()
 
         extensions.configure<LibraryExtension> {
             namespace = "$BASE_NAMESPACE.${namespaceSuffix()}"
