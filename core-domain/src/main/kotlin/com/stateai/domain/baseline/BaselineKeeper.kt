@@ -15,6 +15,13 @@ class BaselineKeeper(
 
     suspend fun current(): UserBaseline? = cached ?: repository.load()?.also { cached = it }
 
+    /** Replaces the stored baseline with [change] applied to it; does nothing before calibration. */
+    suspend fun refine(change: (UserBaseline) -> UserBaseline) {
+        val updated = change(current() ?: return)
+        repository.save(updated)
+        cached = updated
+    }
+
     /** Feeds a sample while no baseline exists. Returns the calibration progress, or null if calibrated. */
     suspend fun calibrate(sample: SensorSample): CalibrationProgress? {
         if (current() != null) return null

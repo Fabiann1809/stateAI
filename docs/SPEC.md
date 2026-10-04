@@ -327,7 +327,7 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 - [x] **T-4.9** Export summaries (segments and profiles) to JSON or CSV from the watch, for analysis in Python. *Done when:* the file is generated and read from `/ml-python`.
 
 ### Phase 5: Learning (in `:core-domain`)
-- [ ] **T-5.1** Personal baseline with exponential moving average (optionally per time slot), updated after each session. *Done when:* a test shows convergence on new data.
+- [x] **T-5.1** Personal baseline with exponential moving average (optionally per time slot), updated after each session. *Done when:* a test shows convergence on new data.
 - [ ] **T-5.2** `FocusProfile`: mean focus score per time slot and day of the week. *Done when:* tests with several days of data.
 - [ ] **T-5.3** "Focus window" notice when the current time slot is good according to the profile. *Done when:* it fires only with minimum confidence (e.g. 5+ days).
 - [ ] **T-5.4** Cycle detection: build the focus series and search for periodicity (autocorrelation/periodogram). *Done when:* it recovers 60/90/110 min cycles in synthetic data with gaps between sessions, and a test confirms end-of-block vibrations do not create a false cycle.

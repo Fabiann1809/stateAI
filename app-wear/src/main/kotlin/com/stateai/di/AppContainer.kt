@@ -10,6 +10,7 @@ import com.stateai.domain.baseline.BaselineKeeper
 import com.stateai.domain.haptics.HapticPlayer
 import com.stateai.domain.haptics.HapticRateLimiter
 import com.stateai.domain.haptics.RateLimitedHapticPlayer
+import com.stateai.domain.learning.BaselineLearner
 import com.stateai.domain.pause.GuidedPause
 import com.stateai.domain.profile.CategoryDefaultsProfileProvider
 import com.stateai.domain.profile.DefaultCategoryProfiles
@@ -45,7 +46,9 @@ class AppContainer(context: Context) {
     val segmentRepository: SegmentRepository = storage.segments
     val segmentRecorder = SegmentRecorder { SegmentId(UUID.randomUUID().toString()) }
     val guidedPause = GuidedPause(segmentRecorder, clock)
-    val endSession = EndSession(sessionTracker, segmentRecorder, segmentRepository, clock)
+    private val baselineKeeper = BaselineKeeper(storage.baseline)
+    private val learners = listOf(BaselineLearner(baselineKeeper))
+    val endSession = EndSession(sessionTracker, segmentRecorder, segmentRepository, clock, learners)
     val startSession =
         StartSession(activityRepository, sessionTracker, profileProvider, segmentRecorder, endSession, clock)
 
@@ -78,7 +81,7 @@ class AppContainer(context: Context) {
     // State estimation
     val sessionMonitor = SessionMonitor(
         sensorSource,
-        BaselineKeeper(storage.baseline),
+        baselineKeeper,
         sessionHapticPlayer,
         segmentRecorder,
     )
