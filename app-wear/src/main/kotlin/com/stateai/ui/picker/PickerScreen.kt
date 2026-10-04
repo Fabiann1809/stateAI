@@ -27,7 +27,12 @@ import com.stateai.ui.common.labelRes
 import com.stateai.ui.common.title
 
 @Composable
-fun PickerRoute(onActivitySelected: (ActivityId) -> Unit, onNewActivity: () -> Unit, onOpenDebug: () -> Unit) {
+fun PickerRoute(
+    onActivitySelected: (ActivityId) -> Unit,
+    onNewActivity: () -> Unit,
+    onOpenSummary: () -> Unit,
+    onOpenDebug: () -> Unit,
+) {
     val container = appContainer()
     val viewModel: PickerViewModel = viewModel(
         factory = viewModelFactory { initializer { PickerViewModel(container.activityRepository) } },
@@ -37,6 +42,7 @@ fun PickerRoute(onActivitySelected: (ActivityId) -> Unit, onNewActivity: () -> U
         state = state,
         onActivitySelected = onActivitySelected,
         onNewActivity = onNewActivity,
+        onOpenSummary = onOpenSummary,
         onOpenDebug = onOpenDebug.takeIf { BuildConfig.DEBUG },
     )
 }
@@ -46,6 +52,7 @@ fun PickerScreen(
     state: PickerUiState,
     onActivitySelected: (ActivityId) -> Unit,
     onNewActivity: () -> Unit,
+    onOpenSummary: () -> Unit,
     onOpenDebug: (() -> Unit)?,
 ) {
     val listState = rememberScalingLazyListState()
@@ -59,6 +66,7 @@ fun PickerScreen(
                 ActivityButton(activity = activity, onClick = { onActivitySelected(activity.id) })
             }
             item { NewActivityButton(enabled = state.canCreateNew, onClick = onNewActivity) }
+            item { SummaryButton(onClick = onOpenSummary) }
             onOpenDebug?.let { open -> item { DebugButton(onClick = open) } }
         }
     }
@@ -84,6 +92,11 @@ private fun NewActivityButton(enabled: Boolean, onClick: () -> Unit) {
         label = { Text(stringResource(R.string.picker_new)) },
         secondaryLabel = if (enabled) null else ({ Text(stringResource(R.string.picker_limit_reached)) }),
     )
+}
+
+@Composable
+private fun SummaryButton(onClick: () -> Unit) {
+    CompactButton(onClick = onClick, label = { Text(stringResource(R.string.summary_open)) })
 }
 
 @Composable

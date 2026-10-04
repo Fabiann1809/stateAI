@@ -3,12 +3,14 @@ package com.stateai.ui.session
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
@@ -21,6 +23,7 @@ import androidx.wear.compose.material3.Text
 import com.stateai.R
 import com.stateai.di.appContainer
 import com.stateai.domain.activity.ActivityId
+import com.stateai.domain.segment.SegmentId
 import com.stateai.domain.session.MonitorStatus
 import com.stateai.domain.session.SessionProgress
 import com.stateai.ui.ambient.LocalIsAmbient
@@ -29,7 +32,7 @@ import com.stateai.ui.common.title
 import com.stateai.ui.common.toClockText
 
 @Composable
-fun SessionRoute(activityId: ActivityId, onStopped: () -> Unit) {
+fun SessionRoute(activityId: ActivityId, onPause: () -> Unit, onStopped: (SegmentId?) -> Unit) {
     val container = appContainer()
     val viewModel: SessionViewModel = viewModel(
         factory = viewModelFactory {
@@ -47,12 +50,15 @@ fun SessionRoute(activityId: ActivityId, onStopped: () -> Unit) {
     )
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     RequestSessionPermissions()
-    val onStop = { viewModel.stop { onStopped() } }
-    SessionScreen(state = state, isAmbient = LocalIsAmbient.current, onStop = onStop)
+    val actions = SessionActions(onPause = onPause, onStop = { viewModel.stop(onStopped) })
+    SessionScreen(state = state, isAmbient = LocalIsAmbient.current, actions = actions)
 }
 
+/** User actions available during a session. */
+data class SessionActions(val onPause: () -> Unit, val onStop: () -> Unit)
+
 @Composable
-fun SessionScreen(state: SessionUiState, isAmbient: Boolean, onStop: () -> Unit) {
+fun SessionScreen(state: SessionUiState, isAmbient: Boolean, actions: SessionActions) {
     val progress = state.progress ?: return
     ScreenScaffold {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -64,7 +70,7 @@ fun SessionScreen(state: SessionUiState, isAmbient: Boolean, onStop: () -> Unit)
                     title = state.activity?.title().orEmpty(),
                     progress = progress,
                     status = state.status,
-                    onStop = onStop,
+                    actions = actions,
                 )
             }
         }
@@ -72,7 +78,12 @@ fun SessionScreen(state: SessionUiState, isAmbient: Boolean, onStop: () -> Unit)
 }
 
 @Composable
-private fun ActiveSessionContent(title: String, progress: SessionProgress, status: MonitorStatus, onStop: () -> Unit) {
+private fun ActiveSessionContent(
+    title: String,
+    progress: SessionProgress,
+    status: MonitorStatus,
+    actions: SessionActions,
+) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
         Text(text = title, style = MaterialTheme.typography.labelMedium)
         Text(text = progress.elapsed.toClockText(), style = MaterialTheme.typography.displayMedium)
@@ -81,6 +92,11 @@ private fun ActiveSessionContent(title: String, progress: SessionProgress, statu
             style = MaterialTheme.typography.bodySmall,
         )
         SessionStatusRow(status)
-        CompactButton(onClick = onStop, label = { Text(stringResource(R.string.session_stop)) })
+        Row(horizontalArrangement = Arrangement.spacedBy(BUTTON_SPACING)) {
+            CompactButton(onClick = actions.onPause, label = { Text(stringResource(R.string.session_pause)) })
+            CompactButton(onClick = actions.onStop, label = { Text(stringResource(R.string.session_stop)) })
+        }
     }
 }
+
+private val BUTTON_SPACING = 4.dp

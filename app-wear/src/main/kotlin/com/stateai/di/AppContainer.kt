@@ -1,12 +1,8 @@
 package com.stateai.di
 
 import android.content.Context
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
-import androidx.datastore.preferences.preferencesDataStoreFile
 import com.stateai.BuildConfig
-import com.stateai.data.baseline.DataStoreBaselineRepository
-import com.stateai.data.memory.InMemoryActivityRepository
-import com.stateai.data.memory.InMemorySegmentRepository
+import com.stateai.data.LocalStorage
 import com.stateai.domain.activity.ActivityId
 import com.stateai.domain.activity.ActivityRepository
 import com.stateai.domain.activity.CreateActivity
@@ -14,6 +10,7 @@ import com.stateai.domain.baseline.BaselineKeeper
 import com.stateai.domain.haptics.HapticPlayer
 import com.stateai.domain.haptics.HapticRateLimiter
 import com.stateai.domain.haptics.RateLimitedHapticPlayer
+import com.stateai.domain.pause.GuidedPause
 import com.stateai.domain.profile.CategoryDefaultsProfileProvider
 import com.stateai.domain.profile.DefaultCategoryProfiles
 import com.stateai.domain.profile.ProfileProvider
@@ -25,11 +22,13 @@ import com.stateai.domain.session.EndSession
 import com.stateai.domain.session.SessionMonitor
 import com.stateai.domain.session.SessionTracker
 import com.stateai.domain.session.StartSession
+import com.stateai.domain.summary.ObserveDaySummary
 import com.stateai.haptics.VibratorHapticPlayer
 import com.stateai.sensors.health.HealthServicesSensorSource
 import com.stateai.sensors.simulation.SimulatedSensorSource
 import com.stateai.sensors.simulation.SimulationController
 import java.time.Clock
+import java.time.ZoneId
 import java.util.UUID
 
 /** Creates and holds the app-wide dependencies (manual dependency injection). */
@@ -37,15 +36,19 @@ class AppContainer(context: Context) {
     val clock: Clock = Clock.systemUTC()
 
     // Activities and sessions
-    val activityRepository: ActivityRepository = InMemoryActivityRepository()
+    private val storage = LocalStorage(context, clock)
+    val activityRepository: ActivityRepository = storage.activities
     val sessionTracker = SessionTracker()
     private val profileProvider: ProfileProvider = CategoryDefaultsProfileProvider()
     val createActivity = CreateActivity(activityRepository) { ActivityId(UUID.randomUUID().toString()) }
-    val segmentRepository: SegmentRepository = InMemorySegmentRepository()
+    val segmentRepository: SegmentRepository = storage.segments
     private val segmentRecorder = SegmentRecorder { SegmentId(UUID.randomUUID().toString()) }
+    val guidedPause = GuidedPause(segmentRecorder, clock)
     val endSession = EndSession(sessionTracker, segmentRecorder, segmentRepository, clock)
     val startSession =
         StartSession(activityRepository, sessionTracker, profileProvider, segmentRecorder, endSession, clock)
+
+    val observeDaySummary = ObserveDaySummary(segmentRepository, clock.withZone(ZoneId.systemDefault()))
 
     // Sensors
     val simulationController = SimulationController()
@@ -70,17 +73,10 @@ class AppContainer(context: Context) {
     )
 
     // State estimation
-    private val baselineRepository = DataStoreBaselineRepository(
-        PreferenceDataStoreFactory.create { context.preferencesDataStoreFile(BASELINE_STORE) },
-    )
     val sessionMonitor = SessionMonitor(
         sensorSource,
-        BaselineKeeper(baselineRepository),
+        BaselineKeeper(storage.baseline),
         sessionHapticPlayer,
         segmentRecorder,
     )
-
-    private companion object {
-        const val BASELINE_STORE = "baseline"
-    }
 }
