@@ -65,4 +65,6 @@
     <string name="pause_finish">Volver</string>
     <string name="debug_export">Exportar resúmenes</string>
     <string name="debug_export_done">Exportado ✓</string>
+    <string name="energy_level">Energía estimada: %1$d%%</string>
+    <string name="energy_low_suggestion">Te queda poca energía; quizá convenga dejar esto para después.</string>
 </resources>

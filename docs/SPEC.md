@@ -336,7 +336,7 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 - [x] **T-5.6** Next-activity prediction per hour and day; preselect it in the picker. *Done when:* the picker shows the suggested one first with enough data.
 - [x] **T-5.7** Slow adjustment of the activity's global sensitivity from the "how did you feel?" feedback (small, bounded steps). *Done when:* a test shows sensitivity moves in the right direction and a single feedback does not change it abruptly.
 - [x] **T-5.8** Energy engine (6.5): consumption per state, recovery per useful pause, capacity per time slot. *Done when:* consumption and recovery tests.
-- [ ] **T-5.9** Show the battery in the session and summary, with suggestions (never locks). *Done when:* it is visible and changes during a simulated session.
+- [x] **T-5.9** Show the battery in the session and summary, with suggestions (never locks). *Done when:* it is visible and changes during a simulated session.
 - [x] **T-5.10** Learned profile per activity with `n / (n + K)` blending towards its category's profile (6.7). *Done when:* tests with n=0, 5 and 20 give the expected weights.
 - [x] **T-5.11** Valid session criterion (≥ 10 min and ≥ 60 % clean windows). *Done when:* a short or noisy session does not increase `n`.
 - [x] **T-5.12** Learn target block and normal movement of each activity from its sessions. *Done when:* with simulated sessions the value approaches the synthetic user's.

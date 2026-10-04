@@ -73,9 +73,15 @@ class SegmentRecorder(private val newId: () -> SegmentId) {
 
     /** Closes the running segment, or returns null when no session is being recorded. */
     fun finish(at: Instant): Segment? {
+        val segment = snapshot(at) ?: return null
+        session = null
+        return segment
+    }
+
+    /** The running segment as if it ended at [at], without closing it; null when nothing is recorded. */
+    fun snapshot(at: Instant): Segment? {
         val running = session ?: return null
         advanceTo(at)
-        session = null
         return Segment(
             id = newId(),
             activity = running.activity,

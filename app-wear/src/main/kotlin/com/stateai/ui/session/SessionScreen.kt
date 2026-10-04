@@ -21,15 +21,19 @@ import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import com.stateai.R
+import com.stateai.common.clockTicks
 import com.stateai.di.appContainer
 import com.stateai.domain.activity.ActivityId
+import com.stateai.domain.energy.EnergyBudget
 import com.stateai.domain.segment.SegmentId
 import com.stateai.domain.session.MonitorStatus
 import com.stateai.domain.session.SessionProgress
 import com.stateai.ui.ambient.LocalIsAmbient
+import com.stateai.ui.common.EnergyText
 import com.stateai.ui.common.RequestSessionPermissions
 import com.stateai.ui.common.title
 import com.stateai.ui.common.toClockText
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun SessionRoute(activityId: ActivityId, onPause: () -> Unit, onStopped: (SegmentId?) -> Unit) {
@@ -37,14 +41,15 @@ fun SessionRoute(activityId: ActivityId, onPause: () -> Unit, onStopped: (Segmen
     val viewModel: SessionViewModel = viewModel(
         factory = viewModelFactory {
             initializer {
-                SessionViewModel(
-                    activityId,
-                    container.startSession,
-                    container.endSession,
-                    container.sessionTracker,
-                    container.sessionMonitor.status,
-                    container.clock,
+                val dependencies = SessionDependencies(
+                    startSession = container.startSession,
+                    endSession = container.endSession,
+                    tracker = container.sessionTracker,
+                    status = container.sessionMonitor.status,
+                    energy = container.insights.observeEnergy(clockTicks(container.clock, ENERGY_REFRESH)),
+                    clock = container.clock,
                 )
+                SessionViewModel(activityId, dependencies)
             }
         },
     )
@@ -70,6 +75,7 @@ fun SessionScreen(state: SessionUiState, isAmbient: Boolean, actions: SessionAct
                     title = state.activity?.title().orEmpty(),
                     progress = progress,
                     status = state.status,
+                    energy = state.energy,
                     actions = actions,
                 )
             }
@@ -82,6 +88,7 @@ private fun ActiveSessionContent(
     title: String,
     progress: SessionProgress,
     status: MonitorStatus,
+    energy: EnergyBudget?,
     actions: SessionActions,
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
@@ -92,6 +99,7 @@ private fun ActiveSessionContent(
             style = MaterialTheme.typography.bodySmall,
         )
         SessionStatusRow(status)
+        energy?.let { EnergyText(it) }
         Row(horizontalArrangement = Arrangement.spacedBy(BUTTON_SPACING)) {
             CompactButton(onClick = actions.onPause, label = { Text(stringResource(R.string.session_pause)) })
             CompactButton(onClick = actions.onStop, label = { Text(stringResource(R.string.session_stop)) })
@@ -100,3 +108,4 @@ private fun ActiveSessionContent(
 }
 
 private val BUTTON_SPACING = 4.dp
+private val ENERGY_REFRESH = 30.seconds
