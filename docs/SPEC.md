@@ -376,6 +376,30 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 - [ ] **T-9.5** Similar-name detection on creation ("is it the same?"). *Done when:* a name similar to an existing one triggers the question.
 - [ ] **T-9.6** Dedicated dictation to name activities. *Done when:* an activity can be created with voice only.
 
+### Phase 10: Mascot and voice entry
+
+A turquoise flame mascot opens the app. Tapping it starts listening once (never continuously); the
+app interprets what the person will do, asks for a short confirmation and starts the session. The
+activity list stays on the same screen as the silent alternative, and every failure falls back to
+it. Audio is never stored; the system recognizer (possibly in the cloud) is used only with consent.
+The mascot changes expression only, never with energy. State engine, energy and score are untouched.
+
+- [x] **T-10.1** Import the 5 expressions as VectorDrawables and document their names. *Done when:* the drawables build and `docs/mascot.md` lists them.
+- [ ] **T-10.2** `Mascot(expression)` composable with the 5 expressions and round previews. *Done when:* every expression renders like the design sheet.
+- [ ] **T-10.3** Subtle idle animation (tip sway), off in ambient mode and with "remove animations". *Done when:* it moves at rest and stops in both cases.
+- [ ] **T-10.4** Home screen: mascot with "Toca y dime qué vas a hacer", suggested and recent activities below. *Done when:* it is the start screen and the list still starts sessions.
+- [ ] **T-10.5** Mascot name chosen on first use (DataStore). *Done when:* it is asked once and shown afterwards.
+- [ ] **T-10.6** RECORD_AUDIO permission with an explanation; refusal falls back to the list. *Done when:* both answers are handled.
+- [ ] **T-10.7** `SpeechInput` with on-device recognizer, system recognizer (with consent) and text input for debug/emulator, in Spanish. *Done when:* the right one is chosen at run time.
+- [ ] **T-10.8** Listening flow: tap, "listening" + short vibration, result, "thinking"; timeout without speech. *Done when:* it works with the text input on the emulator.
+- [ ] **T-10.9** `IntentParser` in `:core-domain`: category, activity name and confidence, ignoring greetings. *Done when:* tests with example phrases pass.
+- [ ] **T-10.10** Match existing activities (normalization and similar names); create when missing; low confidence opens "Nueva actividad" prefilled. *Done when:* tests cover exact, similar and new names.
+- [ ] **T-10.11** Confirmation card "¿Empezamos ...?" with a 3 s countdown, Cambiar and Cancelar. *Done when:* confirming starts the session with the existing flow.
+- [ ] **T-10.12** Errors (no permission, no recognizer, no network, silence, no match): short message and fallback to the list. *Done when:* each case is tested.
+- [ ] **T-10.13** Privacy: no audio stored; notice and consent before the system recognizer; "Voz y privacidad" in the README. *Done when:* consent is asked once and documented.
+- [ ] **T-10.14** (Optional) The mascot in the guided pause and in the feedback.
+- [ ] **T-10.15** Tests: at least 15 parser phrases, matching, and the fallback policy. *Done when:* they pass in CI.
+
 ---
 
 ## 12. Working rules
