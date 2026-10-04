@@ -9,6 +9,7 @@ object Routes {
     const val DEBUG_MENU = "debug"
     const val DEBUG_HAPTICS = "debug/haptics"
     const val DEBUG_SENSORS = "debug/sensors"
+    const val DEBUG_MASCOT = "debug/mascot"
     const val NEW_ACTIVITY = "activity/new"
     const val SUMMARY = "summary"
     const val PAUSE = "pause"

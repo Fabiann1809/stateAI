@@ -31,6 +31,7 @@
     <string name="haptic_breathe">Respirar</string>
     <string name="haptic_pause_suggested">Pausa sugerida</string>
     <string name="haptic_overload_alert">Alerta de sobrecarga</string>
+    <string name="debug_mascot_title">Mascota</string>
     <string name="debug_sensors_title">Sensores simulados</string>
     <string name="debug_sensors_waiting">Esperando datos…</string>
     <string name="debug_sensors_live">FC %1$s lpm · Mov %2$s</string>

@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 
 /** Entry point to the debug tools (debug builds only). */
 @Composable
-fun DebugMenuScreen(onOpenHaptics: () -> Unit, onOpenSensors: () -> Unit) {
+fun DebugMenuScreen(onOpenHaptics: () -> Unit, onOpenSensors: () -> Unit, onOpenMascot: () -> Unit) {
     val exporter = appContainer().insights.summaryExporter
     val scope = rememberCoroutineScope()
     var exported by remember { mutableStateOf(false) }
@@ -32,6 +32,7 @@ fun DebugMenuScreen(onOpenHaptics: () -> Unit, onOpenSensors: () -> Unit) {
             item { ListHeader { Text(stringResource(R.string.debug_open)) } }
             item { MenuButton(R.string.debug_sensors_title, onOpenSensors) }
             item { MenuButton(R.string.debug_haptics_title, onOpenHaptics) }
+            item { MenuButton(R.string.debug_mascot_title, onOpenMascot) }
             item {
                 val label = if (exported) R.string.debug_export_done else R.string.debug_export
                 MenuButton(label) { scope.launch { exporter.export().also { exported = true } } }
