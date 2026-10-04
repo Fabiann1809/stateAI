@@ -19,6 +19,9 @@ enum class Feedback {
 
 /** A guided pause and the estimates right before and right after it. */
 data class PauseRecord(val start: Instant, val end: Instant, val before: StateEstimate?, val after: StateEstimate?) {
+    /** Whether there are estimates on both sides, so the effect of the pause can be judged. */
+    val isEvaluable: Boolean get() = before != null && after != null
+
     /** The pause helped when activation went down or restlessness went away. */
     val improved: Boolean
         get() {
