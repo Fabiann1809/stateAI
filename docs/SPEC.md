@@ -307,7 +307,7 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 - [x] **T-2.5** Implement `HealthServicesSensorSource` (HR and movement) as the real adapter, per the findings of T-0.4. *Done when:* it compiles and can be switched by configuration, even if not tested on a real watch.
 
 ### Phase 3: Rule-based state engine
-- [ ] **T-3.1** Compute `FeatureWindow` (mean HR, HR variability proxy, movement, fidgeting) from samples. *Done when:* tests with known signals give expected values.
+- [x] **T-3.1** Compute `FeatureWindow` (mean HR, HR variability proxy, movement, fidgeting) from samples. *Done when:* tests with known signals give expected values.
 - [ ] **T-3.2** Personal baseline calibration (2 min, once) and persistence. *Done when:* the baseline is saved and reused across all activities.
 - [ ] **T-3.3** Rule classifier with thresholds relative to the baseline (6.4). *Done when:* the simulated scenarios produce the expected activation levels and restlessness flag.
 - [ ] **T-3.4** Reduced weight or discarding of high-movement windows. *Done when:* a test shows high movement does not trigger false states.
