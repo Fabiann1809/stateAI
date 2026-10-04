@@ -17,6 +17,8 @@ class RoomSegmentRepository(private val dao: SegmentDao) : SegmentRepository {
         dao.setFeedback(id.value, feedback.name)
     }
 
+    override suspend fun find(id: SegmentId): Segment? = dao.find(id.value)?.toDomain()
+
     override fun observeBetween(from: Instant, to: Instant): Flow<List<Segment>> =
         dao.observeBetween(from.toEpochMilli(), to.toEpochMilli()).map { rows -> rows.map { it.toDomain() } }
 

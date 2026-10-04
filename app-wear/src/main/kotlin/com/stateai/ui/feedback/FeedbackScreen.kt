@@ -25,7 +25,7 @@ import com.stateai.domain.segment.SegmentId
 fun FeedbackRoute(segmentId: SegmentId, onDone: () -> Unit) {
     val container = appContainer()
     val viewModel: FeedbackViewModel = viewModel(
-        factory = viewModelFactory { initializer { FeedbackViewModel(segmentId, container.segmentRepository) } },
+        factory = viewModelFactory { initializer { FeedbackViewModel(segmentId, container.recordFeedback) } },
     )
     FeedbackScreen(onAnswer = { viewModel.answer(it, onDone) })
 }

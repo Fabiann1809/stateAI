@@ -21,6 +21,8 @@ class FakeSegmentRepository : SegmentRepository {
         segments.value = segments.value.map { if (it.id == id) it.copy(feedback = feedback) else it }
     }
 
+    override suspend fun find(id: SegmentId): Segment? = segments.value.firstOrNull { it.id == id }
+
     override fun observeBetween(from: Instant, to: Instant): Flow<List<Segment>> = segments.map { all ->
         all.filter { !it.start.isBefore(from) && it.start.isBefore(to) }.sortedBy { it.start }
     }

@@ -8,6 +8,8 @@ import com.stateai.domain.activity.CreateActivity
 import com.stateai.domain.baseline.BaselineKeeper
 import com.stateai.domain.learning.ActivityProfileLearner
 import com.stateai.domain.learning.BaselineLearner
+import com.stateai.domain.learning.FeedbackSensitivityLearner
+import com.stateai.domain.learning.RecordFeedback
 import com.stateai.domain.pause.GuidedPause
 import com.stateai.domain.profile.LearnedProfileProvider
 import com.stateai.domain.profile.ProfileProvider
@@ -42,6 +44,7 @@ class AppContainer(context: Context) {
     val segmentRecorder = SegmentRecorder { SegmentId(UUID.randomUUID().toString()) }
     val createActivity = CreateActivity(activityRepository) { ActivityId(UUID.randomUUID().toString()) }
     val guidedPause = GuidedPause(segmentRecorder, clock)
+    val recordFeedback = RecordFeedback(segmentRepository, FeedbackSensitivityLearner(storage.learning))
     val endSession = EndSession(
         sessionTracker,
         segmentRecorder,

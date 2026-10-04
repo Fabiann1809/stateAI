@@ -9,6 +9,8 @@ interface SegmentRepository {
 
     suspend fun setFeedback(id: SegmentId, feedback: Feedback)
 
+    suspend fun find(id: SegmentId): Segment?
+
     /** Segments that started in [from, to), oldest first. */
     fun observeBetween(from: Instant, to: Instant): Flow<List<Segment>>
 

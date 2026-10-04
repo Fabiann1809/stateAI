@@ -33,6 +33,10 @@ interface SegmentDao {
     fun observeBetween(fromMillis: Long, toMillis: Long): Flow<List<SegmentWithPauses>>
 
     @Transaction
+    @Query("SELECT * FROM segments WHERE id = :id")
+    suspend fun find(id: String): SegmentWithPauses?
+
+    @Transaction
     @Query("SELECT * FROM segments ORDER BY startMillis")
     suspend fun all(): List<SegmentWithPauses>
 }
