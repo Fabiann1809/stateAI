@@ -11,6 +11,7 @@ import com.stateai.common.clockTicks
 import com.stateai.domain.session.ActiveSession
 import com.stateai.domain.session.SessionHapticCues
 import com.stateai.ui.common.activityTitle
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -27,6 +28,11 @@ class SessionService : LifecycleService() {
         lifecycleScope.launch {
             container.sessionTracker.activeSession.collect { session ->
                 if (session == null) stopSelf() else showForeground(session)
+            }
+        }
+        lifecycleScope.launch {
+            container.sessionTracker.activeSession.collectLatest { session ->
+                session?.let { container.sessionMonitor.run(it) }
             }
         }
         lifecycleScope.launch {

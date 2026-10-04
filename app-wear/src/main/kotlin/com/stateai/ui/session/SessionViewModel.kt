@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.stateai.common.clockTicks
 import com.stateai.domain.activity.ActivityId
+import com.stateai.domain.session.MonitorStatus
 import com.stateai.domain.session.SessionTracker
 import com.stateai.domain.session.StartSession
 import java.time.Clock
@@ -19,10 +20,15 @@ class SessionViewModel(
     activityId: ActivityId,
     startSession: StartSession,
     private val tracker: SessionTracker,
+    status: StateFlow<MonitorStatus>,
     clock: Clock,
 ) : ViewModel() {
-    val uiState: StateFlow<SessionUiState> = combine(tracker.activeSession, clockTicks(clock)) { session, now ->
-        SessionUiState(activity = session?.activity, progress = session?.progressAt(now))
+    val uiState: StateFlow<SessionUiState> = combine(
+        tracker.activeSession,
+        status,
+        clockTicks(clock),
+    ) { session, monitorStatus, now ->
+        SessionUiState(activity = session?.activity, progress = session?.progressAt(now), status = monitorStatus)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), SessionUiState())
 
     init {

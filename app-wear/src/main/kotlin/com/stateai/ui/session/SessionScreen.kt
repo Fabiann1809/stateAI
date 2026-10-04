@@ -21,6 +21,7 @@ import androidx.wear.compose.material3.Text
 import com.stateai.R
 import com.stateai.di.appContainer
 import com.stateai.domain.activity.ActivityId
+import com.stateai.domain.session.MonitorStatus
 import com.stateai.domain.session.SessionProgress
 import com.stateai.ui.ambient.LocalIsAmbient
 import com.stateai.ui.common.RequestSessionPermissions
@@ -33,7 +34,13 @@ fun SessionRoute(activityId: ActivityId, onStopped: () -> Unit) {
     val viewModel: SessionViewModel = viewModel(
         factory = viewModelFactory {
             initializer {
-                SessionViewModel(activityId, container.startSession, container.sessionTracker, container.clock)
+                SessionViewModel(
+                    activityId,
+                    container.startSession,
+                    container.sessionTracker,
+                    container.sessionMonitor.status,
+                    container.clock,
+                )
             }
         },
     )
@@ -55,14 +62,19 @@ fun SessionScreen(state: SessionUiState, isAmbient: Boolean, onStop: () -> Unit)
                 Text(text = progress.elapsed.toClockText(), style = MaterialTheme.typography.displaySmall)
             } else {
                 CircularProgressIndicator(progress = { progress.fraction }, modifier = Modifier.fillMaxSize())
-                ActiveSessionContent(title = state.activity?.title().orEmpty(), progress = progress, onStop = onStop)
+                ActiveSessionContent(
+                    title = state.activity?.title().orEmpty(),
+                    progress = progress,
+                    status = state.status,
+                    onStop = onStop,
+                )
             }
         }
     }
 }
 
 @Composable
-private fun ActiveSessionContent(title: String, progress: SessionProgress, onStop: () -> Unit) {
+private fun ActiveSessionContent(title: String, progress: SessionProgress, status: MonitorStatus, onStop: () -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
         Text(text = title, style = MaterialTheme.typography.labelMedium)
         Text(text = progress.elapsed.toClockText(), style = MaterialTheme.typography.displayMedium)
@@ -70,6 +82,7 @@ private fun ActiveSessionContent(title: String, progress: SessionProgress, onSto
             text = stringResource(R.string.session_target, progress.target.inWholeMinutes),
             style = MaterialTheme.typography.bodySmall,
         )
+        SessionStatusRow(status)
         CompactButton(onClick = onStop, label = { Text(stringResource(R.string.session_stop)) })
     }
 }

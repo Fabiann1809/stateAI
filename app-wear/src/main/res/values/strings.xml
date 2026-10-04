@@ -35,4 +35,10 @@
     <string name="scenario_overload">Sobrecarga</string>
     <string name="scenario_fatigue">Fatiga</string>
     <string name="scenario_mixed">Sesión mixta</string>
+    <string name="level_low">Enfocado</string>
+    <string name="level_medium">Normal</string>
+    <string name="level_high">Sobrecarga</string>
+    <string name="level_restless">· Inquieto</string>
+    <string name="session_calibrating">Calibrando %1$d%%, quédate quieto</string>
+    <string name="session_waiting">Leyendo señales…</string>
 </resources>

@@ -313,7 +313,7 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 - [x] **T-3.4** Reduced weight or discarding of high-movement windows. *Done when:* a test shows high movement does not trigger false states.
 - [x] **T-3.5** State smoothing (hysteresis, at least 2 equal windows to change). *Done when:* there is no state flickering in the mixed scenario.
 - [x] **T-3.6** Haptic policy: in focus no vibration except sustained restlessness/`HIGH`; suggested pause when leaving focus. *Done when:* tests cover each case.
-- [ ] **T-3.7** Show the activation level on the session screen (icon and color). *Done when:* it changes live with the simulator.
+- [x] **T-3.7** Show the activation level on the session screen (icon and color). *Done when:* it changes live with the simulator.
 
 ### Phase 4: Segments, scoring and summary
 - [ ] **T-4.1** `Segment` and `DayRecord` models (with category and normalized name); close a segment when the activity changes or ends. *Done when:* segment lifecycle tests.
