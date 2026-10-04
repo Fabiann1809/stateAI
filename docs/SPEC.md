@@ -354,7 +354,7 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 - [x] **T-6.7** Include custom activities with few and many sessions in the generator. *Done when:* the dataset allows testing category/activity blending.
 
 ### Phase 7: Model integration
-- [ ] **T-7.1** `:ml` module that loads the `.tflite` and classifies a `FeatureWindow`. *Done when:* it returns an `ActivationLevel` on the emulator.
+- [x] **T-7.1** `:ml` module that loads the `.tflite` and classifies a `FeatureWindow`. *Done when:* it returns an `ActivationLevel` on the emulator.
 - [ ] **T-7.2** `StateClassifier` interface with two implementations: rules and model. *Done when:* switchable by configuration.
 - [ ] **T-7.3** Automatic fallback to rules if the model fails or its confidence is low. *Done when:* a test with a "broken" model uses rules.
 - [ ] **T-7.4** Kotlin/Python parity test on sample features. *Done when:* predictions match within tolerance.
