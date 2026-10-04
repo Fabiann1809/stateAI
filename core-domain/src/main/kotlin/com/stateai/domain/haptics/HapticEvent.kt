@@ -15,6 +15,9 @@ enum class HapticEvent {
     OVERLOAD_ALERT,
     ;
 
-    /** Start events are exempt from the minimum interval between vibrations. */
-    val isStartEvent: Boolean get() = this == BLOCK_START
+    /**
+     * Start events and the breathing guide (which the user starts on purpose) are not
+     * interruptions, so the rate limits do not apply to them.
+     */
+    val isExemptFromRateLimit: Boolean get() = this == BLOCK_START || this == BREATHE
 }

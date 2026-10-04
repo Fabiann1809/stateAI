@@ -21,7 +21,7 @@ class StartSession(
     private suspend fun startNew(activityId: ActivityId): ActiveSession? {
         val activity = repository.findById(activityId) ?: return null
         val now = clock.instant()
-        val session = ActiveSession(activity, profiles.targetBlockFor(activity), startedAt = now)
+        val session = ActiveSession(activity, profiles.profileFor(activity), startedAt = now)
         repository.markUsed(activityId, now)
         tracker.start(session)
         return session
