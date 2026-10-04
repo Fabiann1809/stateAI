@@ -35,7 +35,7 @@ There are two layers, and stateAI uses both for different purposes:
      adb shell am broadcast -a "whs.synthetic.user.STOP_EXERCISE" com.google.android.wearable.healthservices
      adb shell am broadcast -a "whs.USE_SENSOR_PROVIDERS" com.google.android.wearable.healthservices
      ```
-   - The documentation describes synthetic data in terms of **exercises (`ExerciseClient`)**. Whether overridden values also reach `MeasureClient` is **not documented**; it is verified when the adapter is built, and if it does not, the adapter is checked with an exercise session.
+   - The documentation describes synthetic data in terms of **exercises (`ExerciseClient`)**, but **verified on 2026-10-04**: on the Wear OS 6 emulator, `MeasureClient` also receives synthetic heart rate values (about 105-140 bpm by default) without any adb command.
    - Accelerometer values can be changed from the emulator's *Extended controls → Virtual sensors*.
 
 ## Decision (SPEC 6.4.1)

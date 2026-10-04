@@ -1,6 +1,7 @@
 package com.stateai.di
 
 import android.content.Context
+import com.stateai.BuildConfig
 import com.stateai.data.memory.InMemoryActivityRepository
 import com.stateai.domain.activity.ActivityId
 import com.stateai.domain.activity.ActivityRepository
@@ -15,6 +16,7 @@ import com.stateai.domain.sensing.SensorSource
 import com.stateai.domain.session.SessionTracker
 import com.stateai.domain.session.StartSession
 import com.stateai.haptics.VibratorHapticPlayer
+import com.stateai.sensors.health.HealthServicesSensorSource
 import com.stateai.sensors.simulation.SimulatedSensorSource
 import com.stateai.sensors.simulation.SimulationController
 import java.time.Clock
@@ -26,7 +28,11 @@ class AppContainer(context: Context) {
     val activityRepository: ActivityRepository = InMemoryActivityRepository()
     val sessionTracker = SessionTracker()
     val simulationController = SimulationController()
-    val sensorSource: SensorSource = SimulatedSensorSource(simulationController.scenario, clock)
+    val sensorSource: SensorSource = if (BuildConfig.USE_HEALTH_SERVICES) {
+        HealthServicesSensorSource(context, clock)
+    } else {
+        SimulatedSensorSource(simulationController.scenario, clock)
+    }
 
     /** Plays every event; used by the debug screen. */
     val hapticPlayer: HapticPlayer = VibratorHapticPlayer(context)

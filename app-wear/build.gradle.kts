@@ -3,6 +3,15 @@ plugins {
     alias(libs.plugins.stateai.android.compose)
 }
 
+/** Sensor source: "simulated" (default) or "health" for real Health Services sensors. */
+val sensorSource = providers.gradleProperty("stateai.sensorSource").getOrElse("simulated")
+
+android {
+    defaultConfig {
+        buildConfigField("boolean", "USE_HEALTH_SERVICES", (sensorSource == "health").toString())
+    }
+}
+
 dependencies {
     implementation(project(":core-domain"))
     implementation(project(":data"))

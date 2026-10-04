@@ -65,6 +65,18 @@ adb exec-out screencap -p > screen.png
 
 ## Simulating sensors
 
+The app uses simulated sensors by default. To build it with the real Health Services adapter:
+
+```sh
+./gradlew :app-wear:installDebug -Pstateai.sensorSource=health
+```
+
+With real sensors, the app asks for the heart rate permission when a session starts. To grant it from adb:
+
+```sh
+adb shell pm grant com.stateai android.permission.health.READ_HEART_RATE
+```
+
 - **App simulator (default)**: stateAI plays scripted heart rate and movement scenarios through `SimulatedSensorSource`; no emulator configuration is needed.
 - **Health Services**: open the emulator's *Extended controls → Wear Health Services* panel to override heart rate and other metrics. See `docs/sensors.md` for the adb commands and limitations.
 - **Accelerometer**: *Extended controls → Virtual sensors*.
