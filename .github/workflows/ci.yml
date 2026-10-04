@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  conventions:
+    name: Commit messages and file size
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check commit messages
+        env:
+          BEFORE: ${{ github.event.before }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          from="${BASE:-$BEFORE}"
+          if [ -z "$from" ] || ! git cat-file -e "$from" 2>/dev/null; then
+            range="$HEAD"
+          else
+            range="$from..$HEAD"
+          fi
+          for commit in $(git rev-list --no-merges "$range"); do
+            git log -1 --format=%B "$commit" > /tmp/message
+            sh scripts/check-commit-msg.sh /tmp/message
+          done
+      - name: Check file size
+        run: sh scripts/check-file-size.sh
+
