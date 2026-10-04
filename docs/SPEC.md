@@ -317,7 +317,7 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 
 ### Phase 4: Segments, scoring and summary
 - [x] **T-4.1** `Segment` and `DayRecord` models (with category and normalized name); close a segment when the activity changes or ends. *Done when:* segment lifecycle tests.
-- [ ] **T-4.2** Room persistence of segments (summaries only, no raw signal). *Done when:* data survives an app restart.
+- [x] **T-4.2** Room persistence of segments (summaries only, no raw signal). *Done when:* data survives an app restart.
 - [x] **T-4.3** Compute the 0-100 score per segment (6.6). *Done when:* tests with edge cases (all focus, all `HIGH`).
 - [x] **T-4.4** Compute the daily score (duration-weighted average). *Done when:* test with 3 segments of different durations.
 - [ ] **T-4.5** One-tap feedback when closing a segment, saved. *Done when:* it is attached to the segment.
