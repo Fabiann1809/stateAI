@@ -1,8 +1,10 @@
 # Feature definitions
 
 Exact definitions of the features computed for every window. The Kotlin implementation
-(`core-domain`, package `features`) and the Python one (`ml-python`) must match them; a parity
-test checks both against shared sample values.
+(`core-domain`, package `features`) and the Python one (`ml-python/src/stateai_ml/features.py`)
+must match them. Both are tested against the same cases in `shared/parity/feature_cases.json`
+(`FeatureParityTest` in Kotlin, `test_features.py` in Python). Regenerate the file with
+`python -m stateai_ml.parity` only when a definition changes on purpose, and update both sides.
 
 ## Window
 
