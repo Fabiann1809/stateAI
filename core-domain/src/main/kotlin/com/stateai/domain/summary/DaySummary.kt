@@ -12,6 +12,8 @@ data class DaySummary(
     val score: ScoreBreakdown?,
     /** Hour of the day (0-23) whose segments had the highest focus share, if any. */
     val bestHour: Int?,
+    /** Some of today's activities still have too few sessions for their learning to be reliable. */
+    val isLearning: Boolean = false,
 ) {
     val totalTime: Duration get() = segments.fold(Duration.ZERO) { total, segment -> total + segment.duration }
 }

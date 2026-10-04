@@ -3,9 +3,12 @@ package com.stateai.domain.summary
 import com.stateai.domain.activity.Activity
 import com.stateai.domain.activity.ActivityCategory
 import com.stateai.domain.activity.ActivityId
+import com.stateai.domain.learning.ActivityLearning
+import com.stateai.domain.learning.LearningProgress
 import com.stateai.domain.segment.LevelDurations
 import com.stateai.domain.segment.Segment
 import com.stateai.domain.segment.SegmentId
+import com.stateai.domain.testing.FakeLearningRepository
 import com.stateai.domain.testing.FakeSegmentRepository
 import com.stateai.domain.testing.MutableClock
 import java.time.Instant
@@ -14,7 +17,9 @@ import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class ObserveDaySummaryTest {
@@ -40,6 +45,18 @@ class ObserveDaySummaryTest {
         segments.save(segment("2026-10-04T15:00:00Z", low = 25))
 
         assertEquals(15, observe().first().bestHour)
+    }
+
+    @Test
+    fun `shows the learning hint while today's activities have few sessions`() = runTest {
+        val learning = FakeLearningRepository()
+        val withProgress = ObserveDaySummary(segments, clock, LearningProgress(learning))
+        segments.save(segment("2026-10-04T09:00:00Z", low = 30))
+
+        assertTrue(withProgress().first().isLearning)
+
+        learning.save(ActivityLearning(ActivityId("a"), validSessions = 5))
+        assertFalse(withProgress().first().isLearning)
     }
 
     @Test

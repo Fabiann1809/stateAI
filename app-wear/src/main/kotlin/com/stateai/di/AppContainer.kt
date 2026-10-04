@@ -41,7 +41,8 @@ class AppContainer(context: Context) {
     private val profileProvider: ProfileProvider = LearnedProfileProvider(storage.learning)
     private val baselineKeeper = BaselineKeeper(storage.baseline)
     val segmentRecorder = SegmentRecorder { SegmentId(UUID.randomUUID().toString()) }
-    val insights = InsightsModule(context, segmentRepository, segmentRecorder, localClock, haptics.player)
+    val insights =
+        InsightsModule(context, segmentRepository, storage.learning, segmentRecorder, localClock, haptics.player)
     val createActivity = CreateActivity(activityRepository) { ActivityId(UUID.randomUUID().toString()) }
     val guidedPause = GuidedPause(segmentRecorder, clock)
     val recordFeedback = RecordFeedback(segmentRepository, FeedbackSensitivityLearner(storage.learning))

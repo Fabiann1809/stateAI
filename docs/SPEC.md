@@ -340,8 +340,8 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 - [x] **T-5.10** Learned profile per activity with `n / (n + K)` blending towards its category's profile (6.7). *Done when:* tests with n=0, 5 and 20 give the expected weights.
 - [x] **T-5.11** Valid session criterion (≥ 10 min and ≥ 60 % clean windows). *Done when:* a short or noisy session does not increase `n`.
 - [x] **T-5.12** Learn target block and normal movement of each activity from its sessions. *Done when:* with simulated sessions the value approaches the synthetic user's.
-- [ ] **T-5.13** Cap of 10 active activities (no automatic archiving in the MVP). *Done when:* a test confirms number 11 cannot be created.
-- [ ] **T-5.14** "Learning" indicator while `n < 5`. *Done when:* it appears in the summary with low n and disappears afterwards.
+- [x] **T-5.13** Cap of 10 active activities (no automatic archiving in the MVP). *Done when:* a test confirms number 11 cannot be created.
+- [x] **T-5.14** "Learning" indicator while `n < 5`. *Done when:* it appears in the summary with low n and disappears afterwards.
 
 ### Phase 6: Offline ML (Python)
 - [ ] **T-6.1** Synthetic user generator: multi-day routine with known cycles and noise. Physiology is generated with a mechanism **different** from the rule engine (latent state with its own transitions), so the rules are not validated against themselves. *Done when:* it produces reproducible CSVs with a seed and the generator's README explains how it differs from the rule engine.

@@ -74,6 +74,9 @@ private fun ScalingLazyListScope.scoreItems(score: ScoreBreakdown) {
 private fun ScalingLazyListScope.dayItems(summary: DaySummary) {
     item { Text(stringResource(R.string.summary_time, summary.totalTime.inWholeMinutes)) }
     summary.bestHour?.let { hour -> item { Text(stringResource(R.string.summary_best_hour, hour)) } }
+    if (summary.isLearning) {
+        item { Text(stringResource(R.string.summary_learning), style = MaterialTheme.typography.labelSmall) }
+    }
     item {
         Text(
             text = stringResource(R.string.summary_disclaimer),
