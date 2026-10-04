@@ -1,46 +1,43 @@
 package com.stateai.ui.session
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import com.stateai.R
 import com.stateai.domain.session.MonitorStatus
-import com.stateai.ui.common.color
-import com.stateai.ui.common.labelRes
+import com.stateai.domain.state.DisplayState
+import com.stateai.ui.components.StateIndicator
+import com.stateai.ui.theme.StateAiColors
+import com.stateai.ui.theme.StateAiDimens
+import com.stateai.ui.theme.labelRes
 import kotlin.math.roundToInt
 
 private const val PERCENT = 100
 
-/** Estimated level (colored dot and name), calibration progress, or a waiting hint. */
+/** The estimated state (shape, color and name), calibration progress, or a waiting hint. */
 @Composable
-fun SessionStatusRow(status: MonitorStatus) {
-    when (status) {
-        is MonitorStatus.Calibrating -> StatusText(
+fun SessionStatusRow(status: MonitorStatus, displayState: DisplayState?) {
+    when {
+        status is MonitorStatus.Calibrating -> StatusText(
             stringResource(R.string.session_calibrating, (status.fraction * PERCENT).roundToInt()),
         )
-        MonitorStatus.Waiting -> StatusText(stringResource(R.string.session_waiting))
-        is MonitorStatus.Estimating -> Row(
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Box(Modifier.size(10.dp).background(status.estimate.level.color(), CircleShape))
-            StatusText(stringResource(status.estimate.level.labelRes()))
-            if (status.estimate.restless) StatusText(stringResource(R.string.level_restless))
-        }
+        displayState == null -> StatusText(stringResource(R.string.session_waiting))
+        else -> StateIndicator(displayState, label = stringResource(displayState.labelRes()))
     }
+}
+
+/** Ambient version: gray outline indicator, no saturated color. */
+@Composable
+fun AmbientStateRow(displayState: DisplayState) {
+    StateIndicator(
+        state = displayState,
+        label = stringResource(displayState.labelRes()),
+        textColor = StateAiColors.Ambient,
+        ambient = true,
+    )
 }
 
 @Composable
 private fun StatusText(text: String) {
-    Text(text = text, style = MaterialTheme.typography.labelSmall)
+    Text(text = text, fontSize = StateAiDimens.Label, color = StateAiColors.Text2)
 }

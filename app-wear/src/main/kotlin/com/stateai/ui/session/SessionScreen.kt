@@ -4,20 +4,22 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import androidx.wear.compose.material3.CircularProgressIndicator
-import androidx.wear.compose.material3.CompactButton
-import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.LocalTextStyle
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import com.stateai.R
@@ -28,11 +30,19 @@ import com.stateai.domain.energy.EnergyBudget
 import com.stateai.domain.segment.SegmentId
 import com.stateai.domain.session.MonitorStatus
 import com.stateai.domain.session.SessionProgress
+import com.stateai.domain.state.DisplayState
 import com.stateai.ui.ambient.LocalIsAmbient
-import com.stateai.ui.common.EnergyText
 import com.stateai.ui.common.RequestSessionPermissions
 import com.stateai.ui.common.title
 import com.stateai.ui.common.toClockText
+import com.stateai.ui.components.EnergyBadge
+import com.stateai.ui.components.ProgressRing
+import com.stateai.ui.components.RoundIconButton
+import com.stateai.ui.components.StateAiIcons
+import com.stateai.ui.theme.StateAiColors
+import com.stateai.ui.theme.StateAiDimens
+import com.stateai.ui.theme.color
+import com.stateai.ui.theme.tabular
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
@@ -62,50 +72,84 @@ fun SessionRoute(activityId: ActivityId, onPause: () -> Unit, onStopped: (Segmen
 /** User actions available during a session. */
 data class SessionActions(val onPause: () -> Unit, val onStop: () -> Unit)
 
+/** What the session shows right now: the display state, if there is an estimate. */
+private val SessionUiState.displayState: DisplayState?
+    get() = (status as? MonitorStatus.Estimating)?.let { DisplayState.of(it.estimate, energy?.isLow == true) }
+
 @Composable
 fun SessionScreen(state: SessionUiState, isAmbient: Boolean, actions: SessionActions) {
     val progress = state.progress ?: return
-    ScreenScaffold {
+    // No system time here: the session timer is the protagonist and the title sits at the top.
+    ScreenScaffold(timeText = {}) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             if (isAmbient) {
-                Text(text = progress.elapsed.toClockText(), style = MaterialTheme.typography.displaySmall)
+                AmbientSessionContent(progress, state.displayState, state.energy)
             } else {
-                CircularProgressIndicator(progress = { progress.fraction }, modifier = Modifier.fillMaxSize())
-                ActiveSessionContent(
-                    title = state.activity?.title().orEmpty(),
-                    progress = progress,
-                    status = state.status,
-                    energy = state.energy,
-                    actions = actions,
-                )
+                ProgressRing(progress.fraction)
+                ActiveSessionContent(state, progress, actions)
             }
         }
     }
 }
 
 @Composable
-private fun ActiveSessionContent(
-    title: String,
-    progress: SessionProgress,
-    status: MonitorStatus,
-    energy: EnergyBudget?,
-    actions: SessionActions,
-) {
+private fun ActiveSessionContent(state: SessionUiState, progress: SessionProgress, actions: SessionActions) {
+    val displayState = state.displayState
     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-        Text(text = title, style = MaterialTheme.typography.labelMedium)
-        Text(text = progress.elapsed.toClockText(), style = MaterialTheme.typography.displayMedium)
+        Text(state.activity?.title().orEmpty(), fontSize = StateAiDimens.Label, color = StateAiColors.Text3)
+        Text(
+            text = progress.elapsed.toClockText(),
+            fontSize = StateAiDimens.Display,
+            fontWeight = FontWeight.Medium,
+            style = LocalTextStyle.current.tabular(),
+        )
         Text(
             text = stringResource(R.string.session_target, progress.target.inWholeMinutes),
-            style = MaterialTheme.typography.bodySmall,
+            fontSize = StateAiDimens.Label,
+            color = StateAiColors.Text3,
         )
-        SessionStatusRow(status)
-        energy?.let { EnergyText(it) }
+        Spacer(Modifier.height(StateAiDimens.SpaceXs))
+        SessionStatusRow(state.status, displayState)
+        state.energy?.let { energy ->
+            EnergyBadge(energy, color = displayState?.color() ?: StateAiColors.Accent)
+            if (energy.isLow) {
+                Text(
+                    text = stringResource(R.string.energy_low_short),
+                    fontSize = StateAiDimens.Label,
+                    color = StateAiColors.Text2,
+                )
+            }
+        }
+        Spacer(Modifier.height(StateAiDimens.SpaceXs))
         Row(horizontalArrangement = Arrangement.spacedBy(BUTTON_SPACING)) {
-            CompactButton(onClick = actions.onPause, label = { Text(stringResource(R.string.session_pause)) })
-            CompactButton(onClick = actions.onStop, label = { Text(stringResource(R.string.session_stop)) })
+            RoundIconButton(StateAiIcons.Pause, stringResource(R.string.session_pause), actions.onPause)
+            RoundIconButton(
+                StateAiIcons.Check,
+                stringResource(R.string.session_stop),
+                actions.onStop,
+                tint = StateAiColors.Accent,
+            )
         }
     }
 }
 
-private val BUTTON_SPACING = 4.dp
+@Composable
+private fun AmbientSessionContent(progress: SessionProgress, displayState: DisplayState?, energy: EnergyBudget?) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceS),
+    ) {
+        Text(
+            text = progress.elapsed.toClockText(),
+            fontSize = AMBIENT_TIMER,
+            color = StateAiColors.Ambient,
+            style = LocalTextStyle.current.tabular(),
+        )
+        displayState?.let { AmbientStateRow(it) }
+        energy?.let { EnergyBadge(it, color = StateAiColors.Ambient, ambient = true) }
+    }
+}
+
+private val BUTTON_SPACING = 11.dp
+private val AMBIENT_TIMER = 48.sp
 private val ENERGY_REFRESH = 30.seconds

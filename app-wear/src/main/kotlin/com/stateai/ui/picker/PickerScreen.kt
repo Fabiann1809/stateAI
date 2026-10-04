@@ -1,10 +1,21 @@
 package com.stateai.ui.picker
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
@@ -13,18 +24,28 @@ import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material3.Button
-import androidx.wear.compose.material3.CompactButton
-import androidx.wear.compose.material3.FilledTonalButton
+import androidx.wear.compose.material3.ButtonDefaults
+import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.ListHeader
+import androidx.wear.compose.material3.LocalTextStyle
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import com.stateai.BuildConfig
 import com.stateai.R
+import com.stateai.common.clockTicks
 import com.stateai.di.appContainer
 import com.stateai.domain.activity.Activity
 import com.stateai.domain.activity.ActivityId
+import com.stateai.domain.energy.EnergyBudget
 import com.stateai.ui.common.labelRes
 import com.stateai.ui.common.title
+import com.stateai.ui.components.EnergySilhouette
+import com.stateai.ui.components.StateAiIcons
+import com.stateai.ui.theme.StateAiColors
+import com.stateai.ui.theme.StateAiDimens
+import com.stateai.ui.theme.tabular
+import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun PickerRoute(
@@ -41,6 +62,7 @@ fun PickerRoute(
                     container.activityRepository,
                     container.insights.observeSuggestedActivity(),
                     container.insights.focusWindowNotifier.observe(),
+                    container.insights.observeEnergy(clockTicks(container.clock, ENERGY_REFRESH)),
                 )
             }
         },
@@ -48,79 +70,151 @@ fun PickerRoute(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     PickerScreen(
         state = state,
-        onActivitySelected = onActivitySelected,
-        onNewActivity = onNewActivity,
-        onOpenSummary = onOpenSummary,
-        onOpenDebug = onOpenDebug.takeIf { BuildConfig.DEBUG },
+        actions = PickerActions(
+            onActivitySelected = onActivitySelected,
+            onNewActivity = onNewActivity,
+            onOpenSummary = onOpenSummary,
+            onOpenDebug = onOpenDebug.takeIf { BuildConfig.DEBUG },
+        ),
     )
 }
 
+/** What the picker lets the person do. [onOpenDebug] is null outside debug builds. */
+data class PickerActions(
+    val onActivitySelected: (ActivityId) -> Unit,
+    val onNewActivity: () -> Unit,
+    val onOpenSummary: () -> Unit,
+    val onOpenDebug: (() -> Unit)?,
+)
+
 @Composable
-fun PickerScreen(
-    state: PickerUiState,
-    onActivitySelected: (ActivityId) -> Unit,
-    onNewActivity: () -> Unit,
-    onOpenSummary: () -> Unit,
-    onOpenDebug: (() -> Unit)?,
-) {
+fun PickerScreen(state: PickerUiState, actions: PickerActions) {
     val listState = rememberScalingLazyListState()
     ScreenScaffold(scrollState = listState) { contentPadding ->
         ScalingLazyColumn(state = listState, contentPadding = contentPadding) {
-            item { ListHeader { Text(stringResource(R.string.picker_title)) } }
-            if (state.isFocusWindow) item { Text(stringResource(R.string.picker_focus_window)) }
-            if (state.activities.isEmpty()) {
-                item { Text(stringResource(R.string.picker_empty)) }
-            }
+            item { PickerHeader(onLongPress = actions.onOpenDebug) }
+            if (state.isFocusWindow) item { HintText(stringResource(R.string.picker_focus_window)) }
+            if (state.activities.isEmpty()) item { HintText(stringResource(R.string.picker_empty)) }
             items(state.activities, key = { it.id.value }) { activity ->
-                ActivityButton(
+                ActivityCard(
                     activity = activity,
                     suggested = activity == state.suggested,
-                    onClick = { onActivitySelected(activity.id) },
+                    onClick = { actions.onActivitySelected(activity.id) },
                 )
             }
-            item { NewActivityButton(enabled = state.canCreateNew, onClick = onNewActivity) }
-            item { SummaryButton(onClick = onOpenSummary) }
-            onOpenDebug?.let { open -> item { DebugButton(onClick = open) } }
+            item { NewActivityButton(enabled = state.canCreateNew, onClick = actions.onNewActivity) }
+            item { SummaryButton(onClick = actions.onOpenSummary) }
+            state.energy?.let { energy -> item { MiniEnergy(energy) } }
         }
     }
 }
 
+/** Title; in debug builds a long press opens the debug tools. */
 @Composable
-private fun ActivityButton(activity: Activity, suggested: Boolean, onClick: () -> Unit) {
-    val categoryLabel = stringResource(activity.category.labelRes())
-    val secondary = if (suggested) {
-        stringResource(R.string.picker_suggested)
-    } else {
-        categoryLabel.takeIf {
-            activity.name !=
-                null
-        }
+private fun PickerHeader(onLongPress: (() -> Unit)?) {
+    val modifier = onLongPress?.let { Modifier.combinedClickable(onClick = {}, onLongClick = it) } ?: Modifier
+    ListHeader(modifier = modifier) {
+        Text(stringResource(R.string.picker_title), fontSize = StateAiDimens.Body, color = StateAiColors.Text3)
     }
+}
+
+@Composable
+private fun HintText(text: String) {
+    Text(text, fontSize = StateAiDimens.Label, color = StateAiColors.Accent, textAlign = TextAlign.Center)
+}
+
+@Composable
+private fun ActivityCard(activity: Activity, suggested: Boolean, onClick: () -> Unit) {
+    val categoryLabel = stringResource(activity.category.labelRes())
+    val container = if (suggested) StateAiColors.Accent.copy(alpha = SUGGESTED_FILL) else StateAiColors.Surface2
     Button(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
-        label = { Text(activity.title()) },
-        secondaryLabel = secondary?.let { { Text(it) } },
-    )
+        colors = ButtonDefaults.buttonColors(
+            containerColor = container,
+            contentColor = StateAiColors.Text1,
+        ),
+        border = if (suggested) BorderStroke(1.dp, StateAiColors.Accent.copy(alpha = SUGGESTED_BORDER)) else null,
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
+            if (suggested) {
+                Text(
+                    text = stringResource(R.string.picker_suggested_tag),
+                    fontSize = StateAiDimens.Label,
+                    color = StateAiColors.Accent,
+                )
+            }
+            Text(
+                text = activity.title(),
+                fontSize = if (suggested) TITLE_SIZE_SUGGESTED else TITLE_SIZE,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
+            )
+            if (!suggested && activity.name != null) {
+                Text(categoryLabel, fontSize = StateAiDimens.Label, color = StateAiColors.Text2, maxLines = 1)
+            }
+        }
+    }
 }
 
 @Composable
 private fun NewActivityButton(enabled: Boolean, onClick: () -> Unit) {
-    FilledTonalButton(
+    Button(
         onClick = onClick,
         enabled = enabled,
         modifier = Modifier.fillMaxWidth(),
-        label = { Text(stringResource(R.string.picker_new)) },
+        icon = { Icon(StateAiIcons.Plus, contentDescription = null) },
+        label = { Text(stringResource(R.string.picker_new), fontWeight = FontWeight.Medium) },
         secondaryLabel = if (enabled) null else ({ Text(stringResource(R.string.picker_limit_reached)) }),
     )
 }
 
 @Composable
 private fun SummaryButton(onClick: () -> Unit) {
-    CompactButton(onClick = onClick, label = { Text(stringResource(R.string.summary_open)) })
+    Button(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = StateAiColors.Surface2,
+            contentColor = StateAiColors.Text1,
+            iconColor = StateAiColors.Text1,
+        ),
+        icon = { Icon(StateAiIcons.Bars, contentDescription = null) },
+        label = { Text(stringResource(R.string.summary_open)) },
+    )
 }
 
 @Composable
-private fun DebugButton(onClick: () -> Unit) {
-    CompactButton(onClick = onClick, label = { Text(stringResource(R.string.debug_open)) })
+private fun MiniEnergy(energy: EnergyBudget) {
+    val percent = energy.level.roundToInt()
+    Row(
+        modifier = Modifier.padding(top = StateAiDimens.SpaceS),
+        horizontalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceM),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        EnergySilhouette(
+            level = energy.level,
+            color = StateAiColors.Accent,
+            height = MINI_ENERGY_HEIGHT,
+            low = energy.isLow,
+            description = stringResource(R.string.energy_description, percent),
+        )
+        Column {
+            Text(
+                text = stringResource(R.string.percent, percent),
+                fontSize = MINI_ENERGY_TEXT,
+                fontWeight = FontWeight.Medium,
+                style = LocalTextStyle.current.tabular(),
+            )
+            Text(stringResource(R.string.energy_estimated), fontSize = StateAiDimens.Label, color = StateAiColors.Text2)
+        }
+    }
 }
+
+private const val SUGGESTED_FILL = 0.14f
+private const val SUGGESTED_BORDER = 0.55f
+private val TITLE_SIZE = 14.sp
+private val TITLE_SIZE_SUGGESTED = 17.sp
+private val MINI_ENERGY_HEIGHT = 52.dp
+private val MINI_ENERGY_TEXT = 24.sp
+private val ENERGY_REFRESH = 30.seconds

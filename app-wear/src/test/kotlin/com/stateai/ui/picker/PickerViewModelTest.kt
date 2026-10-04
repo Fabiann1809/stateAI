@@ -6,8 +6,10 @@ import com.stateai.domain.activity.ActivityCategory
 import com.stateai.domain.activity.ActivityId
 import com.stateai.domain.activity.ActivityLimits
 import com.stateai.domain.activity.ActivityName
+import com.stateai.domain.energy.EnergyBudget
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
@@ -39,7 +41,7 @@ class PickerViewModelTest {
     @Test
     fun `shows active activities and allows creating more below the limit`() = runTest {
         addActivities(count = 2)
-        val viewModel = PickerViewModel(repository, flowOf(null), flowOf(false))
+        val viewModel = PickerViewModel(repository, flowOf(null), flowOf(false), emptyFlow())
         viewModel.uiState.launchIn(backgroundScope)
 
         val state = viewModel.uiState.first { it.activities.isNotEmpty() }
@@ -50,7 +52,7 @@ class PickerViewModelTest {
     @Test
     fun `disables new activity when the limit is reached`() = runTest {
         addActivities(count = ActivityLimits.MAX_ACTIVE)
-        val viewModel = PickerViewModel(repository, flowOf(null), flowOf(false))
+        val viewModel = PickerViewModel(repository, flowOf(null), flowOf(false), emptyFlow())
         viewModel.uiState.launchIn(backgroundScope)
 
         val state = viewModel.uiState.first { it.activities.isNotEmpty() }
@@ -59,7 +61,7 @@ class PickerViewModelTest {
 
     @Test
     fun `shows the focus window hint`() = runTest {
-        val viewModel = PickerViewModel(repository, flowOf(null), flowOf(true))
+        val viewModel = PickerViewModel(repository, flowOf(null), flowOf(true), emptyFlow())
         viewModel.uiState.launchIn(backgroundScope)
 
         assertTrue(viewModel.uiState.first { it.isFocusWindow }.isFocusWindow)
@@ -68,11 +70,20 @@ class PickerViewModelTest {
     @Test
     fun `puts the suggested activity first`() = runTest {
         addActivities(count = 3)
-        val viewModel = PickerViewModel(repository, flowOf(ActivityId("2")), flowOf(false))
+        val viewModel = PickerViewModel(repository, flowOf(ActivityId("2")), flowOf(false), emptyFlow())
         viewModel.uiState.launchIn(backgroundScope)
 
         val state = viewModel.uiState.first { it.suggested != null }
         assertEquals(listOf("2", "0", "1"), state.activities.map { it.id.value })
+    }
+
+    @Test
+    fun `shows today's estimated energy`() = runTest {
+        val energy = EnergyBudget(level = 64.0, consumed = 40.0, recovered = 4.0, isLow = false)
+        val viewModel = PickerViewModel(repository, flowOf(null), flowOf(false), flowOf(energy))
+        viewModel.uiState.launchIn(backgroundScope)
+
+        assertEquals(energy, viewModel.uiState.first { it.energy != null }.energy)
     }
 
     private suspend fun addActivities(count: Int) {
