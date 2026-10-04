@@ -52,7 +52,7 @@ fun PauseRoute(onFinished: () -> Unit) {
     }
     LaunchedEffect(Unit) {
         while (true) {
-            container.sessionHapticPlayer.play(HapticEvent.BREATHE)
+            container.haptics.sessionPlayer.play(HapticEvent.BREATHE)
             inhaling = true
             scale.animateTo(MAX_SCALE, tween(rhythm.inhale.inWholeMilliseconds.toInt(), easing = LinearOutSlowInEasing))
             inhaling = false

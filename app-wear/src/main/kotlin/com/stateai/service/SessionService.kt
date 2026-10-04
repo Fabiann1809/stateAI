@@ -21,7 +21,7 @@ class SessionService : LifecycleService() {
     private val container by lazy { (application as StateAiApplication).container }
     private val notifications by lazy { SessionNotificationFactory(this, container.clock) }
     private val hapticCues by lazy {
-        SessionHapticCues(container.sessionHapticPlayer, onCue = container.segmentRecorder::onCue)
+        SessionHapticCues(container.haptics.sessionPlayer, onCue = container.segmentRecorder::onCue)
     }
 
     override fun onCreate() {

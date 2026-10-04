@@ -39,7 +39,7 @@ class PickerViewModelTest {
     @Test
     fun `shows active activities and allows creating more below the limit`() = runTest {
         addActivities(count = 2)
-        val viewModel = PickerViewModel(repository, flowOf(false))
+        val viewModel = PickerViewModel(repository, flowOf(null), flowOf(false))
         viewModel.uiState.launchIn(backgroundScope)
 
         val state = viewModel.uiState.first { it.activities.isNotEmpty() }
@@ -50,7 +50,7 @@ class PickerViewModelTest {
     @Test
     fun `disables new activity when the limit is reached`() = runTest {
         addActivities(count = ActivityLimits.MAX_ACTIVE)
-        val viewModel = PickerViewModel(repository, flowOf(false))
+        val viewModel = PickerViewModel(repository, flowOf(null), flowOf(false))
         viewModel.uiState.launchIn(backgroundScope)
 
         val state = viewModel.uiState.first { it.activities.isNotEmpty() }
@@ -59,10 +59,20 @@ class PickerViewModelTest {
 
     @Test
     fun `shows the focus window hint`() = runTest {
-        val viewModel = PickerViewModel(repository, flowOf(true))
+        val viewModel = PickerViewModel(repository, flowOf(null), flowOf(true))
         viewModel.uiState.launchIn(backgroundScope)
 
         assertTrue(viewModel.uiState.first { it.isFocusWindow }.isFocusWindow)
+    }
+
+    @Test
+    fun `puts the suggested activity first`() = runTest {
+        addActivities(count = 3)
+        val viewModel = PickerViewModel(repository, flowOf(ActivityId("2")), flowOf(false))
+        viewModel.uiState.launchIn(backgroundScope)
+
+        val state = viewModel.uiState.first { it.suggested != null }
+        assertEquals(listOf("2", "0", "1"), state.activities.map { it.id.value })
     }
 
     private suspend fun addActivities(count: Int) {

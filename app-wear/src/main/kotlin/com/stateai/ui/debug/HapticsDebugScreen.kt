@@ -19,7 +19,7 @@ import com.stateai.domain.haptics.HapticEvent
 /** Debug-only screen that plays each haptic pattern on demand. */
 @Composable
 fun HapticsDebugScreen() {
-    val player = appContainer().hapticPlayer
+    val player = appContainer().haptics.player
     val listState = rememberScalingLazyListState()
     ScreenScaffold(scrollState = listState) { contentPadding ->
         ScalingLazyColumn(state = listState, contentPadding = contentPadding) {

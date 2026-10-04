@@ -25,7 +25,7 @@ import kotlin.math.roundToInt
 fun SummaryRoute() {
     val container = appContainer()
     val viewModel: SummaryViewModel = viewModel(
-        factory = viewModelFactory { initializer { SummaryViewModel(container.observeDaySummary) } },
+        factory = viewModelFactory { initializer { SummaryViewModel(container.insights.observeDaySummary) } },
     )
     val summary by viewModel.summary.collectAsStateWithLifecycle()
     SummaryScreen(summary)

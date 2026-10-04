@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 /** Entry point to the debug tools (debug builds only). */
 @Composable
 fun DebugMenuScreen(onOpenHaptics: () -> Unit, onOpenSensors: () -> Unit) {
-    val exporter = appContainer().summaryExporter
+    val exporter = appContainer().insights.summaryExporter
     val scope = rememberCoroutineScope()
     var exported by remember { mutableStateOf(false) }
     val listState = rememberScalingLazyListState()

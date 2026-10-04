@@ -333,7 +333,7 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 - [x] **T-5.3** "Focus window" notice when the current time slot is good according to the profile. *Done when:* it fires only with minimum confidence (e.g. 5+ days).
 - [x] **T-5.4** Cycle detection: build the focus series and search for periodicity (autocorrelation/periodogram). *Done when:* it recovers 60/90/110 min cycles in synthetic data with gaps between sessions, and a test confirms end-of-block vibrations do not create a false cycle.
 - [x] **T-5.5** Confidence threshold: report "no clear pattern" when there is no periodicity. *Done when:* a synthetic user without a cycle yields "no pattern".
-- [ ] **T-5.6** Next-activity prediction per hour and day; preselect it in the picker. *Done when:* the picker shows the suggested one first with enough data.
+- [x] **T-5.6** Next-activity prediction per hour and day; preselect it in the picker. *Done when:* the picker shows the suggested one first with enough data.
 - [ ] **T-5.7** Slow adjustment of the activity's global sensitivity from the "how did you feel?" feedback (small, bounded steps). *Done when:* a test shows sensitivity moves in the right direction and a single feedback does not change it abruptly.
 - [ ] **T-5.8** Energy engine (6.5): consumption per state, recovery per useful pause, capacity per time slot. *Done when:* consumption and recovery tests.
 - [ ] **T-5.9** Show the battery in the session and summary, with suggestions (never locks). *Done when:* it is visible and changes during a simulated session.

@@ -29,7 +29,7 @@ fun SensorsDebugScreen() {
     val container = appContainer()
     val viewModel: SensorsDebugViewModel = viewModel(
         factory = viewModelFactory {
-            initializer { SensorsDebugViewModel(container.simulationController, container.sensorSource) }
+            initializer { SensorsDebugViewModel(container.sensors.simulationController, container.sensors.source) }
         },
     )
     val state by viewModel.uiState.collectAsStateWithLifecycle()

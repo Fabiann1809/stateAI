@@ -36,7 +36,13 @@ fun PickerRoute(
     val container = appContainer()
     val viewModel: PickerViewModel = viewModel(
         factory = viewModelFactory {
-            initializer { PickerViewModel(container.activityRepository, container.focusWindowNotifier.observe()) }
+            initializer {
+                PickerViewModel(
+                    container.activityRepository,
+                    container.insights.observeSuggestedActivity(),
+                    container.insights.focusWindowNotifier.observe(),
+                )
+            }
         },
     )
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -66,7 +72,11 @@ fun PickerScreen(
                 item { Text(stringResource(R.string.picker_empty)) }
             }
             items(state.activities, key = { it.id.value }) { activity ->
-                ActivityButton(activity = activity, onClick = { onActivitySelected(activity.id) })
+                ActivityButton(
+                    activity = activity,
+                    suggested = activity == state.suggested,
+                    onClick = { onActivitySelected(activity.id) },
+                )
             }
             item { NewActivityButton(enabled = state.canCreateNew, onClick = onNewActivity) }
             item { SummaryButton(onClick = onOpenSummary) }
@@ -76,13 +86,21 @@ fun PickerScreen(
 }
 
 @Composable
-private fun ActivityButton(activity: Activity, onClick: () -> Unit) {
+private fun ActivityButton(activity: Activity, suggested: Boolean, onClick: () -> Unit) {
     val categoryLabel = stringResource(activity.category.labelRes())
+    val secondary = if (suggested) {
+        stringResource(R.string.picker_suggested)
+    } else {
+        categoryLabel.takeIf {
+            activity.name !=
+                null
+        }
+    }
     Button(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         label = { Text(activity.title()) },
-        secondaryLabel = activity.name?.let { { Text(categoryLabel) } },
+        secondaryLabel = secondary?.let { { Text(it) } },
     )
 }
 
