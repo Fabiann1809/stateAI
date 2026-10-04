@@ -14,7 +14,7 @@ This document is the **project's source of truth**. It is meant to be executed *
 
 **Solution**: A smartwatch-only app that:
 1. Asks at the start "what are you going to do?": you pick a recent activity or create a new one (optional free name on top of one of 5 base categories). Each activity learns its own profile over time.
-2. Estimates the person's state from heart rate, HRV and movement.
+2. Estimates the person's activation level from heart rate, an HR variability proxy and movement (real HRV is not available, see `docs/sensors.md`).
 3. Learns over the days in which time slots and with which cycles the person performs best.
 4. Signals with **haptic micro-pulses** when to breathe or pause, without needing to look at the screen.
 5. Shows an **estimated energy battery** and a daily score.
@@ -45,7 +45,7 @@ This document is the **project's source of truth**. It is meant to be executed *
 
 **Watch (Kotlin)**
 - Jetpack Compose for Wear OS (UI)
-- Health Services API (heart rate) and SensorManager (accelerometer), always behind `SensorSource`
+- Health Services API (heart rate, BPM only) and SensorManager (accelerometer), always behind `SensorSource`
 - `Vibrator` / `VibrationEffect` with waveforms (haptics)
 - Foreground service + Ongoing Activity (long sessions)
 - Room (segment summaries) and DataStore (settings and baselines)
@@ -88,12 +88,13 @@ Separate folder in the repo: `/ml-python` (training, synthetic data, evaluation)
 - **Activity**: optional normalized free name + category + status (`ACTIVE` / `ARCHIVED`). Without a name, the activity is the category itself.
 - **CategoryProfile**: default values of a category (target block duration, state thresholds, "normal" movement, maximum vibrations per hour).
 - **ActivityProfile**: the same parameters, but **learned** for a specific activity and blended with its category's according to the number of sessions (see 6.7).
-- **SensorSample**: timestamp, heart rate, RR intervals / HRV (if available), movement magnitude.
-- **FeatureWindow**: ~3 min window computed every 60 s: mean HR, RMSSD, HR variability, mean movement, number of micro-fidgets.
-- **State**: `DEEP_FOCUS`, `NORMAL`, `OVERLOADED`, `EXHAUSTED` (**provisional**: confirmed after T-0.4, see 6.4.1).
-- **Segment**: one continuous activity within the day (start, end, activity with its category and normalized name, time per state, score, feedback).
+- **SensorSample**: timestamp, heart rate (BPM), movement magnitude. No RR intervals (not exposed by Health Services).
+- **FeatureWindow**: ~3 min window computed every 60 s: mean HR, HR variability proxy (standard deviation and mean successive difference of BPM), mean movement, number of micro-fidgets.
+- **ActivationLevel**: `LOW`, `MEDIUM`, `HIGH` (decided in 6.4.1). `LOW` during a session counts as focus time.
+- **StateEstimate**: activation level + restlessness flag (high fidgeting after a long time in session, replaces the former "exhausted" state).
+- **Segment**: one continuous activity within the day (start, end, activity with its category and normalized name, time per activation level, restless time, score, feedback).
 - **DayRecord**: list of segments, daily score, final energy.
-- **UserBaseline**: resting HR and HRV (or proxy) **per person**, optionally per time slot (moving averages). What is learned per activity are the profile's thresholds and parameters, not the resting baseline.
+- **UserBaseline**: resting HR and HR variability proxy **per person**, optionally per time slot (moving averages). What is learned per activity are the profile's thresholds and parameters, not the resting baseline.
 - **FocusProfile**: focus profile per time slot and detected cycle (if any).
 - **EnergyBudget**: value 0 to 100, daily capacity, consumption and recovery.
 
@@ -119,7 +120,7 @@ When a segment ends: one-tap feedback "how did you feel?" (good / okay / bad).
 
 Rules:
 - At most 1 vibration every 5 minutes, excluding start events.
-- In `DEEP_FOCUS`: no vibration, except sustained fatigue or overload (3+ min).
+- In focus (`LOW` during a session): no vibration, except sustained restlessness or `HIGH` (3+ min).
 - The hourly limit depends on the `ActivityProfile`.
 
 ### 6.3 Category profiles (initial values, configurable)
@@ -137,20 +138,20 @@ These are the default values of each base category. Each activity gradually repl
 - Computed every 60 s over a ~3 min `FeatureWindow`.
 - First session: 2 minutes at rest to set the personal baseline (only once, not per activity; refined with use).
 - Thresholds **relative to the user's baseline**, not absolute.
-- `DEEP_FOCUS`: HR close to baseline, HRV stable or slightly low, little movement.
-- `OVERLOADED`: HR above baseline and HRV dropping in a sustained way.
-- `EXHAUSTED`: low HRV and/or a lot of fidgeting after a long session time.
+- `LOW`: HR close to baseline, stable HR variability proxy, little movement.
+- `MEDIUM`: moderate HR elevation or mixed signals.
+- `HIGH`: HR above baseline in a sustained way.
+- **Restlessness flag**: a lot of fidgeting after a long session time (fatigue hint).
 - Windows with a lot of movement: lower their weight or discard them.
 
-### 6.4.1 Pending decision: number of states
-The 4 states assume real HRV (RR intervals). With wrist HR only, distinguishing `DEEP_FOCUS` from `NORMAL` is very weak (cognitive load moves HR by a few bpm, the same as coffee, posture or talking).
-- **If T-0.4 confirms RR/HRV**: keep the 4 states.
-- **If not**: the domain uses 3 activation levels (`LOW`, `MEDIUM`, `HIGH`) and the UI shows them with friendly names. Energy, focus windows and scoring work the same over those levels.
-- The decision is recorded in `docs/sensors.md` and this document is updated **before** T-2.1.
+### 6.4.1 Decision: number of states (resolved)
+The original 4 states (`DEEP_FOCUS`, `NORMAL`, `OVERLOADED`, `EXHAUSTED`) assumed real HRV (RR intervals). Health Services does not expose RR intervals (see `docs/sensors.md`), and with wrist HR only, distinguishing deep focus from normal is very weak (cognitive load moves HR by a few bpm, the same as coffee, posture or talking).
+
+**Decision**: the domain uses 3 activation levels (`LOW`, `MEDIUM`, `HIGH`) plus a restlessness flag. The UI shows them with friendly Spanish names. Energy, focus windows and scoring work over those levels.
 
 ### 6.5 Energy (simple indicator)
 - Initial value 100 at the start of the day; optional morning input to adjust it (does not depend on sleep data).
-- **Consumes** according to time in `DEEP_FOCUS`, `OVERLOADED` and `EXHAUSTED` (rates per state).
+- **Consumes** according to time in session per activation level and while restless (rates per level).
 - **Recovers** with pauses that actually improve the state afterwards.
 - Daily capacity adjusted by the `FocusProfile` (good/bad time slots).
 - Suggestions, not locks: "you have little energy left, it may be better to leave this for later".
@@ -160,7 +161,7 @@ The 4 states assume real HRV (RR intervals). With wrist HR only, distinguishing 
 Initial weights (adjustable):
 - Time in focus: **40 %**
 - Recovery (pauses taken that improved the state): **25 %**
-- Sustainable load (penalizes prolonged time in overload/exhaustion): **20 %**
+- Sustainable load (penalizes prolonged time in `HIGH` or restless): **20 %**
 - Consistency (meeting the planned duration): **15 %**
 
 The daily score is the duration-weighted average. Always show it **broken down**, not just the number. It is an indicator of focus quality and load, **not** of work produced.
@@ -214,8 +215,8 @@ value = own_weight * activity_profile + (1 - own_weight) * category_profile
 
 ## 7. AI: what it learns and how
 
-1. **State classifier** (offline in Python, on-watch inference with TFLite). Input: `FeatureWindow`; output: `State`. The rule engine remains as fallback. Trained on synthetic data, the model essentially re-learns the generator's rules: it is presented as a **pipeline demonstration** (training, export, Kotlin/Python parity, fallback), not as an accuracy improvement.
-2. **Personal baseline**: exponential moving averages of resting HR and HRV (or proxy), per person and optionally per time slot. Profile parameters (target block, thresholds, normal movement) are **learned per activity**, blended with their category's according to the number of sessions (6.7).
+1. **State classifier** (offline in Python, on-watch inference with TFLite). Input: `FeatureWindow`; output: `ActivationLevel`. The rule engine remains as fallback. Trained on synthetic data, the model essentially re-learns the generator's rules: it is presented as a **pipeline demonstration** (training, export, Kotlin/Python parity, fallback), not as an accuracy improvement.
+2. **Personal baseline**: exponential moving averages of resting HR and HR variability proxy, per person and optionally per time slot. Profile parameters (target block, thresholds, normal movement) are **learned per activity**, blended with their category's according to the number of sessions (6.7).
 3. **Focus windows per time slot**: mean focus score per hour of the day and day of the week.
 4. **Cycle detection** (the core of stateAI): search the user's focus series for periodicity (autocorrelation or periodogram). Report the cycle length **only with enough confidence**; otherwise "no clear pattern".
    - **Self-induced periodicity**: the app itself vibrates when the block is reached and suggests pauses, which can create an artificial cycle. Mitigation: tag app-generated events, discard or exclude the minutes around them from the series, and check that the detected cycle does not simply match the profile's target block.
@@ -262,8 +263,8 @@ Out of the MVP: on-watch LLM, natural-language summaries via API.
 
 ## 10. Risks
 
-- **HRV on Wear OS**: Health Services probably does not expose RR intervals (some vendors do, with their own SDK); verify in T-0.4 **before** designing features. An "RMSSD" computed over 1 Hz bpm HR is not HRV: without RR, use an HR variability proxy, call it that, and apply the decision in 6.4.1.
-- **Insufficient signals for 4 states**: wrist HR separates focus from normal poorly. Mitigation: 6.4.1.
+- **HRV on Wear OS**: confirmed that Health Services does not expose RR intervals (Samsung's SDK does, but needs a physical Galaxy Watch and partner approval). An "RMSSD" computed over 1 Hz bpm HR is not HRV: stateAI uses an HR variability proxy and calls it that (see `docs/sensors.md`).
+- **Weak signals**: wrist HR separates focus from normal poorly. Mitigation: 3 activation levels instead of 4 states (6.4.1).
 - **Self-induced periodicity** in cycle detection: see section 7, item 4.
 - **Circular evaluation**: see section 8.
 - **Watch battery**: a foreground service with continuous HR for hours drains a real watch noticeably. Measure consumption if tested on hardware (T-9.1) and consider intermittent sampling outside sessions.
@@ -285,7 +286,7 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 - [ ] **T-0.1** Create the Wear OS project (Kotlin, Compose) with the modules of section 4. *Done when:* it builds and runs on the emulator showing an empty screen.
 - [ ] **T-0.2** Set up the Wear OS emulator and document the steps. *Done when:* another person can reproduce it.
 - [ ] **T-0.3** Create the `/ml-python` folder with a virtual environment and `requirements.txt`. *Done when:* `python -c "import sklearn"` works.
-- [ ] **T-0.4** Research whether Health Services exposes RR intervals/HRV and how to inject synthetic data into the emulator. Write conclusions in `docs/sensors.md`. *Done when:* the document answers both questions with sources, records the decision of 6.4.1 (4 states or 3 levels) and this document is updated with it.
+- [x] **T-0.4** Research whether Health Services exposes RR intervals/HRV and how to inject synthetic data into the emulator. Write conclusions in `docs/sensors.md`. *Done when:* the document answers both questions with sources, records the decision of 6.4.1 (4 states or 3 levels) and this document is updated with it.
 - [ ] **T-0.5** Create the README with the "Limitations and scientific honesty" section (sections 2 and 10 of this document). *Done when:* the README includes them.
 
 ### Phase 1: Picker, session and basic haptics
@@ -301,23 +302,23 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 ### Phase 2: Sensors and simulator
 - [ ] **T-2.1** Define `SensorSample` and the `SensorSource` interface (sample flow). *Done when:* it compiles and is documented.
 - [ ] **T-2.2** Implement `SimulatedSensorSource` that plays scripted scenarios. *Done when:* it emits samples at 1 Hz according to the scenario.
-- [ ] **T-2.3** Scenarios: deep focus, overload, fatigue and mixed session. *Done when:* each has signal-shape tests (HR/HRV trends).
+- [ ] **T-2.3** Scenarios: deep focus, overload, fatigue and mixed session. *Done when:* each has signal-shape tests (HR and movement trends).
 - [ ] **T-2.4** Debug panel to choose a scenario and see live values (debug builds only). *Done when:* changing the scenario changes the live signal.
 - [ ] **T-2.5** Implement `HealthServicesSensorSource` (HR and movement) as the real adapter, per the findings of T-0.4. *Done when:* it compiles and can be switched by configuration, even if not tested on a real watch.
 
 ### Phase 3: Rule-based state engine
-- [ ] **T-3.1** Compute `FeatureWindow` (mean HR, RMSSD or proxy, variability, movement, fidgeting) from samples. *Done when:* tests with known signals give expected values.
+- [ ] **T-3.1** Compute `FeatureWindow` (mean HR, HR variability proxy, movement, fidgeting) from samples. *Done when:* tests with known signals give expected values.
 - [ ] **T-3.2** Personal baseline calibration (2 min, once) and persistence. *Done when:* the baseline is saved and reused across all activities.
-- [ ] **T-3.3** Rule classifier with thresholds relative to the baseline (6.4). *Done when:* the simulated scenarios produce the expected states.
+- [ ] **T-3.3** Rule classifier with thresholds relative to the baseline (6.4). *Done when:* the simulated scenarios produce the expected activation levels and restlessness flag.
 - [ ] **T-3.4** Reduced weight or discarding of high-movement windows. *Done when:* a test shows high movement does not trigger false states.
 - [ ] **T-3.5** State smoothing (hysteresis, at least 2 equal windows to change). *Done when:* there is no state flickering in the mixed scenario.
-- [ ] **T-3.6** Haptic policy: in `DEEP_FOCUS` no vibration except sustained fatigue/overload; suggested pause when leaving focus. *Done when:* tests cover each case.
-- [ ] **T-3.7** Show the state on the session screen (icon and color). *Done when:* it changes live with the simulator.
+- [ ] **T-3.6** Haptic policy: in focus no vibration except sustained restlessness/`HIGH`; suggested pause when leaving focus. *Done when:* tests cover each case.
+- [ ] **T-3.7** Show the activation level on the session screen (icon and color). *Done when:* it changes live with the simulator.
 
 ### Phase 4: Segments, scoring and summary
 - [ ] **T-4.1** `Segment` and `DayRecord` models (with category and normalized name); close a segment when the activity changes or ends. *Done when:* segment lifecycle tests.
 - [ ] **T-4.2** Room persistence of segments (summaries only, no raw signal). *Done when:* data survives an app restart.
-- [ ] **T-4.3** Compute the 0-100 score per segment (6.6). *Done when:* tests with edge cases (all focus, all overload).
+- [ ] **T-4.3** Compute the 0-100 score per segment (6.6). *Done when:* tests with edge cases (all focus, all `HIGH`).
 - [ ] **T-4.4** Compute the daily score (duration-weighted average). *Done when:* test with 3 segments of different durations.
 - [ ] **T-4.5** One-tap feedback when closing a segment, saved. *Done when:* it is attached to the segment.
 - [ ] **T-4.6** Daily summary screen with a **broken-down** score. *Done when:* it shows the 4 components.
@@ -345,13 +346,13 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 - [ ] **T-6.1** Synthetic user generator: multi-day routine with known cycles and noise. Physiology is generated with a mechanism **different** from the rule engine (latent state with its own transitions), so the rules are not validated against themselves. *Done when:* it produces reproducible CSVs with a seed and the generator's README explains how it differs from the rule engine.
 - [ ] **T-6.2** Include a user without a cycle and one with an irregular cycle. *Done when:* they are in the evaluation dataset.
 - [ ] **T-6.3** (Optional) Pipeline for a public stress dataset (check license and labels). *Done when:* it produces the same feature format as `FeatureWindow`.
-- [ ] **T-6.4** Feature engineering identical to Kotlin's (same definition of mean HR, RMSSD, etc.). *Done when:* there is a parity test with shared sample values.
+- [ ] **T-6.4** Feature engineering identical to Kotlin's (same definition of mean HR, HR variability proxy, etc.). *Done when:* there is a parity test with shared sample values.
 - [ ] **T-6.5** Train a simple classifier with the states decided in 6.4.1 and evaluate it (confusion matrix). *Done when:* there is a report with metrics comparing it with the rule engine and stating that, with synthetic data, a similar result is expected.
 - [ ] **T-6.6** Export to TFLite and verify the model with a script. *Done when:* Python inference with the `.tflite` matches the original model.
 - [ ] **T-6.7** Include custom activities with few and many sessions in the generator. *Done when:* the dataset allows testing category/activity blending.
 
 ### Phase 7: Model integration
-- [ ] **T-7.1** `:ml` module that loads the `.tflite` and classifies a `FeatureWindow`. *Done when:* it returns a `State` on the emulator.
+- [ ] **T-7.1** `:ml` module that loads the `.tflite` and classifies a `FeatureWindow`. *Done when:* it returns an `ActivationLevel` on the emulator.
 - [ ] **T-7.2** `StateClassifier` interface with two implementations: rules and model. *Done when:* switchable by configuration.
 - [ ] **T-7.3** Automatic fallback to rules if the model fails or its confidence is low. *Done when:* a test with a "broken" model uses rules.
 - [ ] **T-7.4** Kotlin/Python parity test on sample features. *Done when:* predictions match within tolerance.
@@ -384,6 +385,6 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 5. Keep functions and classes small and single-responsibility. Code, folder names, comments and documentation are in **English**; only user-facing UI text is in **Spanish** (string resources).
 6. Any threshold, weight or duration must be a **configurable constant**, not a magic number.
 7. If a task requires a decision not covered by this document, **ask** before assuming.
-8. If a technical assumption may be false (e.g. HRV availability in Health Services), **verify and document it** before building on top of it.
+8. If a technical assumption may be false (e.g. whether emulator synthetic data reaches `MeasureClient`), **verify and document it** before building on top of it.
 9. When finishing a task: mark `[x]` and make one Conventional Commit describing what was done (no task numbers in the message). See `CONTRIBUTING.md`.
 10. Keep product language honest: "estimate", "estimated energy", "focus and load indicator". Never "measures your brain" or medical claims.
