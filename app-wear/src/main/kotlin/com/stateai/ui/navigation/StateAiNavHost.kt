@@ -18,7 +18,7 @@ fun StateAiNavHost() {
         }
         composable(Routes.SESSION) { entry ->
             val activityId = entry.arguments?.getString(Routes.SESSION_ARG_ACTIVITY_ID).orEmpty()
-            SessionRoute(activityId = ActivityId(activityId))
+            SessionRoute(activityId = ActivityId(activityId), onStopped = { navController.popBackStack() })
         }
     }
 }

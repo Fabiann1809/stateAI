@@ -7,6 +7,9 @@
     <string name="picker_new">Nueva</string>
     <string name="picker_limit_reached">Máximo 10 actividades</string>
 
+    <string name="session_target">de %1$d min</string>
+    <string name="session_stop">Terminar</string>
+
     <string name="category_deep_work">Trabajo profundo</string>
     <string name="category_study">Estudio</string>
     <string name="category_reading">Lectura</string>
