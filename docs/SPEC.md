@@ -283,7 +283,7 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 ### Phase 0: Setup
 **T-0.4 goes first**: its result decides the features and the number of states (6.4.1). The other tasks of the phase can be done afterwards.
 
-- [ ] **T-0.1** Create the Wear OS project (Kotlin, Compose) with the modules of section 4. *Done when:* it builds and runs on the emulator showing an empty screen.
+- [x] **T-0.1** Create the Wear OS project (Kotlin, Compose) with the modules of section 4. *Done when:* it builds and runs on the emulator showing an empty screen.
 - [ ] **T-0.2** Set up the Wear OS emulator and document the steps. *Done when:* another person can reproduce it.
 - [ ] **T-0.3** Create the `/ml-python` folder with a virtual environment and `requirements.txt`. *Done when:* `python -c "import sklearn"` works.
 - [x] **T-0.4** Research whether Health Services exposes RR intervals/HRV and how to inject synthetic data into the emulator. Write conclusions in `docs/sensors.md`. *Done when:* the document answers both questions with sources, records the decision of 6.4.1 (4 states or 3 levels) and this document is updated with it.

@@ -1,0 +1,41 @@
+# Overrides on top of detekt's default configuration.
+# Size limits mirror CONTRIBUTING.md: files <= 300 lines, functions <= 40 lines, lines <= 120 chars.
+
+complexity:
+  LargeClass:
+    threshold: 300
+  LongMethod:
+    threshold: 40
+  LongParameterList:
+    functionThreshold: 6
+    constructorThreshold: 7
+    ignoreDefaultParameters: true
+    ignoreAnnotated: ['Composable']
+  CyclomaticComplexMethod:
+    threshold: 10
+  TooManyFunctions:
+    thresholdInFiles: 15
+    thresholdInClasses: 15
+    thresholdInInterfaces: 10
+    thresholdInObjects: 15
+
+naming:
+  FunctionNaming:
+    ignoreAnnotated: ['Composable']
+  TopLevelPropertyNaming:
+    constantPattern: '[A-Z][_A-Z0-9]*'
+
+style:
+  MaxLineLength:
+    maxLineLength: 120
+  MagicNumber:
+    ignorePropertyDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+    ignoreAnnotated: ['Preview']
+    excludes: ['**/test/**', '**/build-logic/**']
+  UnusedPrivateMember:
+    ignoreAnnotated: ['Preview']
+  ForbiddenComment:
+    active: true
+  WildcardImport:
+    active: true
