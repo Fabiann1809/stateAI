@@ -360,7 +360,7 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 - [x] **T-7.4** Kotlin/Python parity test on sample features. *Done when:* predictions match within tolerance.
 
 ### Phase 8: Evaluation and demo
-- [ ] **T-8.1** Script that simulates a day with a fixed timer (baseline). *Done when:* it produces metrics of time in focus, overload and pauses.
+- [x] **T-8.1** Script that simulates a day with a fixed timer (baseline). *Done when:* it produces metrics of time in focus, overload and pauses.
 - [ ] **T-8.2** The same day with stateAI. *Done when:* it produces the same metrics.
 - [ ] **T-8.3** End-to-end report with charts in a notebook. *Done when:* the notebook is in the repo and states that the data is simulated, that the result shows the integrated system works and that it does **not** prove superiority on real people.
 - [ ] **T-8.4** Cycle detection test report (T-5.4 and T-5.5). *Done when:* table of real vs detected length.

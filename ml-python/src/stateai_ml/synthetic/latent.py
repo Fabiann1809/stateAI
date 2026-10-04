@@ -47,18 +47,18 @@ def simulate_session(
     """Simulates the latent mode and restlessness of every minute of a session."""
     modes = np.empty(length_minutes, dtype=int)
     restless = np.zeros(length_minutes, dtype=bool)
-    mode = _draw_mode(rhythm_value(start_minute_of_day, period, phase) * strength, 0.0, rng)
+    mode = draw_mode(rhythm_value(start_minute_of_day, period, phase) * strength, 0.0, rng)
     for minute in range(length_minutes):
         fatigue = min(1.0, minute / FATIGUE_SCALE_MINUTES)
         if rng.random() > STICKINESS:
             rhythm = rhythm_value(start_minute_of_day + minute, period, phase) * strength
-            mode = _draw_mode(rhythm, fatigue, rng)
+            mode = draw_mode(rhythm, fatigue, rng)
         modes[minute] = mode
-        restless[minute] = _next_restless(restless[minute - 1] if minute else False, fatigue, rng)
+        restless[minute] = next_restless(restless[minute - 1] if minute else False, fatigue, rng)
     return LatentMinutes(modes, restless)
 
 
-def _draw_mode(rhythm: float, fatigue: float, rng: np.random.Generator) -> int:
+def draw_mode(rhythm: float, fatigue: float, rng: np.random.Generator) -> int:
     scores = np.array(
         [
             CALM_BASE + rhythm - FATIGUE_WEIGHT * fatigue,
@@ -70,7 +70,7 @@ def _draw_mode(rhythm: float, fatigue: float, rng: np.random.Generator) -> int:
     return int(rng.choice(3, p=probabilities))
 
 
-def _next_restless(previous: bool, fatigue: float, rng: np.random.Generator) -> bool:
+def next_restless(previous: bool, fatigue: float, rng: np.random.Generator) -> bool:
     if previous:
         return bool(rng.random() < RESTLESS_STICKINESS)
     return bool(fatigue > RESTLESS_ONSET and rng.random() < (fatigue - RESTLESS_ONSET))

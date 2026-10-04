@@ -28,16 +28,21 @@ class SessionSignal:
     heart_rate: np.ndarray
     movement: np.ndarray
     walking_minutes: np.ndarray
+    final_drift: float
 
 
-def generate_signal(latent: LatentMinutes, resting: float, rng: np.random.Generator) -> SessionSignal:
+def generate_signal(
+    latent: LatentMinutes, resting: float, rng: np.random.Generator, drift_start: float | None = None
+) -> SessionSignal:
+    """``drift_start`` continues the slow drift of a previous call (minute-by-minute simulation)."""
     seconds = len(latent.modes) * SECONDS_PER_MINUTE
     modes = np.repeat(latent.modes, SECONDS_PER_MINUTE)
     restless = np.repeat(latent.restless, SECONDS_PER_MINUTE)
     walking_minutes = rng.random(len(latent.modes)) < WALKING_MINUTE_CHANCE
     walking = np.repeat(walking_minutes, SECONDS_PER_MINUTE)
 
-    heart_rate = resting + MODE_HEART_RATE_OFFSET[modes] + _slow_drift(seconds, rng)
+    drift = _slow_drift(seconds, rng, drift_start)
+    heart_rate = resting + MODE_HEART_RATE_OFFSET[modes] + drift
     heart_rate += rng.normal(0.0, BEAT_NOISE, seconds) + walking * WALKING_HEART_RATE
     heart_rate[rng.random(seconds) < MISSING_HEART_RATE] = np.nan
 
@@ -46,15 +51,15 @@ def generate_signal(latent: LatentMinutes, resting: float, rng: np.random.Genera
     fidgets = rng.random(seconds) < fidget_rate
     movement[fidgets] = rng.uniform(*FIDGET_MAGNITUDE, fidgets.sum())
     movement[walking] = rng.normal(*WALKING_MOVEMENT, walking.sum()).clip(min=0.8)
-    return SessionSignal(heart_rate, movement, walking_minutes)
+    return SessionSignal(heart_rate, movement, walking_minutes, float(drift[-1]))
 
 
-def _slow_drift(seconds: int, rng: np.random.Generator) -> np.ndarray:
+def _slow_drift(seconds: int, rng: np.random.Generator, start: float | None) -> np.ndarray:
     """Ornstein-Uhlenbeck drift: slow heart rate wandering unrelated to the mode."""
     decay = np.exp(-1.0 / DRIFT_TIME_CONSTANT_SECONDS)
     noise_scale = DRIFT_SIGMA * np.sqrt(1 - decay**2)
     drift = np.empty(seconds)
-    value = rng.normal(0.0, DRIFT_SIGMA)
+    value = rng.normal(0.0, DRIFT_SIGMA) if start is None else start
     for second in range(seconds):
         value = value * decay + rng.normal(0.0, noise_scale)
         drift[second] = value

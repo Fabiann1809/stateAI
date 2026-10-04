@@ -50,3 +50,15 @@ inputs in `ModelInputsParityTest` (JVM) and the TFLite probabilities in `Predict
 
 CI installs only `requirements.txt`; the TFLite comparison test is skipped there and runs locally
 when TensorFlow is installed.
+
+## End-to-end simulation
+
+```sh
+python -m stateai_ml.endtoend --days 14     # writes reports/endtoend_days.csv and prints the mean day
+```
+
+Simulates the same days of every synthetic user with each policy, minute by minute, in a closed-loop
+version of the synthetic user where effort builds up with work and pauses recover it
+(`src/stateai_ml/endtoend/world.py`). The fixed timer works 25 minutes and pauses 5. Metrics come from
+the ground-truth latent state: minutes worked, in focus (`LOW`), in overload (`HIGH`), restless, and
+the pauses taken.
