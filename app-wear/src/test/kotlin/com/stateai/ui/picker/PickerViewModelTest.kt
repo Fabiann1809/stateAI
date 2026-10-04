@@ -9,6 +9,7 @@ import com.stateai.domain.activity.ActivityName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -38,7 +39,7 @@ class PickerViewModelTest {
     @Test
     fun `shows active activities and allows creating more below the limit`() = runTest {
         addActivities(count = 2)
-        val viewModel = PickerViewModel(repository)
+        val viewModel = PickerViewModel(repository, flowOf(false))
         viewModel.uiState.launchIn(backgroundScope)
 
         val state = viewModel.uiState.first { it.activities.isNotEmpty() }
@@ -49,11 +50,19 @@ class PickerViewModelTest {
     @Test
     fun `disables new activity when the limit is reached`() = runTest {
         addActivities(count = ActivityLimits.MAX_ACTIVE)
-        val viewModel = PickerViewModel(repository)
+        val viewModel = PickerViewModel(repository, flowOf(false))
         viewModel.uiState.launchIn(backgroundScope)
 
         val state = viewModel.uiState.first { it.activities.isNotEmpty() }
         assertFalse(state.canCreateNew)
+    }
+
+    @Test
+    fun `shows the focus window hint`() = runTest {
+        val viewModel = PickerViewModel(repository, flowOf(true))
+        viewModel.uiState.launchIn(backgroundScope)
+
+        assertTrue(viewModel.uiState.first { it.isFocusWindow }.isFocusWindow)
     }
 
     private suspend fun addActivities(count: Int) {

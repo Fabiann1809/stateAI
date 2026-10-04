@@ -11,6 +11,8 @@ import com.stateai.domain.haptics.HapticPlayer
 import com.stateai.domain.haptics.HapticRateLimiter
 import com.stateai.domain.haptics.RateLimitedHapticPlayer
 import com.stateai.domain.learning.BaselineLearner
+import com.stateai.domain.learning.FocusWindowNotifier
+import com.stateai.domain.learning.ObserveFocusProfile
 import com.stateai.domain.pause.GuidedPause
 import com.stateai.domain.profile.CategoryDefaultsProfileProvider
 import com.stateai.domain.profile.DefaultCategoryProfiles
@@ -77,6 +79,11 @@ class AppContainer(context: Context) {
                 ?: DefaultCategoryProfiles.OTHER.maxVibrationsPerHour
         },
     )
+
+    // Learning
+    private val localClock = clock.withZone(ZoneId.systemDefault())
+    val focusWindowNotifier =
+        FocusWindowNotifier(ObserveFocusProfile(segmentRepository, localClock), hapticPlayer, localClock)
 
     // State estimation
     val sessionMonitor = SessionMonitor(

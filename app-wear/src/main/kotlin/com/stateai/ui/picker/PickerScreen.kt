@@ -35,7 +35,9 @@ fun PickerRoute(
 ) {
     val container = appContainer()
     val viewModel: PickerViewModel = viewModel(
-        factory = viewModelFactory { initializer { PickerViewModel(container.activityRepository) } },
+        factory = viewModelFactory {
+            initializer { PickerViewModel(container.activityRepository, container.focusWindowNotifier.observe()) }
+        },
     )
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     PickerScreen(
@@ -59,6 +61,7 @@ fun PickerScreen(
     ScreenScaffold(scrollState = listState) { contentPadding ->
         ScalingLazyColumn(state = listState, contentPadding = contentPadding) {
             item { ListHeader { Text(stringResource(R.string.picker_title)) } }
+            if (state.isFocusWindow) item { Text(stringResource(R.string.picker_focus_window)) }
             if (state.activities.isEmpty()) {
                 item { Text(stringResource(R.string.picker_empty)) }
             }

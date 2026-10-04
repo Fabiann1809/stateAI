@@ -5,6 +5,7 @@
     <string name="picker_title">¿Qué vas a hacer?</string>
     <string name="picker_empty">Crea tu primera actividad</string>
     <string name="picker_new">Nueva</string>
+    <string name="picker_focus_window">Buen momento para enfocarte</string>
     <string name="picker_limit_reached">Máximo 10 actividades</string>
 
     <string name="new_activity_category_title">Categoría</string>
