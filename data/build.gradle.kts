@@ -5,5 +5,6 @@ plugins {
 dependencies {
     api(project(":core-domain"))
     implementation(libs.kotlinx.coroutines.core)
+    api(libs.androidx.datastore.preferences)
     testImplementation(libs.kotlinx.coroutines.test)
 }

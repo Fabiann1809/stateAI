@@ -308,7 +308,7 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 
 ### Phase 3: Rule-based state engine
 - [x] **T-3.1** Compute `FeatureWindow` (mean HR, HR variability proxy, movement, fidgeting) from samples. *Done when:* tests with known signals give expected values.
-- [ ] **T-3.2** Personal baseline calibration (2 min, once) and persistence. *Done when:* the baseline is saved and reused across all activities.
+- [x] **T-3.2** Personal baseline calibration (2 min, once) and persistence. *Done when:* the baseline is saved and reused across all activities.
 - [ ] **T-3.3** Rule classifier with thresholds relative to the baseline (6.4). *Done when:* the simulated scenarios produce the expected activation levels and restlessness flag.
 - [ ] **T-3.4** Reduced weight or discarding of high-movement windows. *Done when:* a test shows high movement does not trigger false states.
 - [ ] **T-3.5** State smoothing (hysteresis, at least 2 equal windows to change). *Done when:* there is no state flickering in the mixed scenario.
