@@ -10,6 +10,7 @@ import com.stateai.domain.learning.ActivityProfileLearner
 import com.stateai.domain.learning.BaselineLearner
 import com.stateai.domain.learning.FeedbackSensitivityLearner
 import com.stateai.domain.learning.RecordFeedback
+import com.stateai.domain.mascot.MascotRepository
 import com.stateai.domain.pause.GuidedPause
 import com.stateai.domain.profile.LearnedProfileProvider
 import com.stateai.domain.profile.ProfileProvider
@@ -33,6 +34,7 @@ class AppContainer(context: Context) {
 
     val activityRepository: ActivityRepository = storage.activities
     val segmentRepository: SegmentRepository = storage.segments
+    val mascotRepository: MascotRepository = storage.mascot
     val sessionTracker = SessionTracker()
 
     val haptics = HapticsModule(context, clock, sessionTracker)

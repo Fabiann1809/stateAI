@@ -62,11 +62,17 @@ fun HomeRoute(
                     container.insights.observeSuggestedActivity(),
                     container.insights.focusWindowNotifier.observe(),
                     container.insights.observeEnergy(clockTicks(container.clock, ENERGY_REFRESH)),
+                    container.mascotRepository,
                 )
             }
         },
     )
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    when (state.mascotName) {
+        MascotNameState.Loading -> return
+        MascotNameState.NotAsked -> return MascotNamingScreen(onNamed = viewModel::nameMascot)
+        is MascotNameState.Known -> Unit
+    }
     HomeScreen(
         state = state,
         actions = HomeActions(
@@ -94,7 +100,13 @@ fun HomeScreen(state: HomeUiState, actions: HomeActions) {
     val listState = rememberScalingLazyListState(initialCenterItemIndex = 0)
     ScreenScaffold(scrollState = listState) { contentPadding ->
         ScalingLazyColumn(state = listState, contentPadding = contentPadding) {
-            item { MascotHeader(onTalk = actions.onTalk, onLongPress = actions.onOpenDebug) }
+            item {
+                MascotHeader(
+                    name = (state.mascotName as? MascotNameState.Known)?.name.orEmpty(),
+                    onTalk = actions.onTalk,
+                    onLongPress = actions.onOpenDebug,
+                )
+            }
             if (state.isFocusWindow) item { HintText(stringResource(R.string.picker_focus_window)) }
             if (state.activities.isEmpty()) item { HintText(stringResource(R.string.picker_empty)) }
             items(state.activities, key = { it.id.value }) { activity ->

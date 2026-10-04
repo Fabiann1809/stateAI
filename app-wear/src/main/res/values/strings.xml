@@ -104,4 +104,8 @@
         <item quantity="other">%d días de datos</item>
     </plurals>
     <string name="session_end_title">¿Terminar sesión?</string>
+    <string name="mascot_name_question">¿Cómo se llamará tu mascota?</string>
+    <string name="mascot_name_action">Ponerle nombre</string>
+    <string name="mascot_name_skip">Ahora no</string>
+    <string name="mascot_name_label">Nombre de la mascota</string>
 </resources>

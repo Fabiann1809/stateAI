@@ -13,4 +13,15 @@ data class HomeUiState(
     val isFocusWindow: Boolean = false,
     /** Today's estimated energy, null until the first value arrives. */
     val energy: EnergyBudget? = null,
+    val mascotName: MascotNameState = MascotNameState.Loading,
 )
+
+/** Whether the mascot still has to be named (asked once, on first use). */
+sealed interface MascotNameState {
+    data object Loading : MascotNameState
+
+    data object NotAsked : MascotNameState
+
+    /** [name] is empty when the person chose not to name it. */
+    data class Known(val name: String) : MascotNameState
+}
