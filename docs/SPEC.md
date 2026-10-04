@@ -339,7 +339,7 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 - [ ] **T-5.9** Show the battery in the session and summary, with suggestions (never locks). *Done when:* it is visible and changes during a simulated session.
 - [ ] **T-5.10** Learned profile per activity with `n / (n + K)` blending towards its category's profile (6.7). *Done when:* tests with n=0, 5 and 20 give the expected weights.
 - [x] **T-5.11** Valid session criterion (≥ 10 min and ≥ 60 % clean windows). *Done when:* a short or noisy session does not increase `n`.
-- [ ] **T-5.12** Learn target block and normal movement of each activity from its sessions. *Done when:* with simulated sessions the value approaches the synthetic user's.
+- [x] **T-5.12** Learn target block and normal movement of each activity from its sessions. *Done when:* with simulated sessions the value approaches the synthetic user's.
 - [ ] **T-5.13** Cap of 10 active activities (no automatic archiving in the MVP). *Done when:* a test confirms number 11 cannot be created.
 - [ ] **T-5.14** "Learning" indicator while `n < 5`. *Done when:* it appears in the summary with low n and disappears afterwards.
 

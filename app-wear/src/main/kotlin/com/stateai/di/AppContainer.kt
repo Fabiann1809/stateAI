@@ -6,6 +6,7 @@ import com.stateai.domain.activity.ActivityId
 import com.stateai.domain.activity.ActivityRepository
 import com.stateai.domain.activity.CreateActivity
 import com.stateai.domain.baseline.BaselineKeeper
+import com.stateai.domain.learning.ActivityProfileLearner
 import com.stateai.domain.learning.BaselineLearner
 import com.stateai.domain.pause.GuidedPause
 import com.stateai.domain.profile.CategoryDefaultsProfileProvider
@@ -46,7 +47,7 @@ class AppContainer(context: Context) {
         segmentRecorder,
         segmentRepository,
         clock,
-        learners = listOf(BaselineLearner(baselineKeeper)),
+        learners = listOf(BaselineLearner(baselineKeeper), ActivityProfileLearner(storage.learning)),
     )
     val startSession =
         StartSession(activityRepository, sessionTracker, profileProvider, segmentRecorder, endSession, clock)
