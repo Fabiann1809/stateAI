@@ -1,6 +1,8 @@
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 /** Kotlin version detekt was compiled with; its classpath must not be upgraded by the project's Kotlin. */
 private const val DETEKT_KOTLIN_VERSION = "2.0.21"
@@ -13,6 +15,10 @@ internal fun Project.configureQuality() {
     extensions.configure<DetektExtension> {
         buildUponDefaultConfig = true
         config.setFrom(rootProject.file("config/detekt/detekt.yml"))
+    }
+
+    tasks.withType<KotlinCompilationTask<*>>().configureEach {
+        compilerOptions.allWarningsAsErrors.set(true)
     }
 
     configurations.matching { it.name == "detekt" }.configureEach {
