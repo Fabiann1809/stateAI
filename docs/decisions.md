@@ -12,3 +12,4 @@ Decisions not fully specified by `SPEC.md`, recorded so they can be reviewed lat
 | 6 | Haptic policy rules (event type, rate limiting) live in `:core-domain`; `:haptics` only turns events into Android vibrations. | Keeps the rules testable on the JVM and the Android module thin. |
 | 7 | When the target block is reached, the "suggested pause" pattern fires once. | 6.2 has no dedicated end-of-block pattern; a pause suggestion is what the event means. |
 | 8 | Until Room persistence arrives, activities live in an in-memory repository behind the domain interface. | Lets the picker work now without building persistence ahead of its phase. |
+| 9 | `minSdk` is 33 (Wear OS 4) instead of 30. | Wear OS 3 is outdated by 2026; API 31+ provides `VibratorManager`, and Wear OS 4 is where the Health Services sensor panel works for synthetic data. |

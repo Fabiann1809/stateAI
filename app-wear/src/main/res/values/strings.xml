@@ -16,4 +16,11 @@
     <string name="category_reading">Lectura</string>
     <string name="category_collab">Reuniones</string>
     <string name="category_other">Otra</string>
+
+    <string name="debug_open">Depuración</string>
+    <string name="debug_haptics_title">Patrones hápticos</string>
+    <string name="haptic_block_start">Inicio de bloque</string>
+    <string name="haptic_breathe">Respirar</string>
+    <string name="haptic_pause_suggested">Pausa sugerida</string>
+    <string name="haptic_overload_alert">Alerta de sobrecarga</string>
 </resources>

@@ -13,6 +13,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
         extensions.configure<ApplicationExtension> {
             namespace = BASE_NAMESPACE
             configureAndroidCommon(this)
+            buildFeatures.buildConfig = true
             defaultConfig {
                 applicationId = BASE_NAMESPACE
                 targetSdk = libs.version("targetSdk").toInt()

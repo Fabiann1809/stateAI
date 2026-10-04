@@ -6,6 +6,7 @@ plugins {
 dependencies {
     implementation(project(":core-domain"))
     implementation(project(":data"))
+    implementation(project(":haptics"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
