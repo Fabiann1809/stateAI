@@ -310,7 +310,7 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 - [x] **T-3.1** Compute `FeatureWindow` (mean HR, HR variability proxy, movement, fidgeting) from samples. *Done when:* tests with known signals give expected values.
 - [x] **T-3.2** Personal baseline calibration (2 min, once) and persistence. *Done when:* the baseline is saved and reused across all activities.
 - [x] **T-3.3** Rule classifier with thresholds relative to the baseline (6.4). *Done when:* the simulated scenarios produce the expected activation levels and restlessness flag.
-- [ ] **T-3.4** Reduced weight or discarding of high-movement windows. *Done when:* a test shows high movement does not trigger false states.
+- [x] **T-3.4** Reduced weight or discarding of high-movement windows. *Done when:* a test shows high movement does not trigger false states.
 - [ ] **T-3.5** State smoothing (hysteresis, at least 2 equal windows to change). *Done when:* there is no state flickering in the mixed scenario.
 - [ ] **T-3.6** Haptic policy: in focus no vibration except sustained restlessness/`HIGH`; suggested pause when leaving focus. *Done when:* tests cover each case.
 - [ ] **T-3.7** Show the activation level on the session screen (icon and color). *Done when:* it changes live with the simulator.
