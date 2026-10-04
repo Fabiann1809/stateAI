@@ -49,3 +49,21 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Check
         run: ./gradlew check assembleDebug --console=plain
+
+  python:
+    name: Python lint and tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ml-python
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: ml-python/requirements.txt
+      - run: pip install -r requirements.txt
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: pytest -q
