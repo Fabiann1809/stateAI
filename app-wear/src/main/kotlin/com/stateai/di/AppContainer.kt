@@ -6,6 +6,7 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import com.stateai.BuildConfig
 import com.stateai.data.baseline.DataStoreBaselineRepository
 import com.stateai.data.memory.InMemoryActivityRepository
+import com.stateai.data.memory.InMemorySegmentRepository
 import com.stateai.domain.activity.ActivityId
 import com.stateai.domain.activity.ActivityRepository
 import com.stateai.domain.activity.CreateActivity
@@ -16,7 +17,11 @@ import com.stateai.domain.haptics.RateLimitedHapticPlayer
 import com.stateai.domain.profile.CategoryDefaultsProfileProvider
 import com.stateai.domain.profile.DefaultCategoryProfiles
 import com.stateai.domain.profile.ProfileProvider
+import com.stateai.domain.segment.SegmentId
+import com.stateai.domain.segment.SegmentRecorder
+import com.stateai.domain.segment.SegmentRepository
 import com.stateai.domain.sensing.SensorSource
+import com.stateai.domain.session.EndSession
 import com.stateai.domain.session.SessionMonitor
 import com.stateai.domain.session.SessionTracker
 import com.stateai.domain.session.StartSession
@@ -36,7 +41,11 @@ class AppContainer(context: Context) {
     val sessionTracker = SessionTracker()
     private val profileProvider: ProfileProvider = CategoryDefaultsProfileProvider()
     val createActivity = CreateActivity(activityRepository) { ActivityId(UUID.randomUUID().toString()) }
-    val startSession = StartSession(activityRepository, sessionTracker, profileProvider, clock)
+    val segmentRepository: SegmentRepository = InMemorySegmentRepository()
+    private val segmentRecorder = SegmentRecorder { SegmentId(UUID.randomUUID().toString()) }
+    val endSession = EndSession(sessionTracker, segmentRecorder, segmentRepository, clock)
+    val startSession =
+        StartSession(activityRepository, sessionTracker, profileProvider, segmentRecorder, endSession, clock)
 
     // Sensors
     val simulationController = SimulationController()
@@ -64,7 +73,12 @@ class AppContainer(context: Context) {
     private val baselineRepository = DataStoreBaselineRepository(
         PreferenceDataStoreFactory.create { context.preferencesDataStoreFile(BASELINE_STORE) },
     )
-    val sessionMonitor = SessionMonitor(sensorSource, BaselineKeeper(baselineRepository), sessionHapticPlayer)
+    val sessionMonitor = SessionMonitor(
+        sensorSource,
+        BaselineKeeper(baselineRepository),
+        sessionHapticPlayer,
+        segmentRecorder,
+    )
 
     private companion object {
         const val BASELINE_STORE = "baseline"

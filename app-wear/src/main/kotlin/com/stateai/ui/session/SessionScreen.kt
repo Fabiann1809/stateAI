@@ -37,6 +37,7 @@ fun SessionRoute(activityId: ActivityId, onStopped: () -> Unit) {
                 SessionViewModel(
                     activityId,
                     container.startSession,
+                    container.endSession,
                     container.sessionTracker,
                     container.sessionMonitor.status,
                     container.clock,
@@ -46,10 +47,7 @@ fun SessionRoute(activityId: ActivityId, onStopped: () -> Unit) {
     )
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     RequestSessionPermissions()
-    val onStop = {
-        viewModel.stop()
-        onStopped()
-    }
+    val onStop = { viewModel.stop { onStopped() } }
     SessionScreen(state = state, isAmbient = LocalIsAmbient.current, onStop = onStop)
 }
 

@@ -4,8 +4,10 @@ import com.stateai.domain.baseline.BaselineKeeper
 import com.stateai.domain.baseline.CalibrationProgress
 import com.stateai.domain.features.FeatureWindow
 import com.stateai.domain.features.FeatureWindowStream
+import com.stateai.domain.haptics.HapticEvent
 import com.stateai.domain.haptics.HapticPlayer
 import com.stateai.domain.haptics.HapticPolicy
+import com.stateai.domain.segment.SegmentRecorder
 import com.stateai.domain.sensing.SensorSource
 import com.stateai.domain.state.StateEngine
 import com.stateai.domain.state.StateEstimate
@@ -28,12 +30,14 @@ sealed interface MonitorStatus {
 
 /**
  * Runs the estimation pipeline for a session: sensor samples → baseline calibration (first time
- * only) → feature windows → state engine → haptic policy. [run] suspends until cancelled.
+ * only) → feature windows → state engine → haptic policy, recording the segment summary on the way.
+ * [run] suspends until cancelled.
  */
 class SessionMonitor(
     private val sensorSource: SensorSource,
     private val baselineKeeper: BaselineKeeper,
     private val player: HapticPlayer,
+    private val recorder: SegmentRecorder,
     private val windowStream: FeatureWindowStream = FeatureWindowStream(),
     private val newEngine: () -> StateEngine = { StateEngine() },
     private val newPolicy: () -> HapticPolicy = { HapticPolicy() },
@@ -53,7 +57,11 @@ class SessionMonitor(
         windowStream.windows(samples).collect { window ->
             estimate(window, session, engine)?.let { estimate ->
                 current.value = MonitorStatus.Estimating(estimate)
-                policy.onEstimate(estimate)?.let(player::play)
+                recorder.onEstimate(estimate, window.end)
+                policy.onEstimate(estimate)?.let { event ->
+                    if (event == HapticEvent.PAUSE_SUGGESTED) recorder.onPauseSuggested()
+                    player.play(event)
+                }
             }
         }
     }

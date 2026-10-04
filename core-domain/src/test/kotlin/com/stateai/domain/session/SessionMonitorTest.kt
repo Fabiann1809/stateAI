@@ -8,6 +8,8 @@ import com.stateai.domain.baseline.BaselineRepository
 import com.stateai.domain.baseline.UserBaseline
 import com.stateai.domain.haptics.HapticEvent
 import com.stateai.domain.profile.DefaultCategoryProfiles
+import com.stateai.domain.segment.SegmentId
+import com.stateai.domain.segment.SegmentRecorder
 import com.stateai.domain.sensing.SensorSample
 import com.stateai.domain.sensing.SensorSource
 import com.stateai.domain.state.ActivationLevel
@@ -27,6 +29,7 @@ class SessionMonitorTest {
         startedAt = start,
     )
     private val played = mutableListOf<HapticEvent>()
+    private val recorder = SegmentRecorder { SegmentId("segment") }.apply { start(session) }
     private val repository = object : BaselineRepository {
         var stored: UserBaseline? = null
 
@@ -58,12 +61,24 @@ class SessionMonitorTest {
         assertTrue(HapticEvent.OVERLOAD_ALERT in played, "$played")
     }
 
+    @Test
+    fun `records time per level in the segment`() = runTest {
+        repository.stored = UserBaseline(65.0, 1.0, start)
+        val monitor = monitorWith(heartRateAt = { 65.0 }, seconds = 600)
+
+        monitor.run(session)
+
+        val segment = recorder.finish(start.plusSeconds(600))!!
+        assertTrue(segment.levelTime.low.inWholeMinutes >= 8, "${segment.levelTime}")
+    }
+
     private fun monitorWith(heartRateAt: (Int) -> Double, seconds: Int): SessionMonitor {
         val samples = (0 until seconds).map { SensorSample(start.plusSeconds(it.toLong()), heartRateAt(it), 0.05) }
         return SessionMonitor(
             sensorSource = SensorSource { samples.asFlow() },
             baselineKeeper = BaselineKeeper(repository),
             player = { played += it },
+            recorder = recorder,
         )
     }
 }

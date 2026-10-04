@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.stateai.common.clockTicks
 import com.stateai.domain.activity.ActivityId
+import com.stateai.domain.segment.SegmentId
+import com.stateai.domain.session.EndSession
 import com.stateai.domain.session.MonitorStatus
 import com.stateai.domain.session.SessionTracker
 import com.stateai.domain.session.StartSession
@@ -19,7 +21,8 @@ private const val STOP_TIMEOUT_MILLIS = 5_000L
 class SessionViewModel(
     activityId: ActivityId,
     startSession: StartSession,
-    private val tracker: SessionTracker,
+    private val endSession: EndSession,
+    tracker: SessionTracker,
     status: StateFlow<MonitorStatus>,
     clock: Clock,
 ) : ViewModel() {
@@ -35,7 +38,8 @@ class SessionViewModel(
         viewModelScope.launch { startSession(activityId) }
     }
 
-    fun stop() {
-        tracker.stop()
+    /** Ends the session and reports the closed segment, if any. */
+    fun stop(onEnded: (SegmentId?) -> Unit) {
+        viewModelScope.launch { onEnded(endSession()?.id) }
     }
 }
