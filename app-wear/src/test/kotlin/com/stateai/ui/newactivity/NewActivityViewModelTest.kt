@@ -57,4 +57,15 @@ class NewActivityViewModelTest {
         assertEquals(ActivityId("0"), viewModel.uiState.value.readyActivityId)
         assertEquals(1, repository.countActive())
     }
+
+    @Test
+    fun `a voice prefill starts at the name step with the understood name`() = runTest {
+        val prefilled = NewActivityViewModel(
+            CreateActivity(repository) { ActivityId("${nextId++}") },
+            NewActivityPrefill(ActivityCategory.STUDY, "jardinería"),
+        )
+
+        assertEquals(ActivityCategory.STUDY, prefilled.uiState.value.category)
+        assertEquals("jardinería", prefilled.uiState.value.suggestedName)
+    }
 }

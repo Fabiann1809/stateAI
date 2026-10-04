@@ -12,15 +12,25 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/** Two-step creation: pick a category, then optionally name the activity. */
+/**
+ * Two-step creation: pick a category, then optionally name the activity. [suggestedName] is what a
+ * spoken request understood, offered as a one-tap name.
+ */
 data class NewActivityUiState(
     val category: ActivityCategory? = null,
+    val suggestedName: String? = null,
     val readyActivityId: ActivityId? = null,
     val limitReached: Boolean = false,
 )
 
-class NewActivityViewModel(private val createActivity: CreateActivity) : ViewModel() {
-    private val state = MutableStateFlow(NewActivityUiState())
+/** What a voice request already understood, to start "Nueva actividad" from it. */
+data class NewActivityPrefill(val category: ActivityCategory? = null, val name: String? = null)
+
+class NewActivityViewModel(
+    private val createActivity: CreateActivity,
+    prefill: NewActivityPrefill = NewActivityPrefill(),
+) : ViewModel() {
+    private val state = MutableStateFlow(NewActivityUiState(category = prefill.category, suggestedName = prefill.name))
     val uiState: StateFlow<NewActivityUiState> = state.asStateFlow()
 
     fun selectCategory(category: ActivityCategory) {

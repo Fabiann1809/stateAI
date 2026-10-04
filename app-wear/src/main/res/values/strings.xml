@@ -108,4 +108,5 @@
     <string name="mascot_name_action">Ponerle nombre</string>
     <string name="mascot_name_skip">Ahora no</string>
     <string name="mascot_name_label">Nombre de la mascota</string>
+    <string name="new_activity_use_name">Usar «%1$s»</string>
 </resources>

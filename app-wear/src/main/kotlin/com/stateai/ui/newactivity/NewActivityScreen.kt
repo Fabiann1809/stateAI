@@ -38,10 +38,10 @@ import com.stateai.ui.theme.StateAiColors
 import com.stateai.ui.theme.StateAiDimens
 
 @Composable
-fun NewActivityRoute(onActivityReady: (ActivityId) -> Unit) {
+fun NewActivityRoute(prefill: NewActivityPrefill, onActivityReady: (ActivityId) -> Unit) {
     val container = appContainer()
     val viewModel: NewActivityViewModel = viewModel(
-        factory = viewModelFactory { initializer { NewActivityViewModel(container.createActivity) } },
+        factory = viewModelFactory { initializer { NewActivityViewModel(container.createActivity, prefill) } },
     )
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(state.readyActivityId) { state.readyActivityId?.let(onActivityReady) }
@@ -52,6 +52,7 @@ fun NewActivityRoute(onActivityReady: (ActivityId) -> Unit) {
         onCategorySelected = viewModel::selectCategory,
         onAddName = askName,
         onWithoutName = { viewModel.create(null) },
+        onUseSuggested = viewModel::create,
     )
 }
 
@@ -61,6 +62,7 @@ fun NewActivityScreen(
     onCategorySelected: (ActivityCategory) -> Unit,
     onAddName: () -> Unit,
     onWithoutName: () -> Unit,
+    onUseSuggested: (String) -> Unit = {},
 ) {
     val listState = rememberScalingLazyListState()
     ScreenScaffold(scrollState = listState) { contentPadding ->
@@ -69,7 +71,7 @@ fun NewActivityScreen(
             when {
                 state.limitReached -> item { Text(stringResource(R.string.picker_limit_reached)) }
                 category == null -> categoryStep(onCategorySelected)
-                else -> nameStep(category, onAddName, onWithoutName)
+                else -> nameStep(category, state.suggestedName, NameActions(onAddName, onWithoutName, onUseSuggested))
             }
         }
     }
@@ -93,18 +95,30 @@ private fun ScalingLazyListScope.categoryStep(onCategorySelected: (ActivityCateg
     }
 }
 
-private fun ScalingLazyListScope.nameStep(
-    category: ActivityCategory,
-    onAddName: () -> Unit,
-    onWithoutName: () -> Unit,
-) {
+/** The three ways to name an activity: the name understood by voice (if any), typing it, or none. */
+private class NameActions(
+    val onAddName: () -> Unit,
+    val onWithoutName: () -> Unit,
+    val onUseSuggested: (String) -> Unit,
+)
+
+private fun ScalingLazyListScope.nameStep(category: ActivityCategory, suggestedName: String?, actions: NameActions) {
     item {
         ListHeader {
             Text(stringResource(category.labelRes()), fontSize = StateAiDimens.Label, color = StateAiColors.Accent)
         }
     }
+    suggestedName?.let { name ->
+        item {
+            Button(
+                onClick = { actions.onUseSuggested(name) },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text(stringResource(R.string.new_activity_use_name, name), fontWeight = FontWeight.Medium) },
+            )
+        }
+    }
     item {
-        SurfaceButton(onClick = onAddName) {
+        SurfaceButton(onClick = actions.onAddName) {
             Text(
                 text = stringResource(R.string.new_activity_add_name),
                 color = StateAiColors.Text2,
@@ -115,7 +129,7 @@ private fun ScalingLazyListScope.nameStep(
     }
     item {
         Button(
-            onClick = onWithoutName,
+            onClick = actions.onWithoutName,
             colors = surfaceColors(),
             label = { Text(stringResource(R.string.new_activity_without_name), fontWeight = FontWeight.Medium) },
         )
