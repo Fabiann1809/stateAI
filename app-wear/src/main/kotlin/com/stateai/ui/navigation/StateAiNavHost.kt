@@ -6,20 +6,22 @@ import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.stateai.domain.activity.ActivityId
+import com.stateai.ui.home.HomeRoute
 import com.stateai.ui.newactivity.NewActivityRoute
 import com.stateai.ui.pause.PauseRoute
-import com.stateai.ui.picker.PickerRoute
 import com.stateai.ui.session.SessionRoute
 import com.stateai.ui.summary.SummaryRoute
 
 @Composable
 fun StateAiNavHost() {
     val navController = rememberSwipeDismissableNavController()
-    val backToPicker = { navController.popBackStack(Routes.PICKER, inclusive = false) }
+    val backToPicker = { navController.popBackStack(Routes.HOME, inclusive = false) }
 
-    SwipeDismissableNavHost(navController = navController, startDestination = Routes.PICKER) {
-        composable(Routes.PICKER) {
-            PickerRoute(
+    SwipeDismissableNavHost(navController = navController, startDestination = Routes.HOME) {
+        composable(Routes.HOME) {
+            HomeRoute(
+                // Voice entry is wired in the listening flow; until then the list is the way in.
+                onTalk = {},
                 onActivitySelected = { navController.navigate(Routes.session(it)) },
                 onNewActivity = { navController.navigate(Routes.NEW_ACTIVITY) },
                 onOpenSummary = { navController.navigate(Routes.SUMMARY) },
@@ -28,7 +30,7 @@ fun StateAiNavHost() {
         }
         composable(Routes.NEW_ACTIVITY) {
             NewActivityRoute(onActivityReady = { id ->
-                navController.navigate(Routes.session(id)) { popUpTo(Routes.PICKER) }
+                navController.navigate(Routes.session(id)) { popUpTo(Routes.HOME) }
             })
         }
         composable(Routes.SESSION) { entry ->
@@ -39,7 +41,7 @@ fun StateAiNavHost() {
                     if (segmentId == null) {
                         backToPicker()
                     } else {
-                        navController.navigate(Routes.feedback(segmentId)) { popUpTo(Routes.PICKER) }
+                        navController.navigate(Routes.feedback(segmentId)) { popUpTo(Routes.HOME) }
                     }
                 },
             )

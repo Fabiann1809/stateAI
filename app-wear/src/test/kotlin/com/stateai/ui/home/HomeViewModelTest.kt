@@ -1,4 +1,4 @@
-package com.stateai.ui.picker
+package com.stateai.ui.home
 
 import com.stateai.data.memory.InMemoryActivityRepository
 import com.stateai.domain.activity.Activity
@@ -25,7 +25,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class PickerViewModelTest {
+class HomeViewModelTest {
     private val repository = InMemoryActivityRepository()
 
     @BeforeEach
@@ -41,7 +41,7 @@ class PickerViewModelTest {
     @Test
     fun `shows active activities and allows creating more below the limit`() = runTest {
         addActivities(count = 2)
-        val viewModel = PickerViewModel(repository, flowOf(null), flowOf(false), emptyFlow())
+        val viewModel = HomeViewModel(repository, flowOf(null), flowOf(false), emptyFlow())
         viewModel.uiState.launchIn(backgroundScope)
 
         val state = viewModel.uiState.first { it.activities.isNotEmpty() }
@@ -52,7 +52,7 @@ class PickerViewModelTest {
     @Test
     fun `disables new activity when the limit is reached`() = runTest {
         addActivities(count = ActivityLimits.MAX_ACTIVE)
-        val viewModel = PickerViewModel(repository, flowOf(null), flowOf(false), emptyFlow())
+        val viewModel = HomeViewModel(repository, flowOf(null), flowOf(false), emptyFlow())
         viewModel.uiState.launchIn(backgroundScope)
 
         val state = viewModel.uiState.first { it.activities.isNotEmpty() }
@@ -61,7 +61,7 @@ class PickerViewModelTest {
 
     @Test
     fun `shows the focus window hint`() = runTest {
-        val viewModel = PickerViewModel(repository, flowOf(null), flowOf(true), emptyFlow())
+        val viewModel = HomeViewModel(repository, flowOf(null), flowOf(true), emptyFlow())
         viewModel.uiState.launchIn(backgroundScope)
 
         assertTrue(viewModel.uiState.first { it.isFocusWindow }.isFocusWindow)
@@ -70,7 +70,7 @@ class PickerViewModelTest {
     @Test
     fun `puts the suggested activity first`() = runTest {
         addActivities(count = 3)
-        val viewModel = PickerViewModel(repository, flowOf(ActivityId("2")), flowOf(false), emptyFlow())
+        val viewModel = HomeViewModel(repository, flowOf(ActivityId("2")), flowOf(false), emptyFlow())
         viewModel.uiState.launchIn(backgroundScope)
 
         val state = viewModel.uiState.first { it.suggested != null }
@@ -80,7 +80,7 @@ class PickerViewModelTest {
     @Test
     fun `shows today's estimated energy`() = runTest {
         val energy = EnergyBudget(level = 64.0, consumed = 40.0, recovered = 4.0, isLow = false)
-        val viewModel = PickerViewModel(repository, flowOf(null), flowOf(false), flowOf(energy))
+        val viewModel = HomeViewModel(repository, flowOf(null), flowOf(false), flowOf(energy))
         viewModel.uiState.launchIn(backgroundScope)
 
         assertEquals(energy, viewModel.uiState.first { it.energy != null }.energy)

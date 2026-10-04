@@ -1,10 +1,10 @@
-package com.stateai.ui.picker
+package com.stateai.ui.home
 
 import com.stateai.domain.activity.Activity
 import com.stateai.domain.energy.EnergyBudget
 
-/** What the activity picker shows. */
-data class PickerUiState(
+/** What the home screen shows: the activity list under the mascot. */
+data class HomeUiState(
     /** Suggested activity first (if any), then the rest by recent use. */
     val activities: List<Activity> = emptyList(),
     val suggested: Activity? = null,

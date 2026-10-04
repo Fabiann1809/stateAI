@@ -1,7 +1,6 @@
-package com.stateai.ui.picker
+package com.stateai.ui.home
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,7 +25,6 @@ import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.Icon
-import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.LocalTextStyle
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
@@ -48,17 +46,18 @@ import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
-fun PickerRoute(
+fun HomeRoute(
+    onTalk: () -> Unit,
     onActivitySelected: (ActivityId) -> Unit,
     onNewActivity: () -> Unit,
     onOpenSummary: () -> Unit,
     onOpenDebug: () -> Unit,
 ) {
     val container = appContainer()
-    val viewModel: PickerViewModel = viewModel(
+    val viewModel: HomeViewModel = viewModel(
         factory = viewModelFactory {
             initializer {
-                PickerViewModel(
+                HomeViewModel(
                     container.activityRepository,
                     container.insights.observeSuggestedActivity(),
                     container.insights.focusWindowNotifier.observe(),
@@ -68,9 +67,10 @@ fun PickerRoute(
         },
     )
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    PickerScreen(
+    HomeScreen(
         state = state,
-        actions = PickerActions(
+        actions = HomeActions(
+            onTalk = onTalk,
             onActivitySelected = onActivitySelected,
             onNewActivity = onNewActivity,
             onOpenSummary = onOpenSummary,
@@ -79,8 +79,9 @@ fun PickerRoute(
     )
 }
 
-/** What the picker lets the person do. [onOpenDebug] is null outside debug builds. */
-data class PickerActions(
+/** What the home screen lets the person do. [onOpenDebug] is null outside debug builds. */
+data class HomeActions(
+    val onTalk: () -> Unit,
     val onActivitySelected: (ActivityId) -> Unit,
     val onNewActivity: () -> Unit,
     val onOpenSummary: () -> Unit,
@@ -88,11 +89,12 @@ data class PickerActions(
 )
 
 @Composable
-fun PickerScreen(state: PickerUiState, actions: PickerActions) {
-    val listState = rememberScalingLazyListState()
+fun HomeScreen(state: HomeUiState, actions: HomeActions) {
+    // Start centered on the mascot: it is the main way in; the list is just below.
+    val listState = rememberScalingLazyListState(initialCenterItemIndex = 0)
     ScreenScaffold(scrollState = listState) { contentPadding ->
         ScalingLazyColumn(state = listState, contentPadding = contentPadding) {
-            item { PickerHeader(onLongPress = actions.onOpenDebug) }
+            item { MascotHeader(onTalk = actions.onTalk, onLongPress = actions.onOpenDebug) }
             if (state.isFocusWindow) item { HintText(stringResource(R.string.picker_focus_window)) }
             if (state.activities.isEmpty()) item { HintText(stringResource(R.string.picker_empty)) }
             items(state.activities, key = { it.id.value }) { activity ->
@@ -106,15 +108,6 @@ fun PickerScreen(state: PickerUiState, actions: PickerActions) {
             item { SummaryButton(onClick = actions.onOpenSummary) }
             state.energy?.let { energy -> item { MiniEnergy(energy) } }
         }
-    }
-}
-
-/** Title; in debug builds a long press opens the debug tools. */
-@Composable
-private fun PickerHeader(onLongPress: (() -> Unit)?) {
-    val modifier = onLongPress?.let { Modifier.combinedClickable(onClick = {}, onLongClick = it) } ?: Modifier
-    ListHeader(modifier = modifier) {
-        Text(stringResource(R.string.picker_title), fontSize = StateAiDimens.Body, color = StateAiColors.Text3)
     }
 }
 

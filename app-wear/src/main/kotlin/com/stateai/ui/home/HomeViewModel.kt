@@ -1,4 +1,4 @@
-package com.stateai.ui.picker
+package com.stateai.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,25 +16,25 @@ import kotlinx.coroutines.flow.stateIn
 
 private const val STOP_TIMEOUT_MILLIS = 5_000L
 
-class PickerViewModel(
+class HomeViewModel(
     repository: ActivityRepository,
     suggestedActivity: Flow<ActivityId?>,
     focusWindow: Flow<Boolean>,
     energy: Flow<EnergyBudget>,
 ) : ViewModel() {
-    val uiState: StateFlow<PickerUiState> = combine(
+    val uiState: StateFlow<HomeUiState> = combine(
         repository.observeActive(),
         suggestedActivity.onStart { emit(null) },
         focusWindow.onStart { emit(false) },
         energy.map<EnergyBudget, EnergyBudget?> { it }.onStart { emit(null) },
     ) { activities, suggestedId, isFocusWindow, energyBudget ->
         val suggested = activities.firstOrNull { it.id == suggestedId }
-        PickerUiState(
+        HomeUiState(
             activities = listOfNotNull(suggested) + activities.filterNot { it == suggested },
             suggested = suggested,
             canCreateNew = activities.size < ActivityLimits.MAX_ACTIVE,
             isFocusWindow = isFocusWindow,
             energy = energyBudget,
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), PickerUiState())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), HomeUiState())
 }

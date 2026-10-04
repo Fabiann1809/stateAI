@@ -387,7 +387,7 @@ The mascot changes expression only, never with energy. State engine, energy and 
 - [x] **T-10.1** Import the 5 expressions as VectorDrawables and document their names. *Done when:* the drawables build and `docs/mascot.md` lists them.
 - [x] **T-10.2** `Mascot(expression)` composable with the 5 expressions and round previews. *Done when:* every expression renders like the design sheet.
 - [x] **T-10.3** Subtle idle animation (tip sway), off in ambient mode and with "remove animations". *Done when:* it moves at rest and stops in both cases.
-- [ ] **T-10.4** Home screen: mascot with "Toca y dime qué vas a hacer", suggested and recent activities below. *Done when:* it is the start screen and the list still starts sessions.
+- [x] **T-10.4** Home screen: mascot with "Toca y dime qué vas a hacer", suggested and recent activities below. *Done when:* it is the start screen and the list still starts sessions.
 - [ ] **T-10.5** Mascot name chosen on first use (DataStore). *Done when:* it is asked once and shown afterwards.
 - [ ] **T-10.6** RECORD_AUDIO permission with an explanation; refusal falls back to the list. *Done when:* both answers are handled.
 - [ ] **T-10.7** `SpeechInput` with on-device recognizer, system recognizer (with consent) and text input for debug/emulator, in Spanish. *Done when:* the right one is chosen at run time.

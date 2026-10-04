@@ -7,18 +7,18 @@ import com.stateai.domain.segment.SegmentId
 import com.stateai.ui.feedback.FeedbackRoute
 import com.stateai.ui.sessionsummary.SessionSummaryRoute
 
-/** After a session ends: "how did you feel?" (answer or skip), then the session summary, then the picker. */
+/** After a session ends: "how did you feel?" (answer or skip), then the session summary, then the home screen. */
 fun NavGraphBuilder.sessionEndDestinations(navController: NavHostController) {
     composable(Routes.FEEDBACK) { entry ->
         val segmentId = SegmentId(entry.idArgument())
         FeedbackRoute(segmentId = segmentId, onDone = {
-            navController.navigate(Routes.sessionSummary(segmentId)) { popUpTo(Routes.PICKER) }
+            navController.navigate(Routes.sessionSummary(segmentId)) { popUpTo(Routes.HOME) }
         })
     }
     composable(Routes.SESSION_SUMMARY) { entry ->
         SessionSummaryRoute(
             segmentId = SegmentId(entry.idArgument()),
-            onDone = { navController.popBackStack(Routes.PICKER, inclusive = false) },
+            onDone = { navController.popBackStack(Routes.HOME, inclusive = false) },
         )
     }
 }

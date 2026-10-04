@@ -5,7 +5,7 @@ import com.stateai.domain.segment.SegmentId
 
 /** Navigation destinations of the watch app. */
 object Routes {
-    const val PICKER = "picker"
+    const val HOME = "home"
     const val DEBUG_MENU = "debug"
     const val DEBUG_HAPTICS = "debug/haptics"
     const val DEBUG_SENSORS = "debug/sensors"

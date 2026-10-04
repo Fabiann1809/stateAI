@@ -8,7 +8,7 @@ import com.stateai.ui.debug.HapticsDebugScreen
 import com.stateai.ui.debug.MascotDebugScreen
 import com.stateai.ui.debug.SensorsDebugScreen
 
-/** Debug tools; only reachable from the picker in debug builds. */
+/** Debug tools; only reachable from the home screen in debug builds. */
 fun NavGraphBuilder.debugDestinations(navController: NavHostController) {
     composable(Routes.DEBUG_MENU) {
         DebugMenuScreen(
