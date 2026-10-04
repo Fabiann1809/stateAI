@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+# Full verification before pushing: build, static analysis and tests.
+set -eu
+
+if [ -f gradlew ]; then
+    sh gradlew --quiet check
+fi
+
+python_bin=$(sh scripts/python-env.sh)
+if [ -d ml-python/tests ] && [ -n "$python_bin" ]; then
+    (cd ml-python && "../$python_bin" -m pytest -q)
+fi

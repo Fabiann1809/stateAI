@@ -1,0 +1,22 @@
+#!/usr/bin/env sh
+# Fast checks on staged files: size limits, Kotlin lint and Python lint.
+set -eu
+
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+[ -n "$staged" ] || exit 0
+
+# shellcheck disable=SC2086
+sh scripts/check-file-size.sh $staged
+
+if printf '%s\n' "$staged" | grep -Eq '\.(kt|kts)$' && [ -f gradlew ]; then
+    sh gradlew --quiet ktlintCheck detekt
+fi
+
+if printf '%s\n' "$staged" | grep -q '^ml-python/.*\.py$'; then
+    python_bin=$(sh scripts/python-env.sh)
+    if [ -n "$python_bin" ]; then
+        (cd ml-python && "../$python_bin" -m ruff check . && "../$python_bin" -m ruff format --check .)
+    else
+        echo "ml-python virtual environment not found; skipping ruff."
+    fi
+fi
