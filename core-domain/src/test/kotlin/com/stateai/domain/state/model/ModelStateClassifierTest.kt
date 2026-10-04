@@ -4,6 +4,7 @@ import com.stateai.domain.baseline.UserBaseline
 import com.stateai.domain.features.FeatureWindow
 import com.stateai.domain.profile.DefaultCategoryProfiles
 import com.stateai.domain.state.ActivationLevel
+import com.stateai.domain.state.RuleBasedClassifier
 import java.time.Instant
 import kotlin.time.Duration.Companion.minutes
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -48,6 +49,37 @@ class ModelStateClassifierTest {
             }).classify(window(null), baseline, study, 1.minutes),
         )
     }
+
+    @Test
+    fun `a model that throws falls back to the rules`() {
+        val broken = ModelStateClassifier({ error("model cannot run") })
+
+        assertEquals(rulesFor(window(90.0)), broken.classify(window(90.0), baseline, study, 5.minutes))
+    }
+
+    @Test
+    fun `a malformed model output falls back to the rules`() {
+        val malformed = ModelStateClassifier({ floatArrayOf(Float.NaN, Float.NaN, Float.NaN) })
+
+        assertEquals(rulesFor(window(90.0)), malformed.classify(window(90.0), baseline, study, 5.minutes))
+    }
+
+    @Test
+    fun `an unsure model falls back to the rules`() {
+        val unsure = ModelStateClassifier({ floatArrayOf(0.45f, 0.1f, 0.45f) })
+
+        assertEquals(rulesFor(window(90.0)), unsure.classify(window(90.0), baseline, study, 5.minutes))
+    }
+
+    @Test
+    fun `a confident model overrides the rules`() {
+        val confident = ModelStateClassifier({ floatArrayOf(0.9f, 0.05f, 0.05f) })
+
+        assertEquals(ActivationLevel.HIGH, rulesFor(window(90.0))?.level)
+        assertEquals(ActivationLevel.LOW, confident.classify(window(90.0), baseline, study, 5.minutes)?.level)
+    }
+
+    private fun rulesFor(window: FeatureWindow) = RuleBasedClassifier().classify(window, baseline, study, 5.minutes)
 
     private fun window(heartRate: Double?, fidgets: Int = 0) = FeatureWindow(
         Instant.EPOCH, Instant.EPOCH.plusSeconds(180), 180, if (heartRate == null) 0 else 180,
