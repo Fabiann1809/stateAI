@@ -11,9 +11,12 @@ import com.stateai.domain.haptics.RateLimitedHapticPlayer
 import com.stateai.domain.profile.CategoryDefaultsProfileProvider
 import com.stateai.domain.profile.DefaultCategoryProfiles
 import com.stateai.domain.profile.ProfileProvider
+import com.stateai.domain.sensing.SensorSource
 import com.stateai.domain.session.SessionTracker
 import com.stateai.domain.session.StartSession
 import com.stateai.haptics.VibratorHapticPlayer
+import com.stateai.sensors.simulation.SimulatedSensorSource
+import com.stateai.sensors.simulation.SimulationController
 import java.time.Clock
 import java.util.UUID
 
@@ -22,6 +25,8 @@ class AppContainer(context: Context) {
     val clock: Clock = Clock.systemUTC()
     val activityRepository: ActivityRepository = InMemoryActivityRepository()
     val sessionTracker = SessionTracker()
+    val simulationController = SimulationController()
+    val sensorSource: SensorSource = SimulatedSensorSource(simulationController.scenario, clock)
 
     /** Plays every event; used by the debug screen. */
     val hapticPlayer: HapticPlayer = VibratorHapticPlayer(context)
