@@ -2,10 +2,10 @@ package com.stateai.ui.session
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.stateai.common.clockTicks
 import com.stateai.domain.activity.ActivityId
 import com.stateai.domain.session.SessionTracker
 import com.stateai.domain.session.StartSession
-import com.stateai.ui.common.clockTicks
 import java.time.Clock
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

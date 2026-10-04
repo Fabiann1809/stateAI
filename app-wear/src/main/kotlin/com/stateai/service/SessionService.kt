@@ -7,14 +7,19 @@ import androidx.core.app.ServiceCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.stateai.StateAiApplication
+import com.stateai.common.clockTicks
 import com.stateai.domain.session.ActiveSession
+import com.stateai.domain.session.SessionHapticCues
 import com.stateai.ui.common.activityTitle
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
 /** Keeps the process alive while a session runs, so it continues with the screen off. */
 class SessionService : LifecycleService() {
     private val container by lazy { (application as StateAiApplication).container }
     private val notifications by lazy { SessionNotificationFactory(this, container.clock) }
+    private val hapticCues by lazy { SessionHapticCues(container.sessionHapticPlayer) }
 
     override fun onCreate() {
         super.onCreate()
@@ -23,6 +28,11 @@ class SessionService : LifecycleService() {
             container.sessionTracker.activeSession.collect { session ->
                 if (session == null) stopSelf() else showForeground(session)
             }
+        }
+        lifecycleScope.launch {
+            val sessions = container.sessionTracker.activeSession.filterNotNull()
+            combine(sessions, clockTicks(container.clock)) { session, now -> session to now }
+                .collect { (session, now) -> hapticCues.onTick(session, now) }
         }
     }
 

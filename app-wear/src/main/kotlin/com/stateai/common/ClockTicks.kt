@@ -1,4 +1,4 @@
-package com.stateai.ui.common
+package com.stateai.common
 
 import java.time.Clock
 import java.time.Instant
