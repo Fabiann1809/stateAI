@@ -1,0 +1,362 @@
+[
+  {
+    "name": "steady_rest80_min5",
+    "window": "steady",
+    "resting_heart_rate": 80.0,
+    "elapsed_minutes": 5.0,
+    "inputs": [
+      -15.0,
+      0.7071067811865476,
+      1.0,
+      0.05,
+      0.0,
+      5.0
+    ],
+    "probabilities": [
+      0.9979211177206015,
+      0.00207888227928247,
+      1.159703790338885e-13
+    ],
+    "level": "LOW"
+  },
+  {
+    "name": "steady_rest66_min25",
+    "window": "steady",
+    "resting_heart_rate": 66.0,
+    "elapsed_minutes": 25.0,
+    "inputs": [
+      -1.0,
+      0.7071067811865476,
+      1.0,
+      0.05,
+      0.0,
+      25.0
+    ],
+    "probabilities": [
+      0.4972395703523329,
+      0.5025254541198907,
+      0.00023497552777642768
+    ],
+    "level": "MEDIUM"
+  },
+  {
+    "name": "steady_rest52_min60",
+    "window": "steady",
+    "resting_heart_rate": 52.0,
+    "elapsed_minutes": 60.0,
+    "inputs": [
+      13.0,
+      0.7071067811865476,
+      1.0,
+      0.05,
+      0.0,
+      60.0
+    ],
+    "probabilities": [
+      5.321112206253861e-07,
+      0.00028787730082543257,
+      0.999711590587954
+    ],
+    "level": "HIGH"
+  },
+  {
+    "name": "missing_heart_rate_rest80_min5",
+    "window": "missing_heart_rate",
+    "resting_heart_rate": 80.0,
+    "elapsed_minutes": 5.0,
+    "inputs": [
+      -17.0,
+      2.160246899469287,
+      1.0,
+      0.1,
+      0.0,
+      5.0
+    ],
+    "probabilities": [
+      0.9064035295803858,
+      0.09359647041785181,
+      1.7623390256716826e-12
+    ],
+    "level": "LOW"
+  },
+  {
+    "name": "missing_heart_rate_rest66_min25",
+    "window": "missing_heart_rate",
+    "resting_heart_rate": 66.0,
+    "elapsed_minutes": 25.0,
+    "inputs": [
+      -3.0,
+      2.160246899469287,
+      1.0,
+      0.1,
+      0.0,
+      25.0
+    ],
+    "probabilities": [
+      0.019568261474787317,
+      0.9802770257412567,
+      0.00015471278395572823
+    ],
+    "level": "MEDIUM"
+  },
+  {
+    "name": "missing_heart_rate_rest52_min60",
+    "window": "missing_heart_rate",
+    "resting_heart_rate": 52.0,
+    "elapsed_minutes": 60.0,
+    "inputs": [
+      11.0,
+      2.160246899469287,
+      1.0,
+      0.1,
+      0.0,
+      60.0
+    ],
+    "probabilities": [
+      3.178632453752439e-08,
+      0.0008524119267622736,
+      0.9991475562869131
+    ],
+    "level": "HIGH"
+  },
+  {
+    "name": "fidget_bursts_rest80_min5",
+    "window": "fidget_bursts",
+    "resting_heart_rate": 80.0,
+    "elapsed_minutes": 5.0,
+    "inputs": [
+      -10.0,
+      0.0,
+      0.0,
+      0.9714285714285714,
+      2.0,
+      5.0
+    ],
+    "probabilities": [
+      9.636206094960133e-46,
+      0.9999888368099775,
+      1.1163190022426654e-05
+    ],
+    "level": "MEDIUM"
+  },
+  {
+    "name": "fidget_bursts_rest66_min25",
+    "window": "fidget_bursts",
+    "resting_heart_rate": 66.0,
+    "elapsed_minutes": 25.0,
+    "inputs": [
+      4.0,
+      0.0,
+      0.0,
+      0.9714285714285714,
+      2.0,
+      25.0
+    ],
+    "probabilities": [
+      2.1003658897053713e-50,
+      0.01057408328301017,
+      0.9894259167169899
+    ],
+    "level": "HIGH"
+  },
+  {
+    "name": "fidget_bursts_rest52_min60",
+    "window": "fidget_bursts",
+    "resting_heart_rate": 52.0,
+    "elapsed_minutes": 60.0,
+    "inputs": [
+      18.0,
+      0.0,
+      0.0,
+      0.9714285714285714,
+      2.0,
+      60.0
+    ],
+    "probabilities": [
+      5.339447429743305e-60,
+      1.4389864610402135e-09,
+      0.9999999985610135
+    ],
+    "level": "HIGH"
+  },
+  {
+    "name": "walking_rest80_min5",
+    "window": "walking",
+    "resting_heart_rate": 80.0,
+    "elapsed_minutes": 5.0,
+    "inputs": [
+      10.0,
+      0.0,
+      0.0,
+      0.8833333333333333,
+      0.0,
+      5.0
+    ],
+    "probabilities": [
+      1.3236939413646016e-51,
+      1.2698661629196022e-05,
+      0.9999873013383708
+    ],
+    "level": "HIGH"
+  },
+  {
+    "name": "walking_rest66_min25",
+    "window": "walking",
+    "resting_heart_rate": 66.0,
+    "elapsed_minutes": 25.0,
+    "inputs": [
+      24.0,
+      0.0,
+      0.0,
+      0.8833333333333333,
+      0.0,
+      25.0
+    ],
+    "probabilities": [
+      3.255269943552949e-61,
+      1.5150120124631955e-12,
+      0.999999999998485
+    ],
+    "level": "HIGH"
+  },
+  {
+    "name": "walking_rest52_min60",
+    "window": "walking",
+    "resting_heart_rate": 52.0,
+    "elapsed_minutes": 60.0,
+    "inputs": [
+      38.0,
+      0.0,
+      0.0,
+      0.8833333333333333,
+      0.0,
+      60.0
+    ],
+    "probabilities": [
+      8.187883395296896e-71,
+      2.0399209589886456e-19,
+      1.0
+    ],
+    "level": "HIGH"
+  },
+  {
+    "name": "noisy_window_rest80_min5",
+    "window": "noisy_window",
+    "resting_heart_rate": 80.0,
+    "elapsed_minutes": 5.0,
+    "inputs": [
+      -11.836072222222214,
+      2.1738095389087375,
+      2.4714525139664802,
+      0.08957777777777777,
+      0.0,
+      5.0
+    ],
+    "probabilities": [
+      0.7115775954401656,
+      0.28842239591361574,
+      8.646218668284706e-09
+    ],
+    "level": "LOW"
+  },
+  {
+    "name": "noisy_window_rest66_min25",
+    "window": "noisy_window",
+    "resting_heart_rate": 66.0,
+    "elapsed_minutes": 25.0,
+    "inputs": [
+      2.1639277777777863,
+      2.1738095389087375,
+      2.4714525139664802,
+      0.08957777777777777,
+      0.0,
+      25.0
+    ],
+    "probabilities": [
+      0.004047820460227621,
+      0.7959515888160537,
+      0.2000005907237187
+    ],
+    "level": "MEDIUM"
+  },
+  {
+    "name": "noisy_window_rest52_min60",
+    "window": "noisy_window",
+    "resting_heart_rate": 52.0,
+    "elapsed_minutes": 60.0,
+    "inputs": [
+      16.163927777777786,
+      2.1738095389087375,
+      2.4714525139664802,
+      0.08957777777777777,
+      0.0,
+      60.0
+    ],
+    "probabilities": [
+      5.090663271579565e-12,
+      5.358613163533261e-07,
+      0.999999464133593
+    ],
+    "level": "HIGH"
+  },
+  {
+    "name": "noisy_window_with_gaps_rest80_min5",
+    "window": "noisy_window_with_gaps",
+    "resting_heart_rate": 80.0,
+    "elapsed_minutes": 5.0,
+    "inputs": [
+      -11.782987012987007,
+      2.0973063831415764,
+      2.426421874999999,
+      0.08957777777777777,
+      0.0,
+      5.0
+    ],
+    "probabilities": [
+      0.6952815469165611,
+      0.3047184441796088,
+      8.90383019039488e-09
+    ],
+    "level": "LOW"
+  },
+  {
+    "name": "noisy_window_with_gaps_rest66_min25",
+    "window": "noisy_window_with_gaps",
+    "resting_heart_rate": 66.0,
+    "elapsed_minutes": 25.0,
+    "inputs": [
+      2.2170129870129927,
+      2.0973063831415764,
+      2.426421874999999,
+      0.08957777777777777,
+      0.0,
+      25.0
+    ],
+    "probabilities": [
+      0.0037637771243279623,
+      0.8002406996373614,
+      0.19599552323831054
+    ],
+    "level": "MEDIUM"
+  },
+  {
+    "name": "noisy_window_with_gaps_rest52_min60",
+    "window": "noisy_window_with_gaps",
+    "resting_heart_rate": 52.0,
+    "elapsed_minutes": 60.0,
+    "inputs": [
+      16.217012987012993,
+      2.0973063831415764,
+      2.426421874999999,
+      0.08957777777777777,
+      0.0,
+      60.0
+    ],
+    "probabilities": [
+      4.830167025785988e-12,
+      5.497579378778305e-07,
+      0.999999450237232
+    ],
+    "level": "HIGH"
+  }
+]

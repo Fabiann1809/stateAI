@@ -9,6 +9,10 @@ android {
     androidResources {
         noCompress += "tflite"
     }
+    sourceSets {
+        // Shared parity cases generated in ml-python, read by the instrumented parity test.
+        getByName("androidTest").assets.srcDir("../shared/parity")
+    }
 }
 
 dependencies {

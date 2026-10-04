@@ -357,7 +357,7 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 - [x] **T-7.1** `:ml` module that loads the `.tflite` and classifies a `FeatureWindow`. *Done when:* it returns an `ActivationLevel` on the emulator.
 - [x] **T-7.2** `StateClassifier` interface with two implementations: rules and model. *Done when:* switchable by configuration.
 - [x] **T-7.3** Automatic fallback to rules if the model fails or its confidence is low. *Done when:* a test with a "broken" model uses rules.
-- [ ] **T-7.4** Kotlin/Python parity test on sample features. *Done when:* predictions match within tolerance.
+- [x] **T-7.4** Kotlin/Python parity test on sample features. *Done when:* predictions match within tolerance.
 
 ### Phase 8: Evaluation and demo
 - [ ] **T-8.1** Script that simulates a day with a fixed timer (baseline). *Done when:* it produces metrics of time in focus, overload and pauses.

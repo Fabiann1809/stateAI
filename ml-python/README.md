@@ -40,7 +40,13 @@ python -m stateai_ml.evaluate_classifier                    # trains, compares w
 pip install -r requirements-export.txt                     # TensorFlow, only needed to export
 python -m stateai_ml.export_tflite                          # writes models/state_classifier.tflite and
                                                             # checks it matches the original model
+python -m stateai_ml.prediction_parity                      # writes shared/parity/prediction_cases.json
 ```
+
+After exporting, copy `models/state_classifier.tflite` into `ml/src/main/assets` (a unit test in `:ml`
+fails if they differ) and regenerate the prediction cases. Kotlin checks them in two places: the model
+inputs in `ModelInputsParityTest` (JVM) and the TFLite probabilities in `PredictionParityTest`
+(`./gradlew :ml:connectedDebugAndroidTest`, needs an emulator).
 
 CI installs only `requirements.txt`; the TFLite comparison test is skipped there and runs locally
 when TensorFlow is installed.
