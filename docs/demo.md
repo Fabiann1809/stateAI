@@ -31,7 +31,7 @@ el emulador suele usar la hora GMT, que puede no coincidir con la tuya.
 
 ## Recorrido (unos 5 minutos)
 
-1. **Inicio.** La mascota grande sobre un resplandor turquesa y "Toca a <nombre> y dime qué vas a hacer".
+1. **Inicio.** La mascota grande sobre un resplandor turquesa y "Toca a <nombre> y dile qué vas a hacer".
    Abajo, tres accesos: **Actividades** (la lista con la sugerida y "Nueva"), la energía estimada y el
    **Resumen del día**.
 2. **Voz.** Toca la mascota. En el emulador no hay reconocedor de voz, así que se abre el teclado:
