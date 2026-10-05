@@ -22,6 +22,20 @@ class HourlyFocusTest {
     }
 
     @Test
+    fun `an hour seen on too few days cannot be the best`() {
+        val profile = FocusProfile(
+            bySlot = emptyMap(),
+            byHour = mapOf(9 to SlotStats(0.6, 300, 14), 20 to SlotStats(1.0, 20, 1)),
+            overallFocusShare = 0.6,
+        )
+
+        val hourly = HourlyFocus.of(profile)
+
+        assertEquals(9, hourly.bestHour)
+        assertEquals(14, hourly.bestHourDays)
+    }
+
+    @Test
     fun `no data gives no hours and no best hour`() {
         val hourly = HourlyFocus.of(FocusProfile.EMPTY)
 

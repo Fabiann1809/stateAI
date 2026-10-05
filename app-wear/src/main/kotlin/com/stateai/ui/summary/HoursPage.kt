@@ -31,7 +31,7 @@ fun HoursPage(hourly: HourlyFocus, isLearning: Boolean) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         PageTitle(stringResource(R.string.hours_title))
         val best = hourly.bestHour
-        if (hourly.hours.isEmpty() || best == null) {
+        if (hourly.hours.isEmpty()) {
             MissingData(stringResource(R.string.summary_missing_data), Modifier.width(CHART_WIDTH))
             return@Column
         }
@@ -40,30 +40,45 @@ fun HoursPage(hourly: HourlyFocus, isLearning: Boolean) {
             modifier = Modifier.size(width = CHART_WIDTH, height = CHART_HEIGHT),
             dimAlpha = DIM_ALPHA,
         )
-        Row(Modifier.width(CHART_WIDTH)) {
-            hourly.hours.forEach { hour ->
-                Text(
-                    text = if (hour.hour % LABEL_EVERY == 0) hour.hour.toString() else "",
-                    fontSize = StateAiDimens.Label,
-                    color = StateAiColors.Text3,
-                    textAlign = TextAlign.Center,
-                    maxLines = 1,
-                    softWrap = false,
-                    modifier = Modifier.weight(1f),
-                )
-            }
-        }
-        Text(stringResource(R.string.hours_best, best, best + 1), fontSize = BEST_SIZE, fontWeight = FontWeight.Medium)
-        Text(
-            text = if (isLearning) {
-                stringResource(R.string.summary_learning)
-            } else {
-                pluralStringResource(R.plurals.days_support, hourly.bestHourDays, hourly.bestHourDays)
-            },
-            fontSize = StateAiDimens.Label,
-            color = StateAiColors.Text2,
-        )
+        HourLabels(hourly)
+        BestHour(best, hourly.bestHourDays, isLearning)
     }
+}
+
+@Composable
+private fun HourLabels(hourly: HourlyFocus) {
+    Row(Modifier.width(CHART_WIDTH)) {
+        hourly.hours.forEach { hour ->
+            Text(
+                text = if (hour.hour % LABEL_EVERY == 0) hour.hour.toString() else "",
+                fontSize = StateAiDimens.Label,
+                color = StateAiColors.Text3,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                softWrap = false,
+                modifier = Modifier.weight(1f),
+            )
+        }
+    }
+}
+
+/** The best hour and how many days support it, or "still learning" while no hour has enough days. */
+@Composable
+private fun BestHour(best: Int?, days: Int, isLearning: Boolean) {
+    if (best == null) {
+        Text(stringResource(R.string.summary_learning), fontSize = StateAiDimens.Label, color = StateAiColors.Text2)
+        return
+    }
+    Text(stringResource(R.string.hours_best, best, best + 1), fontSize = BEST_SIZE, fontWeight = FontWeight.Medium)
+    Text(
+        text = if (isLearning) {
+            stringResource(R.string.summary_learning)
+        } else {
+            pluralStringResource(R.plurals.days_support, days, days)
+        },
+        fontSize = StateAiDimens.Label,
+        color = StateAiColors.Text2,
+    )
 }
 
 private val CHART_WIDTH = 160.dp
