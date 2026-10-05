@@ -3,6 +3,9 @@
     <string name="app_name">stateAI</string>
 
     <string name="home_talk_hint">Toca y dime qué vas a hacer</string>
+    <string name="home_talk_hint_named">Toca a %1$s y dime qué vas a hacer</string>
+    <string name="home_activities">Actividades</string>
+    <string name="activities_title">¿Qué vas a hacer?</string>
     <string name="picker_empty">Crea tu primera actividad</string>
     <string name="picker_new">Nueva</string>
     <string name="picker_suggested">Sugerida para esta hora</string>

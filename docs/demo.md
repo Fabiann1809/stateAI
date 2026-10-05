@@ -25,13 +25,15 @@ vea lo que la app aprende. **Todos los datos de la demo son simulados**: el hist
    foco, sobrecarga, recuperación e inquietud en 30 minutos; "Sobrecarga" muestra antes la alerta.
 
 La rutina simulada es: Tesis a las 9:00, Bases de datos a las 11:30 y a las 18:00, y a las 15:00
-Reuniones (lunes, miércoles y viernes) o la Novela. La tarjeta "Sugerida" aparece a esas horas. Ojo:
+Reuniones (lunes, miércoles y viernes) o la Novela. La tarjeta "Sugerida" aparece a esas horas, primera
+en la pantalla de Actividades. Ojo:
 el emulador suele usar la hora GMT, que puede no coincidir con la tuya.
 
 ## Recorrido (unos 5 minutos)
 
-1. **Inicio.** La mascota con su nombre y "Toca y dime qué vas a hacer". Debajo, la sugerida, las
-   actividades, "Nueva", "Resumen del día" y la energía estimada.
+1. **Inicio.** La mascota grande sobre un resplandor turquesa y "Toca a <nombre> y dime qué vas a hacer".
+   Abajo, tres accesos: **Actividades** (la lista con la sugerida y "Nueva"), la energía estimada y el
+   **Resumen del día**.
 2. **Voz.** Toca la mascota. En el emulador no hay reconocedor de voz, así que se abre el teclado:
    escribe, por ejemplo, `voy a estudiar bases de datos`. La mascota pasa a "pensando" y luego aparece
    "¿Empezamos? Estudio: Bases de datos" con una cuenta atrás de 3 s. Prueba también "Cambiar" o

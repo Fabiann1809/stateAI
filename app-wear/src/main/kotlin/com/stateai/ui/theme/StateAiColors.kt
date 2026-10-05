@@ -20,6 +20,10 @@ object StateAiColors {
     val NoData = Color(0xFF6B7280)
 
     val Accent = Color(0xFF5EEAD4)
+
+    /** Background glow of the main screen: a very dark turquoise that fades into black. */
+    val GlowCenter = Color(0xFF0F3634)
+    val GlowEdge = Color(0xFF07191A)
     val OnAccent = Color(0xFF04201C)
 
     /** Everything in ambient mode: no saturated color. */
