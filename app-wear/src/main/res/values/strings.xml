@@ -9,7 +9,7 @@
     <string name="picker_empty">Crea tu primera actividad</string>
     <string name="picker_new">Nueva</string>
     <string name="picker_suggested">Sugerida para esta hora</string>
-    <string name="picker_focus_window">Buen momento para enfocarte</string>
+    <string name="picker_focus_window">Buen momento para concentrarte</string>
     <string name="picker_limit_reached">Máximo 10 actividades</string>
 
     <string name="new_activity_category_title">Nueva · categoría</string>
@@ -38,11 +38,11 @@
     <string name="debug_sensors_title">Sensores simulados</string>
     <string name="debug_sensors_waiting">Esperando datos…</string>
     <string name="debug_sensors_live">FC %1$s lpm · Mov %2$s</string>
-    <string name="scenario_deep_focus">Foco profundo</string>
+    <string name="scenario_deep_focus">Concentración profunda</string>
     <string name="scenario_overload">Sobrecarga</string>
     <string name="scenario_fatigue">Fatiga</string>
     <string name="scenario_mixed">Sesión mixta</string>
-    <string name="state_focused">Enfocado</string>
+    <string name="state_focused">Concentrado</string>
     <string name="state_normal">Normal</string>
     <string name="state_overloaded">Sobrecarga</string>
     <string name="state_exhausted">Agotado</string>
@@ -53,7 +53,7 @@
     <string name="feedback_okay">Regular</string>
     <string name="feedback_bad">Mal</string>
     <string name="summary_open">Resumen del día</string>
-    <string name="summary_focus">Foco</string>
+    <string name="summary_focus">Concentración</string>
     <string name="summary_recovery">Recuperación</string>
     <string name="summary_load">Carga sostenible</string>
     <string name="summary_consistency">Constancia</string>
@@ -64,7 +64,7 @@
     <string name="rest_tip">Levántate, estírate y toma agua.</string>
     <string name="suggestion_overload">Llevas un rato en sobrecarga. ¿Respiramos un minuto?</string>
     <string name="suggestion_restless">Te noto inquieto. ¿Un descanso para moverte?</string>
-    <string name="suggestion_left_focus">Buen tramo de foco. ¿Respiras un momento antes de seguir?</string>
+    <string name="suggestion_left_focus">Llevas un buen rato concentrado. ¿Respiras un momento?</string>
     <string name="suggestion_block_done">Cumpliste tu bloque de %1$d min. ¿Un descanso?</string>
     <string name="suggestion_long_session">Llevas %1$s seguido. ¿Un descanso corto?</string>
     <string name="suggestion_breathe">Respirar</string>
@@ -102,16 +102,16 @@
     <string name="summary_missing_data">Faltan datos para mostrar esto</string>
     <string name="summary_factors">Factores</string>
     <string name="summary_today">Hoy · %1$s</string>
-    <string name="summary_focus_time">Foco: %1$s</string>
+    <string name="summary_focus_time">Concentrado: %1$s</string>
     <string name="summary_states_estimated">Estados estimados</string>
     <string name="summary_hour">%1$d:00</string>
-    <string name="cycle_title">Ciclo de foco</string>
+    <string name="cycle_title">Ciclo de concentración</string>
     <string name="cycle_value">~%1$d min</string>
-    <string name="cycle_detected">Tu ciclo de foco es de ~%1$d min</string>
+    <string name="cycle_detected">Tu ciclo de concentración es de ~%1$d min</string>
     <string name="cycle_none">Sin patrón claro</string>
     <string name="cycle_none_detail">Aún no se detecta un patrón claro</string>
     <string name="week_title">Tu semana</string>
-    <string name="hours_title">Foco por hora</string>
+    <string name="hours_title">Concentración por hora</string>
     <string name="hours_best">Mejor franja: %1$d-%2$d</string>
     <plurals name="days_support">
         <item quantity="one">%d día lo respalda</item>

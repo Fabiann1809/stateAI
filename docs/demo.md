@@ -39,7 +39,7 @@ el emulador suele usar la hora GMT, que puede no coincidir con la tuya.
    "¿Empezamos? Estudio: Bases de datos" con una cuenta atrás de 3 s. Prueba también "Cambiar" o
    "Cancelar", o una frase que no entienda (por ejemplo `hola`) para ver la vuelta a la lista.
 3. **Sesión.** Cronómetro, anillo de progreso, estado en vivo y silueta de energía. Tras unos 3 minutos
-   aparece el primer estado ("Enfocado"); con "Sesión mixta" cambia a Normal y a Sobrecarga hacia el
+   aparece el primer estado ("Concentrado"); con "Sesión mixta" cambia a Normal y a Sobrecarga hacia el
    minuto 16-21. Desliza a la izquierda para ver la página de **Energía**.
 4. **Pausa guiada.** Botón de pausa → círculo de respiración (inhala 4 s, exhala 6 s) → "Volver".
 5. **Terminar.** Botón ✓ → "¿Cómo te sentiste?" (o "Omitir") → **resumen de la sesión**: anillo de
@@ -54,7 +54,7 @@ el emulador suele usar la hora GMT, que puede no coincidir con la tuya.
   las 10:00 en la hora del emulador), hoy aún estará vacío: vuelve a pulsar "Cargar demo" más tarde o
   haz una sesión.
 - **La semana** (D6) muestra los días anteriores y hoy.
-- **Foco por hora** (D7) muestra la mejor franja solo si la respaldan al menos 3 días.
+- **Concentración por hora** (D7) muestra la mejor franja solo si la respaldan al menos 3 días.
 - **El ciclo de foco** (D5) dirá casi seguro "Sin patrón claro". Es coherente con `cycles.md`: con 14
   días y señales de este tipo, el detector no encuentra un ciclo, y no se forzó la demo para que lo
   hiciera.
