@@ -364,7 +364,7 @@ Convención: cada tarea es **corta** y tiene un criterio de "Hecho cuando". Marc
 - [x] **T-8.2** El mismo día con stateAI. *Hecho cuando:* produce las mismas métricas.
 - [x] **T-8.3** Informe de extremo a extremo con gráficas en un notebook. *Hecho cuando:* el notebook está en el repositorio e indica que los datos son simulados, que el resultado muestra que el sistema integrado funciona y que **no** demuestra superioridad con personas reales.
 - [x] **T-8.4** Informe de las pruebas de detección de ciclos (T-5.4 y T-5.5). *Hecho cuando:* hay una tabla de duración real frente a detectada.
-- [ ] **T-8.5** Preparar la demo: usuario sintético de 14 días, panel de simulación y flujo completo. *Hecho cuando:* se puede mostrar de principio a fin en el emulador.
+- [x] **T-8.5** Preparar la demo: usuario sintético de 14 días, panel de simulación y flujo completo. *Hecho cuando:* se puede mostrar de principio a fin en el emulador.
 - [ ] **T-8.6** Capturas o un video corto para el portafolio. *Hecho cuando:* están en `/docs/media`.
 - [ ] **T-8.7** Pulir el README: problema, arquitectura, decisiones, limitaciones, cómo ejecutarla. *Hecho cuando:* una persona ajena puede entenderlo en 5 minutos.
 

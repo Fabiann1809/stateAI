@@ -17,15 +17,17 @@ import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import com.stateai.R
+import com.stateai.demo.DemoLoadResult
 import com.stateai.di.appContainer
 import kotlinx.coroutines.launch
 
 /** Entry point to the debug tools (debug builds only). */
 @Composable
 fun DebugMenuScreen(onOpenHaptics: () -> Unit, onOpenSensors: () -> Unit, onOpenMascot: () -> Unit) {
-    val exporter = appContainer().insights.summaryExporter
+    val container = appContainer()
     val scope = rememberCoroutineScope()
     var exported by remember { mutableStateOf(false) }
+    var demo by remember { mutableStateOf<DemoLoadResult?>(null) }
     val listState = rememberScalingLazyListState()
     ScreenScaffold(scrollState = listState) { contentPadding ->
         ScalingLazyColumn(state = listState, contentPadding = contentPadding) {
@@ -34,11 +36,24 @@ fun DebugMenuScreen(onOpenHaptics: () -> Unit, onOpenSensors: () -> Unit, onOpen
             item { MenuButton(R.string.debug_haptics_title, onOpenHaptics) }
             item { MenuButton(R.string.debug_mascot_title, onOpenMascot) }
             item {
+                MenuButton(demo.labelRes()) { scope.launch { demo = container.demoLoader.load() } }
+            }
+            item {
                 val label = if (exported) R.string.debug_export_done else R.string.debug_export
-                MenuButton(label) { scope.launch { exporter.export().also { exported = true } } }
+                MenuButton(label) {
+                    scope.launch { container.insights.summaryExporter.export().also { exported = true } }
+                }
             }
         }
     }
+}
+
+@StringRes
+private fun DemoLoadResult?.labelRes(): Int = when (this) {
+    null -> R.string.debug_demo_load
+    is DemoLoadResult.Loaded -> R.string.debug_demo_loaded
+    DemoLoadResult.AlreadyLoaded -> R.string.debug_demo_already
+    DemoLoadResult.NoRoomForActivities -> R.string.debug_demo_no_room
 }
 
 @Composable

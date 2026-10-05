@@ -57,6 +57,10 @@
     <string name="pause_inhale">Inhala</string>
     <string name="pause_exhale">Exhala</string>
     <string name="pause_finish">Volver</string>
+    <string name="debug_demo_load">Cargar demo (14 días)</string>
+    <string name="debug_demo_loaded">Demo cargada ✓</string>
+    <string name="debug_demo_already">La demo ya está cargada</string>
+    <string name="debug_demo_no_room">No caben las actividades de la demo</string>
     <string name="debug_export">Exportar resúmenes</string>
     <string name="debug_export_done">Exportado ✓</string>
     <string name="summary_learning">Aprendiendo tus patrones…</string>

@@ -2,6 +2,8 @@ package com.stateai.di
 
 import android.content.Context
 import com.stateai.data.LocalStorage
+import com.stateai.demo.DemoLoader
+import com.stateai.demo.DemoTargets
 import com.stateai.domain.activity.ActivityId
 import com.stateai.domain.activity.ActivityRepository
 import com.stateai.domain.activity.CreateActivity
@@ -54,12 +56,13 @@ class AppContainer(context: Context) {
     val createActivity = CreateActivity(activityRepository) { ActivityId(UUID.randomUUID().toString()) }
     val guidedPause = GuidedPause(segmentRecorder, clock)
     val recordFeedback = RecordFeedback(segmentRepository, FeedbackSensitivityLearner(storage.learning))
-    val endSession = EndSession(
-        sessionTracker,
-        segmentRecorder,
-        segmentRepository,
-        clock,
-        learners = listOf(BaselineLearner(baselineKeeper), ActivityProfileLearner(storage.learning)),
+    private val segmentLearners = listOf(BaselineLearner(baselineKeeper), ActivityProfileLearner(storage.learning))
+    val endSession = EndSession(sessionTracker, segmentRecorder, segmentRepository, clock, segmentLearners)
+
+    /** Debug tool: 14 days of synthetic history for the demo, learned like real sessions. */
+    val demoLoader = DemoLoader(
+        DemoTargets(createActivity, activityRepository, segmentRepository, storage.baseline, segmentLearners),
+        localClock,
     )
     val startSession =
         StartSession(activityRepository, sessionTracker, profileProvider, segmentRecorder, endSession, clock)
