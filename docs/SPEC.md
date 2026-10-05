@@ -363,7 +363,7 @@ Convention: each task is **short**, with a "Done when" criterion. Mark `[x]` whe
 - [x] **T-8.1** Script that simulates a day with a fixed timer (baseline). *Done when:* it produces metrics of time in focus, overload and pauses.
 - [x] **T-8.2** The same day with stateAI. *Done when:* it produces the same metrics.
 - [x] **T-8.3** End-to-end report with charts in a notebook. *Done when:* the notebook is in the repo and states that the data is simulated, that the result shows the integrated system works and that it does **not** prove superiority on real people.
-- [ ] **T-8.4** Cycle detection test report (T-5.4 and T-5.5). *Done when:* table of real vs detected length.
+- [x] **T-8.4** Cycle detection test report (T-5.4 and T-5.5). *Done when:* table of real vs detected length.
 - [ ] **T-8.5** Prepare the demo: 14-day synthetic user, simulation panel and full flow. *Done when:* it can be shown end to end on the emulator.
 - [ ] **T-8.6** Screenshots or a short video for the portfolio. *Done when:* they are in `/docs/media`.
 - [ ] **T-8.7** Polish README: problem, architecture, decisions, limitations, how to run. *Done when:* an outside person can understand it in 5 minutes.

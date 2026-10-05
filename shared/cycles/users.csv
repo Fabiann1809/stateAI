@@ -1,0 +1,16 @@
+user,kind,period_minutes,drift_minutes,days
+cycle60-s60,cycle60,60.0,0.0,21
+cycle60-s1060,cycle60,60.0,0.0,21
+cycle60-s2060,cycle60,60.0,0.0,21
+cycle90-s90,cycle90,90.0,0.0,21
+cycle90-s1090,cycle90,90.0,0.0,21
+cycle90-s2090,cycle90,90.0,0.0,21
+cycle110-s110,cycle110,110.0,0.0,21
+cycle110-s1110,cycle110,110.0,0.0,21
+cycle110-s2110,cycle110,110.0,0.0,21
+no_cycle-s7,no_cycle,,0.0,21
+no_cycle-s1007,no_cycle,,0.0,21
+no_cycle-s2007,no_cycle,,0.0,21
+irregular-s95,irregular,95.0,20.0,21
+irregular-s1095,irregular,95.0,20.0,21
+irregular-s2095,irregular,95.0,20.0,21

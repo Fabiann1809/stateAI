@@ -41,6 +41,7 @@ pip install -r requirements-export.txt                     # TensorFlow, only ne
 python -m stateai_ml.export_tflite                          # writes models/state_classifier.tflite and
                                                             # checks it matches the original model
 python -m stateai_ml.prediction_parity                      # writes shared/parity/prediction_cases.json
+python -m stateai_ml.cycle_traces                           # writes shared/cycles/ for the cycle report
 ```
 
 After exporting, copy `models/state_classifier.tflite` into `ml/src/main/assets` (a unit test in `:ml`
