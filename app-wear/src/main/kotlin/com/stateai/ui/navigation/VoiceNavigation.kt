@@ -2,7 +2,6 @@ package com.stateai.ui.navigation
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.wear.compose.navigation.composable
 import com.stateai.ui.voice.VoiceExits
 import com.stateai.ui.voice.VoiceRoute
 
@@ -11,7 +10,7 @@ import com.stateai.ui.voice.VoiceRoute
  * with what was understood, or back on the home list (every failure).
  */
 fun NavGraphBuilder.voiceDestination(navController: NavHostController) {
-    composable(Routes.VOICE) {
+    screen(Routes.VOICE) {
         VoiceRoute(
             VoiceExits(
                 onStart = { id -> navController.navigate(Routes.session(id)) { popUpTo(Routes.HOME) } },

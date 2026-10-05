@@ -22,11 +22,9 @@ import androidx.wear.compose.material3.Text
 import com.stateai.BuildConfig
 import com.stateai.R
 import com.stateai.domain.energy.EnergyBudget
-import com.stateai.ui.ambient.LocalIsAmbient
 import com.stateai.ui.components.EnergyBadge
 import com.stateai.ui.components.RoundIconButton
 import com.stateai.ui.components.StateAiIcons
-import com.stateai.ui.components.glowBackground
 import com.stateai.ui.mascot.AnimatedMascot
 import com.stateai.ui.mascot.MascotExpression
 import com.stateai.ui.theme.StateAiColors
@@ -69,7 +67,7 @@ fun HomeScreen(state: HomeUiState, actions: HomeActions) {
     val name = (state.mascotName as? MascotNameState.Known)?.name.orEmpty()
     // No system time here: the mascot fills the top of the screen.
     ScreenScaffold(timeText = {}) {
-        Box(Modifier.fillMaxSize().glowBackground(LocalIsAmbient.current), contentAlignment = Alignment.TopCenter) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(2.dp),

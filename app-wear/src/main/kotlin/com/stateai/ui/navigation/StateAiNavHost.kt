@@ -3,7 +3,6 @@ package com.stateai.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavBackStackEntry
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
-import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.stateai.domain.activity.ActivityId
 import com.stateai.ui.pause.PauseRoute
@@ -18,7 +17,7 @@ fun StateAiNavHost() {
 
     SwipeDismissableNavHost(navController = navController, startDestination = Routes.HOME) {
         entryDestinations(navController)
-        composable(Routes.SESSION) { entry ->
+        screen(Routes.SESSION) { entry ->
             SessionRoute(
                 activityId = ActivityId(entry.idArgument()),
                 onPause = { navController.navigate(Routes.PAUSE) },
@@ -33,10 +32,10 @@ fun StateAiNavHost() {
             )
         }
         sessionEndDestinations(navController)
-        composable(Routes.SUMMARY) { SummaryRoute() }
+        screen(Routes.SUMMARY) { SummaryRoute() }
         voiceDestination(navController)
-        composable(Routes.PAUSE) { PauseRoute(onFinished = { navController.popBackStack() }) }
-        composable(Routes.REST) { RestRoute(onFinished = { navController.popBackStack() }) }
+        screen(Routes.PAUSE) { PauseRoute(onFinished = { navController.popBackStack() }) }
+        screen(Routes.REST) { RestRoute(onFinished = { navController.popBackStack() }) }
         debugDestinations(navController)
     }
 }

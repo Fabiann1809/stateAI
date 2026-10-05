@@ -28,7 +28,6 @@ import com.stateai.R
 import com.stateai.di.appContainer
 import com.stateai.domain.haptics.HapticEvent
 import com.stateai.ui.common.toClockText
-import com.stateai.ui.components.glowBackground
 import com.stateai.ui.mascot.AnimatedMascot
 import com.stateai.ui.mascot.MascotExpression
 import com.stateai.ui.theme.StateAiColors
@@ -66,7 +65,7 @@ fun RestRoute(onFinished: () -> Unit, length: Duration = REST_LENGTH) {
 @Composable
 fun RestScreen(left: Duration, onBack: () -> Unit) {
     ScreenScaffold(timeText = {}) {
-        Box(Modifier.fillMaxSize().glowBackground(ambient = false), contentAlignment = Alignment.Center) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceXs),
