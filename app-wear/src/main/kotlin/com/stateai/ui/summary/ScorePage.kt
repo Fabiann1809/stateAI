@@ -26,7 +26,7 @@ import com.stateai.ui.theme.StateAiDimens
 import com.stateai.ui.theme.tabular
 import kotlin.math.roundToInt
 
-/** D1: today's score on the gauge, always called an estimate, with the non-medical disclaimer. */
+/** D1: today's score on the gauge, named under the value, with the estimate and non-medical disclaimer. */
 @Composable
 fun ScorePage(score: ScoreBreakdown?) {
     val total = score?.total()
@@ -51,7 +51,7 @@ fun ScorePage(score: ScoreBreakdown?) {
                     modifier = Modifier.semantics { contentDescription = description },
                 )
                 Text(
-                    text = stringResource(R.string.summary_estimated),
+                    text = stringResource(R.string.score_title),
                     fontSize = StateAiDimens.Label,
                     color = StateAiColors.Text2,
                 )
@@ -68,6 +68,6 @@ fun ScorePage(score: ScoreBreakdown?) {
     }
 }
 
-private const val VALUE_TOP = 0.27f
+private const val VALUE_TOP = 0.2f
 private const val DISCLAIMER_TOP = 0.64f
 private val VALUE_SIZE = 50.sp

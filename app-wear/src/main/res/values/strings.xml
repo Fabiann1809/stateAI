@@ -81,6 +81,7 @@
     <string name="pauses_helped">te ayudaron</string>
     <string name="pauses_none">Sin pausas en esta sesión</string>
     <string name="summary_done">Listo</string>
+    <string name="score_title">Puntuación del día</string>
     <string name="summary_estimated">estimado</string>
     <string name="score_description">Puntuación estimada %1$d de 100</string>
     <string name="summary_disclaimer">Estimado a partir de tu pulso y movimiento. No es un dato médico.</string>
