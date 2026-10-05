@@ -18,7 +18,14 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 
 class DemoLoaderTest {
-    private val clock = Clock.fixed(Instant.parse("2026-10-05T10:00:00Z"), ZoneOffset.UTC)
+    private var now = Instant.parse("2026-10-05T10:30:00Z")
+    private val clock = object : Clock() {
+        override fun getZone() = ZoneOffset.UTC
+
+        override fun withZone(zone: java.time.ZoneId?) = this
+
+        override fun instant() = now
+    }
     private val activities = InMemoryActivityRepository()
     private val segments = InMemorySegmentRepository()
     private val baseline = MemoryBaseline()
@@ -37,13 +44,24 @@ class DemoLoaderTest {
 
     @Test
     fun `loads the history through the learners, once`() = runTest {
-        assertEquals(DemoLoadResult.Loaded(56), loader.load())
+        val first = loader.load()
         assertEquals(DemoLoadResult.AlreadyLoaded, loader.load())
 
-        assertEquals(56, segments.all().size)
-        assertEquals(56, learned.size)
+        assertEquals(DemoLoadResult.Loaded(57), first)
+        assertEquals(57, segments.all().size)
+        assertEquals(57, learned.size)
         assertEquals(4, activities.observeActive().first().size)
         assertNotNull(baseline.load())
+    }
+
+    @Test
+    fun `loading again later the same day only adds the sessions that ended since`() = runTest {
+        loader.load()
+        now = Instant.parse("2026-10-05T22:00:00Z")
+
+        assertEquals(DemoLoadResult.Loaded(3), loader.load())
+        assertEquals(60, segments.all().size)
+        assertEquals(60, learned.size)
     }
 
     private class MemoryBaseline : BaselineRepository {

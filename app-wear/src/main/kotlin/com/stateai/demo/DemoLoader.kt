@@ -10,6 +10,7 @@ import com.stateai.domain.learning.SegmentLearner
 import com.stateai.domain.segment.Segment
 import com.stateai.domain.segment.SegmentRepository
 import java.time.Clock
+import java.time.Instant
 import java.time.LocalDate
 import kotlinx.coroutines.flow.first
 
@@ -34,29 +35,30 @@ class DemoTargets(
 /**
  * Debug tool: loads [DemoHistory] into the app. Every segment is stored and passed to the same
  * learners as a finished session, in time order, so suggestions, focus hours, the week and the
- * per-activity learning come from the real code. Loading twice does nothing.
+ * per-activity learning come from the real code. Loading again only adds the sessions still missing
+ * (today's later ones, or a new day), never duplicates.
  */
 class DemoLoader(private val targets: DemoTargets, private val clock: Clock) {
     suspend fun load(): DemoLoadResult {
-        val today = LocalDate.now(clock)
-        val loaded = isLoaded(today)
-        val activities = if (loaded) null else demoActivities()
-        return when {
-            loaded -> DemoLoadResult.AlreadyLoaded
-            activities == null -> DemoLoadResult.NoRoomForActivities
-            else -> {
-                ensureBaseline()
-                val history = DemoHistory(clock.zone, DEMO_DAYS.toInt()).segments(today, activities)
-                history.forEach { store(it) }
-                DemoLoadResult.Loaded(history.size)
-            }
+        val activities = demoActivities() ?: return DemoLoadResult.NoRoomForActivities
+        val now = clock.instant()
+        val stored = storedIds(now)
+        val missing = DemoHistory(clock.zone, DEMO_DAYS.toInt()).segments(now, activities)
+            .filterNot { it.id.value in stored }
+        if (missing.isNotEmpty()) {
+            ensureBaseline()
+            missing.forEach { store(it) }
         }
+        return if (missing.isEmpty()) DemoLoadResult.AlreadyLoaded else DemoLoadResult.Loaded(missing.size)
     }
 
-    private suspend fun isLoaded(today: LocalDate): Boolean {
-        val from = today.minusDays(DEMO_DAYS).atStartOfDay(clock.zone).toInstant()
-        val to = today.atStartOfDay(clock.zone).toInstant()
-        return targets.segments.observeBetween(from, to).first().any { it.id.value.startsWith(DEMO_PREFIX) }
+    /** Demo sessions already stored, so loading again (or the next day) only adds what is missing. */
+    private suspend fun storedIds(now: Instant): Set<String> {
+        val from = LocalDate.now(clock).minusDays(DEMO_DAYS).atStartOfDay(clock.zone).toInstant()
+        return targets.segments.observeBetween(from, now).first()
+            .map { it.id.value }
+            .filter { it.startsWith(DEMO_PREFIX) }
+            .toSet()
     }
 
     /** Sessions never calibrate during the demo: a resting baseline exists from the start. */

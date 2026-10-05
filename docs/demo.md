@@ -15,10 +15,12 @@ vea lo que la app aprende. **Todos los datos de la demo son simulados**: el hist
    ```
 
 2. La primera vez la mascota pide un nombre ("Ponerle nombre" o "Ahora no").
-3. **Cargar el historial:** mantén pulsada la mascota → *Depuración* → **Cargar demo (14 días)**. Aparece
-   "Demo cargada ✓". Se crean las actividades Tesis, Bases de datos, Novela y Reuniones, con 56 sesiones
-   de los 14 días anteriores a hoy. Cada sesión pasa por los mismos aprendizajes que una sesión real
-   (línea base y perfil por actividad). Cargarla dos veces no duplica nada.
+3. **Cargar el historial:** mantén pulsada la mascota → *Depuración* → baja hasta **Cargar demo (14 días)**.
+   Aparece "Demo cargada ✓". Se crean las actividades Tesis, Bases de datos, Novela y Reuniones, con las
+   sesiones de los 14 días anteriores y las de **hoy que ya terminaron** según la rutina. Cada sesión pasa
+   por los mismos aprendizajes que una sesión real (línea base y perfil por actividad). Volver a pulsarlo
+   solo añade lo que falta (las sesiones de hoy que terminaron desde entonces, o un día nuevo); nunca
+   duplica.
 4. **Elegir el escenario de sensores:** en *Depuración* → *Sensores simulados*. "Sesión mixta" recorre
    foco, sobrecarga, recuperación e inquietud en 30 minutos; "Sobrecarga" muestra antes la alerta.
 
@@ -46,7 +48,10 @@ el emulador suele usar la hora GMT, que puede no coincidir con la tuya.
 
 ## Qué esperar del historial simulado
 
-- **La semana** (D6) muestra los días anteriores con barras y hoy vacío hasta que hagas una sesión.
+- **Hoy** tiene las sesiones de la rutina que ya terminaron. Si cargas la demo muy temprano (antes de
+  las 10:00 en la hora del emulador), hoy aún estará vacío: vuelve a pulsar "Cargar demo" más tarde o
+  haz una sesión.
+- **La semana** (D6) muestra los días anteriores y hoy.
 - **Foco por hora** (D7) muestra la mejor franja solo si la respaldan al menos 3 días.
 - **El ciclo de foco** (D5) dirá casi seguro "Sin patrón claro". Es coherente con `cycles.md`: con 14
   días y señales de este tipo, el detector no encuentra un ciclo, y no se forzó la demo para que lo
