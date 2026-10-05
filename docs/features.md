@@ -1,31 +1,31 @@
-# Feature definitions
+# Definición de las características
 
-Exact definitions of the features computed for every window. The Kotlin implementation
-(`core-domain`, package `features`) and the Python one (`ml-python/src/stateai_ml/features.py`)
-must match them. Both are tested against the same cases in `shared/parity/feature_cases.json`
-(`FeatureParityTest` in Kotlin, `test_features.py` in Python). Regenerate the file with
-`python -m stateai_ml.parity` only when a definition changes on purpose, and update both sides.
+Definiciones exactas de las características que se calculan para cada ventana. La implementación en
+Kotlin (`core-domain`, paquete `features`) y la de Python (`ml-python/src/stateai_ml/features.py`)
+deben coincidir con ellas. Ambas se prueban con los mismos casos de `shared/parity/feature_cases.json`
+(`FeatureParityTest` en Kotlin, `test_features.py` en Python). Regenera el archivo con
+`python -m stateai_ml.parity` solo cuando una definición cambie a propósito, y actualiza los dos lados.
 
-## Window
+## Ventana
 
-- A window covers the last **180 s** of samples and is computed every **60 s**.
-- Samples arrive about once per second. A sample may have no heart rate (`null`).
+- Una ventana cubre los últimos **180 s** de muestras y se calcula cada **60 s**.
+- Las muestras llegan aproximadamente una vez por segundo. Una muestra puede no tener pulso (`null`).
 
-## Features
+## Características
 
-| Feature | Definition |
+| Característica | Definición |
 |---|---|
-| `sampleCount` | Number of samples in the window. |
-| `heartRateCount` | Number of samples with a heart rate. |
-| `meanHeartRate` | Arithmetic mean of the available heart rates (bpm). Undefined when `heartRateCount` is 0. |
-| `heartRateStdDev` | Population standard deviation of the available heart rates. 0 when fewer than 2 values. |
-| `heartRateMeanAbsDiff` | Mean of `abs(hr[i] - hr[i-1])` over consecutive samples where **both** have a heart rate. 0 when there are no such pairs. This is the HR variability proxy; it is **not** RMSSD. |
-| `meanMovement` | Arithmetic mean of `movement` (m/s²) over all samples. |
-| `fidgetCount` | Number of times `movement` rises above **1.5 m/s²** from a sample at or below it (a burst of consecutive high seconds counts once; a window starting above the threshold counts one fidget). |
-| `highMovementShare` | Fraction of samples with `movement` above **1.0 m/s²** (sustained activity such as walking). |
+| `sampleCount` | Número de muestras de la ventana. |
+| `heartRateCount` | Número de muestras con pulso. |
+| `meanHeartRate` | Media aritmética de los pulsos disponibles (lpm). No está definida cuando `heartRateCount` es 0. |
+| `heartRateStdDev` | Desviación estándar poblacional de los pulsos disponibles. 0 cuando hay menos de 2 valores. |
+| `heartRateMeanAbsDiff` | Media de `abs(hr[i] - hr[i-1])` sobre muestras consecutivas en las que **ambas** tienen pulso. 0 cuando no hay ningún par así. Es el indicador aproximado de variabilidad del pulso; **no** es RMSSD. |
+| `meanMovement` | Media aritmética de `movement` (m/s²) sobre todas las muestras. |
+| `fidgetCount` | Número de veces que `movement` sube por encima de **1,5 m/s²** desde una muestra igual o inferior (una ráfaga de segundos altos consecutivos cuenta una sola vez; una ventana que empieza por encima del umbral cuenta un movimiento brusco). |
+| `highMovementShare` | Fracción de muestras con `movement` por encima de **1,0 m/s²** (actividad sostenida, como caminar). |
 
-## Clean windows
+## Ventanas limpias
 
-A window is **clean** when `highMovementShare` is below **0.3** and `heartRateCount` is at least
-**50 %** of `sampleCount`. Windows that are not clean carry no reliable evidence about the person's
-state: the classifier keeps the previous level instead of reacting to them.
+Una ventana está **limpia** cuando `highMovementShare` es menor que **0,3** y `heartRateCount` es al
+menos el **50 %** de `sampleCount`. Las ventanas que no están limpias no aportan evidencia fiable sobre
+el estado de la persona: el clasificador mantiene el nivel anterior en lugar de reaccionar a ellas.

@@ -1,6 +1,6 @@
-# Architecture
+# Arquitectura
 
-## Modules and dependencies
+## Módulos y dependencias
 
 ```
 app-wear ──► core-domain ◄── data
@@ -10,44 +10,45 @@ app-wear ──► core-domain ◄── data
    └──► data
 ```
 
-| Module | Responsibility | Android |
+| Módulo | Responsabilidad | Android |
 |---|---|---|
-| `core-domain` | Models, rules, learning, scoring and the interfaces the domain needs (`ActivityRepository`, `SegmentRepository`, `BaselineRepository`, `SensorSource`, `HapticPlayer`). | No |
-| `sensors` | `SimulatedSensorSource` (scripted scenarios) and `HealthServicesSensorSource`. | Yes |
-| `haptics` | Waveforms and `VibratorHapticPlayer`. | Yes |
-| `data` | Room and DataStore implementations behind `LocalStorage`, which only exposes domain interfaces. | Yes |
-| `ml` | TFLite wrapper (Phase 7). | Yes |
-| `app-wear` | Compose UI, ViewModels, the session foreground service and the `AppContainer` (manual DI). | Yes |
+| `core-domain` | Modelos, reglas, aprendizaje, puntuación y las interfaces que necesita el dominio (`ActivityRepository`, `SegmentRepository`, `BaselineRepository`, `SensorSource`, `HapticPlayer`). | No |
+| `sensors` | `SimulatedSensorSource` (escenarios programados) y `HealthServicesSensorSource`. | Sí |
+| `haptics` | Formas de onda y `VibratorHapticPlayer`. | Sí |
+| `data` | Implementaciones con Room y DataStore detrás de `LocalStorage`, que solo expone interfaces del dominio. | Sí |
+| `ml` | Envoltorio de TFLite (Fase 7). | Sí |
+| `app-wear` | Interfaz en Compose, ViewModels, el servicio en primer plano de la sesión y el `AppContainer` (inyección de dependencias manual). | Sí |
 
-Rules:
+Reglas:
 
-- `core-domain` imports nothing from Android and every behavior has JVM unit tests.
-- The domain owns the interfaces it consumes (dependency inversion). Implementations live in the
-  Android modules and are wired in `AppContainer`.
-- Domain tests use in-memory fakes (`core-domain/src/test/.../testing`); `data` provides
-  `InMemoryActivityRepository` and `InMemorySegmentRepository` for app-level tests.
-- Storage keeps summaries only, never the raw signal.
+- `core-domain` no importa nada de Android y todo su comportamiento tiene tests unitarios en la JVM.
+- El dominio es dueño de las interfaces que consume (inversión de dependencias). Las implementaciones
+  viven en los módulos de Android y se conectan en `AppContainer`.
+- Los tests del dominio usan dobles en memoria (`core-domain/src/test/.../testing`); `data` ofrece
+  `InMemoryActivityRepository` e `InMemorySegmentRepository` para los tests de la app.
+- El almacenamiento guarda solo resúmenes, nunca la señal cruda.
 
-## Session pipeline
+## Flujo de una sesión
 
 ```
-SensorSource ─► BaselineKeeper (first use: 2-min calibration, saved in DataStore)
-             └► FeatureWindowStream (3-min window every 60 s)
-                  └► StateEngine (clean-window filter → RuleBasedClassifier → StateSmoother)
-                       ├► MonitorStatus ─► session screen
-                       ├► SegmentRecorder (time per level, pauses) ─► EndSession ─► SegmentRepository
+SensorSource ─► BaselineKeeper (primer uso: calibración de 2 min, guardada en DataStore)
+             └► FeatureWindowStream (ventana de 3 min cada 60 s)
+                  └► StateEngine (filtro de ventanas limpias → RuleBasedClassifier → StateSmoother)
+                       ├► MonitorStatus ─► pantalla de sesión
+                       ├► SegmentRecorder (tiempo por nivel, pausas) ─► EndSession ─► SegmentRepository
                        └► HapticPolicy ─► RateLimitedHapticPlayer ─► VibratorHapticPlayer
 ```
 
-`SessionService` (foreground, Ongoing Activity) runs `SessionMonitor` while a session is active, so
-estimation continues with the screen off.
+`SessionService` (en primer plano, con Ongoing Activity) ejecuta `SessionMonitor` mientras hay una
+sesión activa, así que la estimación continúa con la pantalla apagada.
 
-## Repositories
+## Repositorios
 
-| Interface | Implementation | Notes |
+| Interfaz | Implementación | Notas |
 |---|---|---|
-| `ActivityRepository` | `RoomActivityRepository` | Ordered by last use; key = category + normalized name. |
-| `SegmentRepository` | `RoomSegmentRepository` | Segment summaries with their guided pauses and feedback. |
-| `BaselineRepository` | `DataStoreBaselineRepository` | Personal resting baseline. |
+| `ActivityRepository` | `RoomActivityRepository` | Ordenadas por último uso; clave = categoría + nombre normalizado. |
+| `SegmentRepository` | `RoomSegmentRepository` | Resúmenes de segmentos con sus pausas guiadas y su feedback. |
+| `BaselineRepository` | `DataStoreBaselineRepository` | Línea base personal en reposo. |
 
-Learned activity profiles get their own repository when profile learning arrives (Phase 5).
+Los perfiles aprendidos de cada actividad tendrán su propio repositorio cuando llegue el aprendizaje de
+perfiles (Fase 5).

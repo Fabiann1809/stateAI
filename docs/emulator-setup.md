@@ -1,38 +1,38 @@
-# Wear OS emulator setup
+# Configuración del emulador de Wear OS
 
-stateAI is developed and tested without a physical watch. These steps reproduce the environment used by the project on Windows, macOS or Linux.
+stateAI se desarrolla y se prueba sin un reloj físico. Estos pasos reproducen el entorno que usa el proyecto en Windows, macOS o Linux.
 
-## Requirements
+## Requisitos
 
 - JDK 21 (`java -version`).
-- Android SDK with:
+- Android SDK con:
   - **Command-line tools** (`cmdline-tools/latest`),
-  - **Platform** `android-37`,
-  - **Emulator** and **platform-tools**,
-  - **System image** `system-images;android-36;android-wear-signed;x86_64` (Wear OS 6).
-- Hardware acceleration enabled (Windows Hypervisor Platform / HAXM on Windows, KVM on Linux).
+  - **Plataforma** `android-37`,
+  - **Emulator** y **platform-tools**,
+  - **Imagen del sistema** `system-images;android-36;android-wear-signed;x86_64` (Wear OS 6).
+- Aceleración por hardware activada (Windows Hypervisor Platform / HAXM en Windows, KVM en Linux).
 
-## 1. Point Gradle to the SDK
+## 1. Indicar a Gradle dónde está el SDK
 
-Create `local.properties` in the repository root (it is git-ignored):
+Crea `local.properties` en la raíz del repositorio (git lo ignora):
 
 ```properties
-sdk.dir=C:/Users/<you>/AppData/Local/Android/Sdk
+sdk.dir=C:/Users/<tu-usuario>/AppData/Local/Android/Sdk
 ```
 
-Use forward slashes on Windows. Alternatively set the `ANDROID_HOME` environment variable.
+En Windows usa barras normales. También puedes definir la variable de entorno `ANDROID_HOME`.
 
-## 2. Install the Wear OS image
+## 2. Instalar la imagen de Wear OS
 
-With Android Studio: *Settings → Languages & Frameworks → Android SDK → SDK Platforms*, enable *Show Package Details* and select the **Wear OS 6 Intel x86_64 Atom System Image** under Android 16 (API 36).
+Con Android Studio: *Settings → Languages & Frameworks → Android SDK → SDK Platforms*, activa *Show Package Details* y selecciona **Wear OS 6 Intel x86_64 Atom System Image** dentro de Android 16 (API 36).
 
-From the command line (quote the package on Windows):
+Desde la línea de comandos (en Windows, pon el paquete entre comillas):
 
 ```sh
 sdkmanager "system-images;android-36;android-wear-signed;x86_64"
 ```
 
-## 3. Create the virtual device
+## 3. Crear el dispositivo virtual
 
 ```sh
 avdmanager create avd -n Wear_OS_Large_Round \
@@ -40,47 +40,47 @@ avdmanager create avd -n Wear_OS_Large_Round \
     -d wearos_large_round
 ```
 
-Or in Android Studio: *Device Manager → Create Virtual Device → Wear OS → Wear OS Large Round*.
+O en Android Studio: *Device Manager → Create Virtual Device → Wear OS → Wear OS Large Round*.
 
-## 4. Start the emulator
+## 4. Arrancar el emulador
 
 ```sh
 emulator -avd Wear_OS_Large_Round -no-boot-anim
 adb wait-for-device
-adb shell getprop sys.boot_completed   # prints 1 when ready
+adb shell getprop sys.boot_completed   # imprime 1 cuando está listo
 ```
 
-## 5. Build, install and launch
+## 5. Compilar, instalar y abrir
 
 ```sh
 ./gradlew :app-wear:installDebug
 adb shell am start -n com.stateai/.MainActivity
 ```
 
-The watch shows the home screen. Take a screenshot to check it without the emulator window:
+El reloj muestra la pantalla de Inicio. Para comprobarla sin la ventana del emulador, haz una captura:
 
 ```sh
 adb exec-out screencap -p > screen.png
 ```
 
-## Simulating sensors
+## Simular sensores
 
-The app uses simulated sensors by default. To build it with the real Health Services adapter:
+Por defecto la app usa sensores simulados. Para compilarla con el adaptador real de Health Services:
 
 ```sh
 ./gradlew :app-wear:installDebug -Pstateai.sensorSource=health
 ```
 
-With real sensors, the app asks for the heart rate permission when a session starts. To grant it from adb:
+Con sensores reales, la app pide el permiso de pulso al empezar una sesión. Para concederlo por adb:
 
 ```sh
 adb shell pm grant com.stateai android.permission.health.READ_HEART_RATE
 ```
 
-- **App simulator (default)**: stateAI plays scripted heart rate and movement scenarios through `SimulatedSensorSource`; no emulator configuration is needed.
-- **Health Services**: open the emulator's *Extended controls → Wear Health Services* panel to override heart rate and other metrics. See `docs/sensors.md` for the adb commands and limitations.
-- **Accelerometer**: *Extended controls → Virtual sensors*.
-- **Haptics**: the emulator does not vibrate. Haptic events are verified through logcat:
+- **Simulador de la app (por defecto)**: stateAI reproduce escenarios programados de pulso y movimiento con `SimulatedSensorSource`; no hace falta configurar el emulador.
+- **Health Services**: abre el panel *Extended controls → Wear Health Services* del emulador para sobrescribir el pulso y otras métricas. Consulta `docs/sensors.md` para los comandos de adb y las limitaciones.
+- **Acelerómetro**: *Extended controls → Virtual sensors*.
+- **Hápticos**: el emulador no vibra. Los eventos hápticos se comprueban en logcat:
 
   ```sh
   adb logcat -s Haptics

@@ -1,28 +1,29 @@
-# Mascot
+# Mascota
 
-The mascot is a turquoise flame. Its five expressions come from the design SVGs (256 x 256 viewport)
-and are imported as VectorDrawables by `scripts/mascot_to_vector.py`. Nothing is redrawn: circles,
-ellipses and rects become equivalent paths, and SVG rotations and scales become `<group>`s.
+La mascota es una llama turquesa. Sus cinco expresiones vienen de los SVG del diseño (área de
+256 x 256) y se importan como VectorDrawables con `scripts/mascot_to_vector.py`. No se redibuja nada:
+los círculos, elipses y rectángulos se convierten en trazados equivalentes, y las rotaciones y escalas
+del SVG en elementos `<group>`.
 
 ```sh
-python scripts/mascot_to_vector.py <folder with reposo.svg, escuchando.svg, ...>
+python scripts/mascot_to_vector.py <carpeta con reposo.svg, escuchando.svg, ...>
 ```
 
-Each expression is split in three layers that share the viewport and stack exactly, so the tip can
-sway on its own:
+Cada expresión se divide en tres capas que comparten el área y se superponen exactamente, para que la
+punta pueda balancearse por su cuenta:
 
-| Layer | SVG groups | Drawable |
+| Capa | Grupos del SVG | Drawable |
 |---|---|---|
-| Body | `cuerpo` | `mascot_<expression>_body` |
-| Tip | `punta` (pivot 128, 100) | `mascot_<expression>_tip` |
-| Face | `reflejo`, `mejillas`, `ojos`, `parpados`, `brillos`, `boca` | `mascot_<expression>_face` |
+| Cuerpo | `cuerpo` | `mascot_<expression>_body` |
+| Punta | `punta` (pivote 128, 100) | `mascot_<expression>_tip` |
+| Cara | `reflejo`, `mejillas`, `ojos`, `parpados`, `brillos`, `boca` | `mascot_<expression>_face` |
 
-| Design name | Code name | Use |
+| Nombre en el diseño | Nombre en el código | Uso |
 |---|---|---|
-| Reposo | `rest` | Home screen, waiting |
-| Escuchando | `listening` | Microphone open |
-| Pensando | `thinking` | Interpreting what was said |
-| Contenta | `happy` | Session confirmed |
-| Cansada | `tired` | Imported, not used yet |
+| Reposo | `rest` | Pantalla de Inicio, en espera |
+| Escuchando | `listening` | Micrófono abierto |
+| Pensando | `thinking` | Interpretando lo que se dijo |
+| Contenta | `happy` | Sesión confirmada |
+| Cansada | `tired` | Importada, todavía no se usa |
 
-The mascot never reflects energy (that is the silhouette); it only changes expression.
+La mascota nunca refleja la energía (para eso está la silueta); solo cambia de expresión.
