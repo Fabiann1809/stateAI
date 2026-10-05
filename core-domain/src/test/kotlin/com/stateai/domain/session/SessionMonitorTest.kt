@@ -29,6 +29,7 @@ class SessionMonitorTest {
         startedAt = start,
     )
     private val played = mutableListOf<HapticEvent>()
+    private val suggestions = SessionSuggestions()
     private val recorder = SegmentRecorder { SegmentId("segment") }.apply { start(session) }
     private val repository = object : BaselineRepository {
         var stored: UserBaseline? = null
@@ -59,6 +60,8 @@ class SessionMonitorTest {
 
         assertEquals(ActivationLevel.HIGH, (monitor.status.value as MonitorStatus.Estimating).estimate.level)
         assertTrue(HapticEvent.OVERLOAD_ALERT in played, "$played")
+        assertEquals(SuggestionReason.OVERLOAD, suggestions.current.value?.reason)
+        assertEquals(PauseKind.BREATHE, suggestions.current.value?.reason?.pause)
     }
 
     @Test
@@ -79,6 +82,7 @@ class SessionMonitorTest {
             baselineKeeper = BaselineKeeper(repository),
             player = { played += it },
             recorder = recorder,
+            suggestions = suggestions,
         )
     }
 }

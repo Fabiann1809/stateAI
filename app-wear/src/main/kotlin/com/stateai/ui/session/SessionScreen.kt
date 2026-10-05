@@ -36,6 +36,7 @@ import com.stateai.domain.activity.ActivityId
 import com.stateai.domain.energy.EnergyBudget
 import com.stateai.domain.segment.SegmentId
 import com.stateai.domain.session.MonitorStatus
+import com.stateai.domain.session.PauseKind
 import com.stateai.domain.session.SessionProgress
 import com.stateai.domain.state.DisplayState
 import com.stateai.ui.ambient.LocalIsAmbient
@@ -55,7 +56,7 @@ import com.stateai.ui.theme.tabular
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
-fun SessionRoute(activityId: ActivityId, onPause: () -> Unit, onStopped: (SegmentId?) -> Unit) {
+fun SessionRoute(activityId: ActivityId, onPause: () -> Unit, onRest: () -> Unit, onStopped: (SegmentId?) -> Unit) {
     val container = appContainer()
     val viewModel: SessionViewModel = viewModel(
         factory = viewModelFactory {
@@ -67,6 +68,7 @@ fun SessionRoute(activityId: ActivityId, onPause: () -> Unit, onStopped: (Segmen
                     status = container.sessionMonitor.status,
                     energy = container.insights.observeEnergy(clockTicks(container.clock, ENERGY_REFRESH)),
                     clock = container.clock,
+                    suggestions = container.sessionSuggestions,
                 )
                 SessionViewModel(activityId, dependencies)
             }
@@ -74,7 +76,12 @@ fun SessionRoute(activityId: ActivityId, onPause: () -> Unit, onStopped: (Segmen
     )
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     RequestSessionPermissions()
-    val actions = SessionActions(onPause = onPause, onStop = { viewModel.stop(onStopped) })
+    val actions = SessionActions(
+        onPause = onPause,
+        onRest = onRest,
+        onStop = { viewModel.stop(onStopped) },
+        onDismissSuggestion = viewModel::dismissSuggestion,
+    )
     var confirmingEnd by remember { mutableStateOf(false) }
     // Back never ends a session by accident: it asks first (the session keeps running meanwhile).
     BackHandler { confirmingEnd = true }
@@ -90,7 +97,12 @@ fun SessionRoute(activityId: ActivityId, onPause: () -> Unit, onStopped: (Segmen
 }
 
 /** User actions available during a session. */
-data class SessionActions(val onPause: () -> Unit, val onStop: () -> Unit)
+data class SessionActions(
+    val onPause: () -> Unit,
+    val onRest: () -> Unit,
+    val onStop: () -> Unit,
+    val onDismissSuggestion: () -> Unit,
+)
 
 /** What the session shows right now: the display state, if there is an estimate. */
 private val SessionUiState.displayState: DisplayState?
@@ -105,7 +117,19 @@ fun SessionScreen(state: SessionUiState, isAmbient: Boolean, actions: SessionAct
             if (isAmbient) {
                 AmbientSessionContent(progress, state.displayState, state.energy)
             } else {
-                SessionPages(state, progress, actions)
+                val suggestion = state.suggestion
+                if (suggestion == null) {
+                    SessionPages(state, progress, actions)
+                } else {
+                    SuggestionCard(
+                        suggestion = suggestion,
+                        onAccept = { pause ->
+                            actions.onDismissSuggestion()
+                            if (pause == PauseKind.BREATHE) actions.onPause() else actions.onRest()
+                        },
+                        onDismiss = actions.onDismissSuggestion,
+                    )
+                }
             }
         }
     }

@@ -37,7 +37,7 @@ class HapticPolicyTest {
 
     @Test
     fun `sustained restlessness during focus suggests a pause once`() {
-        val events = List(6) { policy.onEstimate(StateEstimate(LOW, restless = true)) }
+        val events = List(6) { policy.onEstimate(StateEstimate(LOW, restless = true))?.event }
 
         assertEquals(listOf(null, null, HapticEvent.PAUSE_SUGGESTED, null, null, null), events)
     }
@@ -54,5 +54,5 @@ class HapticPolicyTest {
         assertEquals(null, feed(List(4) { LOW } + MEDIUM).last())
     }
 
-    private fun feed(levels: List<ActivationLevel>) = levels.map { policy.onEstimate(StateEstimate(it, false)) }
+    private fun feed(levels: List<ActivationLevel>) = levels.map { policy.onEstimate(StateEstimate(it, false))?.event }
 }

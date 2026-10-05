@@ -60,6 +60,16 @@
     <string name="pause_inhale">Inhala</string>
     <string name="pause_exhale">Exhala</string>
     <string name="pause_finish">Volver</string>
+    <string name="rest_title">Descanso</string>
+    <string name="rest_tip">Levántate, estírate y toma agua.</string>
+    <string name="suggestion_overload">Llevas un rato en sobrecarga. ¿Respiramos un minuto?</string>
+    <string name="suggestion_restless">Te noto inquieto. ¿Un descanso para moverte?</string>
+    <string name="suggestion_left_focus">Buen tramo de foco. ¿Respiras un momento antes de seguir?</string>
+    <string name="suggestion_block_done">Cumpliste tu bloque de %1$d min. ¿Un descanso?</string>
+    <string name="suggestion_long_session">Llevas %1$s seguido. ¿Un descanso corto?</string>
+    <string name="suggestion_breathe">Respirar</string>
+    <string name="suggestion_rest">Descansar</string>
+    <string name="suggestion_dismiss">Ahora no</string>
     <string name="debug_demo_load">Cargar demo (14 días)</string>
     <string name="debug_demo_loaded">Demo cargada ✓</string>
     <string name="debug_demo_already">La demo ya está cargada</string>

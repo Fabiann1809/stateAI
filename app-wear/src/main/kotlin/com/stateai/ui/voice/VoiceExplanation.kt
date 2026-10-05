@@ -54,15 +54,23 @@ fun VoiceExplanation(title: String, body: String, accept: String, decline: Strin
                 )
             }
             item {
-                Button(
-                    onClick = { onAnswer(false) },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = StateAiColors.Surface2),
-                    label = { Text(decline) },
-                )
+                DeclineButton(decline) { onAnswer(false) }
             }
         }
     }
+}
+
+@Composable
+private fun DeclineButton(label: String, onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = StateAiColors.Surface2,
+            contentColor = StateAiColors.Text1,
+        ),
+        label = { Text(label) },
+    )
 }
 
 private val MASCOT_SIZE = 56.dp

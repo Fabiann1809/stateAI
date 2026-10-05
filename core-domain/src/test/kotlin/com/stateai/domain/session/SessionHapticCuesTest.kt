@@ -14,7 +14,9 @@ import org.junit.jupiter.api.Test
 class SessionHapticCuesTest {
     private val clock = MutableClock()
     private val played = mutableListOf<HapticEvent>()
-    private val cues = SessionHapticCues(player = { played += it }, onCue = { cueTimes += it })
+    private val suggestions = SessionSuggestions()
+    private val cues =
+        SessionHapticCues(player = { played += it }, onCue = { cueTimes += it }, suggestions = suggestions)
     private val cueTimes = mutableListOf<Instant>()
     private val study = Activity(ActivityId("study"), ActivityCategory.STUDY, name = null)
     private val session = ActiveSession(study, DefaultCategoryProfiles.STUDY, startedAt = clock.instant())
@@ -56,5 +58,29 @@ class SessionHapticCuesTest {
         cues.onTick(next, clock.instant())
 
         assertEquals(listOf(HapticEvent.BLOCK_START, HapticEvent.BLOCK_START), played)
+    }
+
+    @Test
+    fun `reaching the block posts a rest suggestion`() {
+        cues.onTick(session, clock.instant())
+        clock.advanceBy(40.minutes)
+        cues.onTick(session, clock.instant())
+
+        assertEquals(SuggestionReason.BLOCK_DONE, suggestions.current.value?.reason)
+        assertEquals(PauseKind.REST, suggestions.current.value?.reason?.pause)
+        assertEquals(40.minutes, suggestions.current.value?.elapsed)
+    }
+
+    @Test
+    fun `keeps reminding every twenty minutes past the block`() {
+        cues.onTick(session, clock.instant())
+        repeat(80) {
+            clock.advanceBy(1.minutes)
+            cues.onTick(session, clock.instant())
+        }
+
+        assertEquals(3, played.count { it == HapticEvent.PAUSE_SUGGESTED })
+        assertEquals(SuggestionReason.LONG_SESSION, suggestions.current.value?.reason)
+        assertEquals(80.minutes, suggestions.current.value?.elapsed)
     }
 }

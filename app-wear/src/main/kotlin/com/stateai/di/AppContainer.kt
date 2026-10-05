@@ -21,6 +21,7 @@ import com.stateai.domain.segment.SegmentRecorder
 import com.stateai.domain.segment.SegmentRepository
 import com.stateai.domain.session.EndSession
 import com.stateai.domain.session.SessionMonitor
+import com.stateai.domain.session.SessionSuggestions
 import com.stateai.domain.session.SessionTracker
 import com.stateai.domain.session.StartSession
 import com.stateai.domain.state.StateEngine
@@ -67,11 +68,15 @@ class AppContainer(context: Context) {
     val startSession =
         StartSession(activityRepository, sessionTracker, profileProvider, segmentRecorder, endSession, clock)
     private val classifiers = ClassifierModule(context)
+
+    /** Pause suggestions of the running session, shown on screen next to the vibration. */
+    val sessionSuggestions = SessionSuggestions()
     val sessionMonitor = SessionMonitor(
         sensors.source,
         baselineKeeper,
         haptics.sessionPlayer,
         segmentRecorder,
         newEngine = { StateEngine(classifiers.classifier) },
+        suggestions = sessionSuggestions,
     )
 }

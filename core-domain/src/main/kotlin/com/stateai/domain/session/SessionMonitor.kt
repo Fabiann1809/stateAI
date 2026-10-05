@@ -7,10 +7,12 @@ import com.stateai.domain.features.FeatureWindowStream
 import com.stateai.domain.haptics.HapticEvent
 import com.stateai.domain.haptics.HapticPlayer
 import com.stateai.domain.haptics.HapticPolicy
+import com.stateai.domain.haptics.SessionCue
 import com.stateai.domain.segment.SegmentRecorder
 import com.stateai.domain.sensing.SensorSource
 import com.stateai.domain.state.StateEngine
 import com.stateai.domain.state.StateEstimate
+import java.time.Instant
 import kotlin.time.toKotlinDuration
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -41,6 +43,7 @@ class SessionMonitor(
     private val windowStream: FeatureWindowStream = FeatureWindowStream(),
     private val newEngine: () -> StateEngine = { StateEngine() },
     private val newPolicy: () -> HapticPolicy = { HapticPolicy() },
+    private val suggestions: SessionSuggestions = SessionSuggestions(),
 ) {
     private val current = MutableStateFlow<MonitorStatus>(MonitorStatus.Waiting)
     val status: StateFlow<MonitorStatus> = current.asStateFlow()
@@ -49,6 +52,7 @@ class SessionMonitor(
         val engine = newEngine()
         val policy = newPolicy()
         current.value = MonitorStatus.Waiting
+        suggestions.dismiss()
         val samples = sensorSource.samples().onEach { sample ->
             val progress = baselineKeeper.calibrate(sample)
             if (progress is CalibrationProgress.Collecting) current.value = MonitorStatus.Calibrating(progress.fraction)
@@ -59,12 +63,17 @@ class SessionMonitor(
             recorder.onWindow(window, estimate)
             estimate?.let {
                 current.value = MonitorStatus.Estimating(estimate)
-                policy.onEstimate(estimate)?.let { event ->
-                    if (event == HapticEvent.PAUSE_SUGGESTED) recorder.onPauseSuggested()
-                    player.play(event)
-                }
+                policy.onEstimate(estimate)?.let { cue -> playCue(cue, session, window.end) }
             }
         }
+    }
+
+    /** Vibrates and posts the matching suggestion, so the screen says why the watch vibrated. */
+    private fun playCue(cue: SessionCue, session: ActiveSession, at: Instant) {
+        if (cue.event == HapticEvent.PAUSE_SUGGESTED) recorder.onPauseSuggested()
+        player.play(cue.event)
+        val elapsed = java.time.Duration.between(session.startedAt, at).toKotlinDuration()
+        suggestions.post(Suggestion(cue.reason, at, elapsed))
     }
 
     private suspend fun estimate(window: FeatureWindow, session: ActiveSession, engine: StateEngine): StateEstimate? {

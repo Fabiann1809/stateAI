@@ -1,5 +1,6 @@
 package com.stateai.domain.haptics
 
+import com.stateai.domain.session.SuggestionReason
 import com.stateai.domain.state.ActivationLevel
 import com.stateai.domain.state.StateEstimate
 
@@ -21,13 +22,23 @@ class HapticPolicy(private val config: HapticPolicyConfig = HapticPolicyConfig()
     private var overloadAlerted = false
     private var restlessAlerted = false
 
-    fun onEstimate(estimate: StateEstimate): HapticEvent? {
+    /** The cue this estimate deserves, with the reason the screen shows next to the vibration. */
+    fun onEstimate(estimate: StateEstimate): SessionCue? {
         val focusStreakBefore = if (previousLevel == ActivationLevel.LOW) levelStreak else 0
         updateStreaks(estimate)
         return when {
-            sustainedOverload() -> HapticEvent.OVERLOAD_ALERT.also { overloadAlerted = true }
-            sustainedRestlessness() -> HapticEvent.PAUSE_SUGGESTED.also { restlessAlerted = true }
-            leftFocus(estimate, focusStreakBefore) -> HapticEvent.PAUSE_SUGGESTED
+            sustainedOverload() -> {
+                overloadAlerted = true
+                SessionCue(HapticEvent.OVERLOAD_ALERT, SuggestionReason.OVERLOAD)
+            }
+            sustainedRestlessness() -> {
+                restlessAlerted = true
+                SessionCue(HapticEvent.PAUSE_SUGGESTED, SuggestionReason.RESTLESS)
+            }
+            leftFocus(
+                estimate,
+                focusStreakBefore,
+            ) -> SessionCue(HapticEvent.PAUSE_SUGGESTED, SuggestionReason.LEFT_FOCUS)
             else -> null
         }
     }

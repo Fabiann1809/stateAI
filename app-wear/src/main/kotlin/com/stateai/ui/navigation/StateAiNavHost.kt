@@ -7,6 +7,7 @@ import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.stateai.domain.activity.ActivityId
 import com.stateai.ui.pause.PauseRoute
+import com.stateai.ui.pause.RestRoute
 import com.stateai.ui.session.SessionRoute
 import com.stateai.ui.summary.SummaryRoute
 
@@ -21,6 +22,7 @@ fun StateAiNavHost() {
             SessionRoute(
                 activityId = ActivityId(entry.idArgument()),
                 onPause = { navController.navigate(Routes.PAUSE) },
+                onRest = { navController.navigate(Routes.REST) },
                 onStopped = { segmentId ->
                     if (segmentId == null) {
                         backToHome()
@@ -34,6 +36,7 @@ fun StateAiNavHost() {
         composable(Routes.SUMMARY) { SummaryRoute() }
         voiceDestination(navController)
         composable(Routes.PAUSE) { PauseRoute(onFinished = { navController.popBackStack() }) }
+        composable(Routes.REST) { RestRoute(onFinished = { navController.popBackStack() }) }
         debugDestinations(navController)
     }
 }
