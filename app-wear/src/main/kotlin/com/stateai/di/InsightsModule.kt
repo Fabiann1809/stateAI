@@ -7,6 +7,7 @@ import com.stateai.domain.haptics.HapticPlayer
 import com.stateai.domain.learning.FocusWindowNotifier
 import com.stateai.domain.learning.LearningProgress
 import com.stateai.domain.learning.LearningRepository
+import com.stateai.domain.learning.ObserveDiscovery
 import com.stateai.domain.learning.ObserveFocusProfile
 import com.stateai.domain.learning.ObserveSuggestedActivity
 import com.stateai.domain.segment.SegmentRecorder
@@ -26,6 +27,7 @@ class InsightsModule(
     player: HapticPlayer,
 ) {
     val observeFocusProfile = ObserveFocusProfile(segments, localClock)
+    val observeDiscovery = ObserveDiscovery(segments, localClock)
     val observeDaySummary = ObserveDaySummary(segments, localClock, LearningProgress(learning))
     val observeRecentDays = ObserveRecentDays(segments, localClock)
     val observeCycle = ObserveCycle(segments, localClock)

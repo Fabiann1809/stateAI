@@ -37,6 +37,7 @@ fun SummaryRoute() {
                         energy = insights.observeEnergy(flowOf(container.clock.instant())),
                         focusProfile = insights.observeFocusProfile(),
                         cycle = insights.observeCycle(),
+                        discovery = insights.observeDiscovery(),
                     ),
                 )
             }
@@ -69,7 +70,7 @@ private fun SummaryPage(page: Int, state: DaySummaryUiState) {
     PAGE_CONTENT[page](state)
 }
 
-/** D1 to D7, from "how did it go" to "when does it repeat". */
+/** D1 to D8, from "how did it go" to "when does it repeat". */
 private val PAGE_CONTENT: List<@Composable (DaySummaryUiState) -> Unit> = listOf(
     { ScorePage(it.summary?.score) },
     { FactorsPage(it.summary?.score, it.recentDays.changeSinceYesterday()) },
@@ -81,4 +82,5 @@ private val PAGE_CONTENT: List<@Composable (DaySummaryUiState) -> Unit> = listOf
     { CyclePage(it.cycle) },
     { WeekPage(it.recentDays) },
     { HoursPage(it.hourly, isLearning = it.summary?.isLearning == true) },
+    { DiscoveryPage(it.discovery) },
 )

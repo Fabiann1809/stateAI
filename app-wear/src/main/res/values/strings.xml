@@ -123,6 +123,18 @@
         <item quantity="one">%d día de datos</item>
         <item quantity="other">%d días de datos</item>
     </plurals>
+    <string name="discovery_title">Descubrimiento</string>
+    <string name="discovery_morning">Por la mañana</string>
+    <string name="discovery_afternoon">Por la tarde</string>
+    <string name="discovery_evening">Por la noche</string>
+    <string name="discovery_better">Lo valoras mejor: %1$.1f frente a %2$.1f</string>
+    <string name="discovery_provisional">Confianza provisional · %1$d y %2$d sesiones</string>
+    <string name="discovery_moderate">Confianza moderada · %1$d y %2$d sesiones</string>
+    <string name="discovery_not_enough">Aún no sé lo suficiente</string>
+    <string name="discovery_not_enough_detail">Valora tus sesiones al terminar: necesito varias, en distintos momentos del día</string>
+    <string name="discovery_no_difference">Sin diferencia clara</string>
+    <string name="discovery_no_difference_detail">Valoras parecido tus sesiones a cualquier hora</string>
+    <string name="discovery_basis">Se basa en cómo valoras tus sesiones</string>
     <string name="session_end_title">¿Terminar sesión?</string>
     <string name="mascot_name_question">¿Cómo se llamará tu mascota?</string>
     <string name="mascot_name_action">Ponerle nombre</string>

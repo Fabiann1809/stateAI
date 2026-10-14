@@ -3,6 +3,7 @@ package com.stateai.domain.testing
 import com.stateai.domain.activity.Activity
 import com.stateai.domain.activity.ActivityCategory
 import com.stateai.domain.activity.ActivityId
+import com.stateai.domain.segment.Feedback
 import com.stateai.domain.segment.LevelDurations
 import com.stateai.domain.segment.LevelTrace
 import com.stateai.domain.segment.Segment
@@ -23,6 +24,7 @@ fun testSegment(
     trace: LevelTrace = LevelTrace("L".repeat(duration.inWholeMinutes.toInt())),
     calmHeartRate: Double? = null,
     cleanMovement: Double? = null,
+    feedback: Feedback? = null,
 ) = Segment(
     id = SegmentId(id),
     activity = activity,
@@ -33,6 +35,7 @@ fun testSegment(
     restlessTime = Duration.ZERO,
     pauseSuggestions = 0,
     pauses = emptyList(),
+    feedback = feedback,
     trace = trace,
     calmHeartRate = calmHeartRate,
     cleanMovement = cleanMovement,

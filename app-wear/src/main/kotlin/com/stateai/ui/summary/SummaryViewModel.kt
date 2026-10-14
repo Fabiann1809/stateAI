@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.stateai.domain.cycles.CycleInsight
 import com.stateai.domain.energy.EnergyBudget
+import com.stateai.domain.learning.Discovery
 import com.stateai.domain.learning.FocusProfile
 import com.stateai.domain.learning.HourlyFocus
 import com.stateai.domain.summary.DayScore
@@ -28,6 +29,7 @@ data class DaySummaryUiState(
     val points: List<TimelinePoint> = emptyList(),
     val hourly: HourlyFocus = HourlyFocus.EMPTY,
     val cycle: CycleInsight? = null,
+    val discovery: Discovery = Discovery.EMPTY,
 )
 
 /** The flows the day summary needs; cycle detection is slow, so its page fills in when it is ready. */
@@ -37,16 +39,23 @@ data class DaySummarySources(
     val energy: Flow<EnergyBudget>,
     val focusProfile: Flow<FocusProfile>,
     val cycle: Flow<CycleInsight>,
+    val discovery: Flow<Discovery>,
 )
 
 class SummaryViewModel(sources: DaySummarySources, timeline: DayTimeline = DayTimeline()) : ViewModel() {
+    /** The two slow-to-compute findings travel together, so they fit in one `combine`. */
+    private val findings: Flow<Pair<CycleInsight?, Discovery>> = combine(
+        sources.cycle.nullUntilFirst(),
+        sources.discovery.onStart { emit(Discovery.EMPTY) },
+    ) { cycle, discovery -> cycle to discovery }
+
     val uiState: StateFlow<DaySummaryUiState> = combine(
         sources.summary.nullUntilFirst(),
         sources.recentDays.onStart { emit(emptyList()) },
         sources.energy.nullUntilFirst(),
         sources.focusProfile.map(HourlyFocus::of).onStart { emit(HourlyFocus.EMPTY) },
-        sources.cycle.nullUntilFirst(),
-    ) { summary, recentDays, energy, hourly, cycle ->
+        findings,
+    ) { summary, recentDays, energy, hourly, (cycle, discovery) ->
         DaySummaryUiState(
             summary = summary,
             recentDays = recentDays,
@@ -54,6 +63,7 @@ class SummaryViewModel(sources: DaySummarySources, timeline: DayTimeline = DayTi
             points = summary?.segments?.let(timeline::points).orEmpty(),
             hourly = hourly,
             cycle = cycle,
+            discovery = discovery,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), DaySummaryUiState())
 

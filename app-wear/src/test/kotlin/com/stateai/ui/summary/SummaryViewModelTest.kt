@@ -5,6 +5,7 @@ import com.stateai.domain.activity.ActivityCategory
 import com.stateai.domain.activity.ActivityId
 import com.stateai.domain.cycles.CycleInsight
 import com.stateai.domain.cycles.CycleResult
+import com.stateai.domain.learning.Discovery
 import com.stateai.domain.learning.FocusProfile
 import com.stateai.domain.learning.SlotStats
 import com.stateai.domain.segment.LevelDurations
@@ -49,6 +50,7 @@ class SummaryViewModelTest {
         val summary = DaySummary(LocalDate.parse("2026-10-04"), listOf(segment()), score = null, bestHour = null)
         val profile = FocusProfile(emptyMap(), mapOf(9 to SlotStats(0.8, 20, 3)), overallFocusShare = 0.8)
         val cycle = CycleInsight(CycleResult.NoClearPattern(CycleResult.Reason.NOT_ENOUGH_DATA), days = 1)
+        val discovery = Discovery.NoClearDifference(ratedSessions = 8)
         val viewModel = SummaryViewModel(
             DaySummarySources(
                 summary = flowOf(summary),
@@ -56,6 +58,7 @@ class SummaryViewModelTest {
                 energy = emptyFlow(),
                 focusProfile = flowOf(profile),
                 cycle = flowOf(cycle),
+                discovery = flowOf(discovery),
             ),
         )
         viewModel.uiState.launchIn(backgroundScope)
@@ -65,6 +68,7 @@ class SummaryViewModelTest {
         assertEquals(listOf(DisplayState.FOCUSED, DisplayState.NORMAL), state.points.map { it.state })
         assertEquals(9, state.hourly.bestHour)
         assertEquals(cycle, state.cycle)
+        assertEquals(discovery, viewModel.uiState.first { it.discovery == discovery }.discovery)
     }
 
     private fun segment() = Segment(
