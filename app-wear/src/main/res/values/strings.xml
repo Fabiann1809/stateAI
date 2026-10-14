@@ -48,10 +48,12 @@
     <string name="state_exhausted">Agotado</string>
     <string name="session_calibrating">Calibrando %1$d%%, quédate quieto</string>
     <string name="session_waiting">Leyendo señales…</string>
-    <string name="feedback_title">¿Cómo te sentiste?</string>
+    <string name="feedback_title">¿Cómo te fue?</string>
+    <string name="feedback_very_good">Muy bien</string>
     <string name="feedback_good">Bien</string>
-    <string name="feedback_okay">Regular</string>
+    <string name="feedback_okay">Normal</string>
     <string name="feedback_bad">Mal</string>
+    <string name="feedback_very_bad">Muy mal</string>
     <string name="summary_open">Resumen del día</string>
     <string name="summary_focus">Concentración</string>
     <string name="summary_recovery">Recuperación</string>

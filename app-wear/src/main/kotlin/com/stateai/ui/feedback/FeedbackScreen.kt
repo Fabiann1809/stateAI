@@ -56,8 +56,10 @@ fun FeedbackScreen(onAnswer: (Feedback) -> Unit, onSkip: () -> Unit) {
                     fontWeight = FontWeight.Medium,
                     color = StateAiColors.Text2,
                 )
-                Row(horizontalArrangement = Arrangement.spacedBy(7.dp)) {
-                    Feedback.entries.forEach { feedback -> FaceOption(feedback, onClick = { onAnswer(feedback) }) }
+                Row(horizontalArrangement = Arrangement.spacedBy(3.dp)) {
+                    Feedback.entries.sortedBy { it.rating }.forEach { feedback ->
+                        FaceOption(feedback, onClick = { onAnswer(feedback) })
+                    }
                 }
                 Text(
                     text = stringResource(R.string.feedback_skip),
@@ -76,7 +78,7 @@ fun FeedbackScreen(onAnswer: (Feedback) -> Unit, onSkip: () -> Unit) {
 @Composable
 private fun FaceOption(feedback: Feedback, onClick: () -> Unit) {
     val label = stringResource(feedback.labelRes())
-    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         FilledTonalIconButton(
             onClick = onClick,
             modifier = Modifier.size(FACE_BUTTON),
@@ -87,16 +89,18 @@ private fun FaceOption(feedback: Feedback, onClick: () -> Unit) {
         ) {
             Icon(FeedbackFaces.of(feedback), contentDescription = label, modifier = Modifier.size(FACE_ICON))
         }
-        Text(label, fontSize = StateAiDimens.Body, fontWeight = FontWeight.Medium)
+        Text(feedback.rating.toString(), fontSize = StateAiDimens.Body, fontWeight = FontWeight.Medium)
     }
 }
 
 @StringRes
 private fun Feedback.labelRes(): Int = when (this) {
+    Feedback.VERY_GOOD -> R.string.feedback_very_good
     Feedback.GOOD -> R.string.feedback_good
     Feedback.OKAY -> R.string.feedback_okay
     Feedback.BAD -> R.string.feedback_bad
+    Feedback.VERY_BAD -> R.string.feedback_very_bad
 }
 
-private val FACE_BUTTON = 52.dp
-private val FACE_ICON = 30.dp
+private val FACE_BUTTON = 36.dp
+private val FACE_ICON = 24.dp

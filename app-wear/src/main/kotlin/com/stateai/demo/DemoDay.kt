@@ -85,9 +85,11 @@ class DemoDay(private val zone: ZoneId, private val date: LocalDate, private val
         val levels = trace.levels().filterNotNull()
         val focus = levels.count { it == ActivationLevel.LOW }.toDouble() / levels.size.coerceAtLeast(1)
         return when {
+            focus >= VERY_GOOD_FOCUS -> Feedback.VERY_GOOD
             focus >= GOOD_FOCUS -> Feedback.GOOD
             focus >= OKAY_FOCUS -> Feedback.OKAY
-            else -> Feedback.BAD
+            focus >= BAD_FOCUS -> Feedback.BAD
+            else -> Feedback.VERY_BAD
         }
     }
 
@@ -100,7 +102,9 @@ class DemoDay(private val zone: ZoneId, private val date: LocalDate, private val
         const val HELPFUL_PAUSE_SHARE = 0.7
         const val CALM_HEART_RATE = 65.0
         const val CLEAN_MOVEMENT = 0.05
+        const val VERY_GOOD_FOCUS = 0.8
         const val GOOD_FOCUS = 0.6
         const val OKAY_FOCUS = 0.4
+        const val BAD_FOCUS = 0.2
     }
 }

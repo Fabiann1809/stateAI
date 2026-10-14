@@ -41,6 +41,22 @@ class FeedbackSensitivityLearnerTest {
     }
 
     @Test
+    fun `very bad and very good count like bad and good`() = runTest {
+        learner.learn(mostlyFocused, Feedback.VERY_BAD)
+        learner.learn(mostlyLoaded, Feedback.VERY_GOOD)
+
+        assertEquals(0.0, adjustment(), 1e-9)
+    }
+
+    @Test
+    fun `a neutral rating changes nothing`() = runTest {
+        learner.learn(mostlyFocused, Feedback.OKAY)
+        learner.learn(mostlyLoaded, Feedback.OKAY)
+
+        assertNull(repository.stored[id])
+    }
+
+    @Test
     fun `a single feedback never changes sensitivity abruptly`() = runTest {
         learner.learn(mostlyFocused, Feedback.BAD)
 

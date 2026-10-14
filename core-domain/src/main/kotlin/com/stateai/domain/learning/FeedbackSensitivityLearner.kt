@@ -14,8 +14,10 @@ data class FeedbackSensitivityConfig(
 /**
  * Slowly adjusts an activity's global sensitivity from the one-tap feedback (SPEC 7.6). Feedback
  * labels a whole segment, not individual windows, so it only nudges the thresholds:
- * - "bad" after a segment estimated as mostly focused means load was under-detected: more sensitive;
- * - "good" after a segment estimated as mostly loaded means load was over-detected: less sensitive;
+ * - a negative rating (1-2) after a segment estimated as mostly focused means load was under-detected:
+ *   more sensitive;
+ * - a positive rating (4-5) after a segment estimated as mostly loaded means load was over-detected:
+ *   less sensitive;
  * - anything else leaves the sensitivity as it is.
  */
 class FeedbackSensitivityLearner(
@@ -37,8 +39,8 @@ class FeedbackSensitivityLearner(
         val focusShare = segment.levelTime.low / known
         val loadShare = minOf(1.0, (segment.levelTime.high + segment.restlessTime) / known)
         return when {
-            feedback == Feedback.BAD && focusShare >= config.mostlyFocusedShare -> -config.step
-            feedback == Feedback.GOOD && loadShare >= config.mostlyLoadedShare -> config.step
+            feedback.isNegative && focusShare >= config.mostlyFocusedShare -> -config.step
+            feedback.isPositive && loadShare >= config.mostlyLoadedShare -> config.step
             else -> 0.0
         }
     }

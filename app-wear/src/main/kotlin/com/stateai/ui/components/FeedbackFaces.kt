@@ -10,14 +10,18 @@ import com.stateai.ui.theme.StateAiColors
 
 /** Soft outline faces for the "how did you feel?" answers (48-unit viewport). */
 object FeedbackFaces {
+    private val veryGood = face("M14 27q10 13 20 0")
     private val good = face("M16 29q8 8 16 0")
     private val okay = face("M17 31h14")
     private val bad = face("M16 33q8-7 16 0")
+    private val veryBad = face("M14 36q10-13 20 0")
 
     fun of(feedback: Feedback): ImageVector = when (feedback) {
+        Feedback.VERY_GOOD -> veryGood
         Feedback.GOOD -> good
         Feedback.OKAY -> okay
         Feedback.BAD -> bad
+        Feedback.VERY_BAD -> veryBad
     }
 
     private fun face(mouth: String): ImageVector = ImageVector.Builder(

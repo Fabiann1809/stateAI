@@ -10,11 +10,34 @@ import kotlin.time.toKotlinDuration
 @JvmInline
 value class SegmentId(val value: String)
 
-/** One-tap answer to "how did you feel?" when a segment ends. */
+/**
+ * The user's own 1-to-5 rating of how the session went, asked when a segment ends. It is a personal
+ * judgement, kept apart from the activation estimated by the watch. The names are stored, so the
+ * original `GOOD`, `OKAY` and `BAD` keep their meaning.
+ */
 enum class Feedback {
-    GOOD,
-    OKAY,
+    VERY_BAD,
     BAD,
+    OKAY,
+    GOOD,
+    VERY_GOOD,
+    ;
+
+    /** From 1 (very bad) to 5 (very good). */
+    val rating: Int get() = ordinal + 1
+
+    /** Whether the user felt the session went badly (1 or 2). */
+    val isNegative: Boolean get() = rating <= NEGATIVE_MAX
+
+    /** Whether the user felt the session went well (4 or 5). */
+    val isPositive: Boolean get() = rating >= POSITIVE_MIN
+
+    companion object {
+        private const val NEGATIVE_MAX = 2
+        private const val POSITIVE_MIN = 4
+
+        fun fromRating(rating: Int): Feedback? = entries.firstOrNull { it.rating == rating }
+    }
 }
 
 /** A guided pause and the estimates right before and right after it. */
