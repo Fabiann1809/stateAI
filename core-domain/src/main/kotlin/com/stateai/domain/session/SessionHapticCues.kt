@@ -11,12 +11,14 @@ import kotlin.time.Duration.Companion.minutes
  * target block is reached, and a gentle reminder every [reminderEvery] while the person keeps going
  * past it. Every cue is reported to [onCue] so cycle detection can discount the periodicity the app
  * itself induces, and pauses are posted to [suggestions] so the screen shows them. The vibrations
- * still go through the player's rate limits.
+ * still go through the player's rate limits. A kind of suggestion the person keeps turning down is
+ * held back by [gate].
  */
 class SessionHapticCues(
     private val player: HapticPlayer,
     private val onCue: (Instant) -> Unit = {},
     private val suggestions: SessionSuggestions = SessionSuggestions(),
+    private val gate: SuggestionGate = SuggestionGate.Always,
     private val reminderEvery: Duration = DEFAULT_REMINDER_EVERY,
 ) {
     private var startedSession: ActiveSession? = null
@@ -35,6 +37,7 @@ class SessionHapticCues(
             val blockDone = due == session.profile.targetBlock
             val reason = if (blockDone) SuggestionReason.BLOCK_DONE else SuggestionReason.LONG_SESSION
             nextPauseAt = due + reminderEvery
+            if (!gate.shouldSuggest(reason)) return
             player.play(HapticEvent.PAUSE_SUGGESTED)
             onCue(now)
             suggestions.post(Suggestion(reason, now, progress.elapsed))

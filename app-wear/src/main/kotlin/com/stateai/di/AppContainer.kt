@@ -14,6 +14,7 @@ import com.stateai.domain.learning.FeedbackSensitivityLearner
 import com.stateai.domain.learning.RecordFeedback
 import com.stateai.domain.mascot.MascotRepository
 import com.stateai.domain.pause.GuidedPause
+import com.stateai.domain.pause.PauseAdvisor
 import com.stateai.domain.profile.LearnedProfileProvider
 import com.stateai.domain.profile.ProfileProvider
 import com.stateai.domain.segment.SegmentId
@@ -31,6 +32,9 @@ import com.stateai.voice.SpeechAvailability
 import java.time.Clock
 import java.time.ZoneId
 import java.util.UUID
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 
 /** Creates and holds the app-wide dependencies (manual dependency injection). */
 class AppContainer(context: Context) {
@@ -69,8 +73,11 @@ class AppContainer(context: Context) {
         StartSession(activityRepository, sessionTracker, profileProvider, segmentRecorder, endSession, clock)
     private val classifiers = ClassifierModule(context)
 
+    /** Learns which pause suggestions the person takes and holds back the ones they keep turning down. */
+    val pauseAdvisor = PauseAdvisor(storage.pauseResponses, CoroutineScope(SupervisorJob() + Dispatchers.Default))
+
     /** Pause suggestions of the running session, shown on screen next to the vibration. */
-    val sessionSuggestions = SessionSuggestions()
+    val sessionSuggestions = SessionSuggestions(onOutcome = pauseAdvisor::record)
     val sessionMonitor = SessionMonitor(
         sensors.source,
         baselineKeeper,
@@ -78,5 +85,6 @@ class AppContainer(context: Context) {
         segmentRecorder,
         newEngine = { StateEngine(classifiers.classifier) },
         suggestions = sessionSuggestions,
+        gate = pauseAdvisor,
     )
 }

@@ -15,8 +15,13 @@ class SessionHapticCuesTest {
     private val clock = MutableClock()
     private val played = mutableListOf<HapticEvent>()
     private val suggestions = SessionSuggestions()
-    private val cues =
-        SessionHapticCues(player = { played += it }, onCue = { cueTimes += it }, suggestions = suggestions)
+    private var allowed = true
+    private val cues = SessionHapticCues(
+        player = { played += it },
+        onCue = { cueTimes += it },
+        suggestions = suggestions,
+        gate = { allowed },
+    )
     private val cueTimes = mutableListOf<Instant>()
     private val study = Activity(ActivityId("study"), ActivityCategory.STUDY, name = null)
     private val session = ActiveSession(study, DefaultCategoryProfiles.STUDY, startedAt = clock.instant())
@@ -82,5 +87,23 @@ class SessionHapticCuesTest {
         assertEquals(3, played.count { it == HapticEvent.PAUSE_SUGGESTED })
         assertEquals(SuggestionReason.LONG_SESSION, suggestions.current.value?.reason)
         assertEquals(80.minutes, suggestions.current.value?.elapsed)
+    }
+
+    @Test
+    fun `a suggestion held back does not move the reminders`() {
+        allowed = false
+        cues.onTick(session, clock.instant())
+        clock.advanceBy(40.minutes)
+        cues.onTick(session, clock.instant())
+
+        assertEquals(listOf(HapticEvent.BLOCK_START), played)
+        assertEquals(1, cueTimes.size)
+        assertEquals(null, suggestions.current.value)
+
+        allowed = true
+        clock.advanceBy(20.minutes)
+        cues.onTick(session, clock.instant())
+
+        assertEquals(SuggestionReason.LONG_SESSION, suggestions.current.value?.reason)
     }
 }

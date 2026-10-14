@@ -58,9 +58,14 @@ class SessionViewModel(activityId: ActivityId, private val dependencies: Session
         viewModelScope.launch { dependencies.startSession(activityId) }
     }
 
-    /** "Ahora no", or the suggestion was taken: either way it leaves the screen. */
+    /** "Ahora no": the suggestion leaves the screen. */
     fun dismissSuggestion() {
         dependencies.suggestions.dismiss()
+    }
+
+    /** The person took the suggested pause. */
+    fun acceptSuggestion() {
+        dependencies.suggestions.accept()
     }
 
     /** Ends the session and reports the closed segment, if any. */

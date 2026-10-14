@@ -81,6 +81,7 @@ fun SessionRoute(activityId: ActivityId, onPause: () -> Unit, onRest: () -> Unit
         onRest = onRest,
         onStop = { viewModel.stop(onStopped) },
         onDismissSuggestion = viewModel::dismissSuggestion,
+        onAcceptSuggestion = viewModel::acceptSuggestion,
     )
     var confirmingEnd by remember { mutableStateOf(false) }
     // Back never ends a session by accident: it asks first (the session keeps running meanwhile).
@@ -102,6 +103,7 @@ data class SessionActions(
     val onRest: () -> Unit,
     val onStop: () -> Unit,
     val onDismissSuggestion: () -> Unit,
+    val onAcceptSuggestion: () -> Unit,
 )
 
 /** What the session shows right now: the display state, if there is an estimate. */
@@ -124,7 +126,7 @@ fun SessionScreen(state: SessionUiState, isAmbient: Boolean, actions: SessionAct
                     SuggestionCard(
                         suggestion = suggestion,
                         onAccept = { pause ->
-                            actions.onDismissSuggestion()
+                            actions.onAcceptSuggestion()
                             if (pause == PauseKind.BREATHE) actions.onPause() else actions.onRest()
                         },
                         onDismiss = actions.onDismissSuggestion,

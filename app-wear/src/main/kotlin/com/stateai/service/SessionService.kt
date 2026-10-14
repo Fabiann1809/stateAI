@@ -25,12 +25,14 @@ class SessionService : LifecycleService() {
             container.haptics.sessionPlayer,
             onCue = container.segmentRecorder::onCue,
             suggestions = container.sessionSuggestions,
+            gate = container.pauseAdvisor,
         )
     }
 
     override fun onCreate() {
         super.onCreate()
         notifications.createChannel()
+        lifecycleScope.launch { container.pauseAdvisor.load() }
         lifecycleScope.launch {
             container.sessionTracker.activeSession.collect { session ->
                 if (session == null) stopSelf() else showForeground(session)

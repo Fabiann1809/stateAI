@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.stateai.data.baseline.DataStoreBaselineRepository
 import com.stateai.data.mascot.DataStoreMascotRepository
+import com.stateai.data.pause.DataStorePauseResponseRepository
 import com.stateai.data.room.RoomActivityRepository
 import com.stateai.data.room.RoomLearningRepository
 import com.stateai.data.room.RoomSegmentRepository
@@ -14,6 +15,7 @@ import com.stateai.domain.activity.ActivityRepository
 import com.stateai.domain.baseline.BaselineRepository
 import com.stateai.domain.learning.LearningRepository
 import com.stateai.domain.mascot.MascotRepository
+import com.stateai.domain.pause.PauseResponseRepository
 import com.stateai.domain.segment.SegmentRepository
 import com.stateai.domain.voice.VoiceConsentRepository
 import java.time.Clock
@@ -35,9 +37,14 @@ class LocalStorage(context: Context, clock: Clock) {
         PreferenceDataStoreFactory.create { context.preferencesDataStoreFile(VOICE_STORE) },
     )
 
+    val pauseResponses: PauseResponseRepository = DataStorePauseResponseRepository(
+        PreferenceDataStoreFactory.create { context.preferencesDataStoreFile(PAUSE_STORE) },
+    )
+
     private companion object {
         const val BASELINE_STORE = "baseline"
         const val MASCOT_STORE = "mascot"
         const val VOICE_STORE = "voice"
+        const val PAUSE_STORE = "pause_responses"
     }
 }

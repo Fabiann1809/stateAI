@@ -44,6 +44,7 @@ class SessionMonitor(
     private val newEngine: () -> StateEngine = { StateEngine() },
     private val newPolicy: () -> HapticPolicy = { HapticPolicy() },
     private val suggestions: SessionSuggestions = SessionSuggestions(),
+    private val gate: SuggestionGate = SuggestionGate.Always,
 ) {
     private val current = MutableStateFlow<MonitorStatus>(MonitorStatus.Waiting)
     val status: StateFlow<MonitorStatus> = current.asStateFlow()
@@ -52,24 +53,32 @@ class SessionMonitor(
         val engine = newEngine()
         val policy = newPolicy()
         current.value = MonitorStatus.Waiting
-        suggestions.dismiss()
+        suggestions.reset()
         val samples = sensorSource.samples().onEach { sample ->
             val progress = baselineKeeper.calibrate(sample)
             if (progress is CalibrationProgress.Collecting) current.value = MonitorStatus.Calibrating(progress.fraction)
             if (progress is CalibrationProgress.Done) current.value = MonitorStatus.Waiting
         }
-        windowStream.windows(samples).collect { window ->
-            val estimate = estimate(window, session, engine)
-            recorder.onWindow(window, estimate)
-            estimate?.let {
-                current.value = MonitorStatus.Estimating(estimate)
-                policy.onEstimate(estimate)?.let { cue -> playCue(cue, session, window.end) }
+        try {
+            windowStream.windows(samples).collect { window ->
+                val estimate = estimate(window, session, engine)
+                recorder.onWindow(window, estimate)
+                estimate?.let {
+                    current.value = MonitorStatus.Estimating(estimate)
+                    policy.onEstimate(estimate)?.let { cue -> playCue(cue, session, window.end) }
+                }
             }
+        } finally {
+            suggestions.reset()
         }
     }
 
-    /** Vibrates and posts the matching suggestion, so the screen says why the watch vibrated. */
+    /**
+     * Vibrates and posts the matching suggestion, so the screen says why the watch vibrated. A kind of
+     * suggestion the person keeps turning down is held back.
+     */
     private fun playCue(cue: SessionCue, session: ActiveSession, at: Instant) {
+        if (!gate.shouldSuggest(cue.reason)) return
         if (cue.event == HapticEvent.PAUSE_SUGGESTED) recorder.onPauseSuggested()
         player.play(cue.event)
         val elapsed = java.time.Duration.between(session.startedAt, at).toKotlinDuration()

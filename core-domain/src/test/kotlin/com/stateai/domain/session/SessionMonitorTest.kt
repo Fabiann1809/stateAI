@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -29,7 +30,9 @@ class SessionMonitorTest {
         startedAt = start,
     )
     private val played = mutableListOf<HapticEvent>()
-    private val suggestions = SessionSuggestions()
+    private val outcomes = mutableListOf<Pair<Suggestion, SuggestionOutcome>>()
+    private val suggestions = SessionSuggestions { suggestion, outcome -> outcomes += suggestion to outcome }
+    private var allowed = true
     private val recorder = SegmentRecorder { SegmentId("segment") }.apply { start(session) }
     private val repository = object : BaselineRepository {
         var stored: UserBaseline? = null
@@ -60,8 +63,23 @@ class SessionMonitorTest {
 
         assertEquals(ActivationLevel.HIGH, (monitor.status.value as MonitorStatus.Estimating).estimate.level)
         assertTrue(HapticEvent.OVERLOAD_ALERT in played, "$played")
-        assertEquals(SuggestionReason.OVERLOAD, suggestions.current.value?.reason)
-        assertEquals(PauseKind.BREATHE, suggestions.current.value?.reason?.pause)
+        // The session ended with the suggestion unanswered, so it was reported as ignored.
+        assertEquals(listOf(SuggestionOutcome.IGNORED), outcomes.map { it.second })
+        assertEquals(SuggestionReason.OVERLOAD, outcomes.single().first.reason)
+        assertEquals(PauseKind.BREATHE, outcomes.single().first.reason.pause)
+        assertNull(suggestions.current.value)
+    }
+
+    @Test
+    fun `a suggestion held back by the gate neither vibrates nor shows`() = runTest {
+        repository.stored = UserBaseline(65.0, 1.0, start)
+        allowed = false
+        val monitor = monitorWith(heartRateAt = { second -> if (second < 180) 65.0 else 85.0 }, seconds = 900)
+
+        monitor.run(session)
+
+        assertTrue(played.isEmpty(), "$played")
+        assertTrue(outcomes.isEmpty())
     }
 
     @Test
@@ -83,6 +101,7 @@ class SessionMonitorTest {
             player = { played += it },
             recorder = recorder,
             suggestions = suggestions,
+            gate = { allowed },
         )
     }
 }
