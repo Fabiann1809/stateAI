@@ -17,7 +17,6 @@ private const val FULL_TURN = 360f
 private const val TOP = -90f
 private const val GAP_DEGREES = 1f
 private const val NO_DATA_ALPHA = 0.7f
-private const val REMAINING_ALPHA = 0.5f
 private val STROKE = 10.dp
 private val EDGE_INSET = 11.dp
 
@@ -49,6 +48,6 @@ fun SegmentedRing(minutes: List<DisplayState?>, plannedMinutes: Int, modifier: M
 }
 
 private fun colorOf(minutes: List<DisplayState?>, index: Int): Color = when {
-    index >= minutes.size -> StateAiColors.Outline.copy(alpha = REMAINING_ALPHA)
+    index >= minutes.size -> StateAiColors.Surface
     else -> minutes[index]?.color() ?: StateAiColors.NoData.copy(alpha = NO_DATA_ALPHA)
 }
