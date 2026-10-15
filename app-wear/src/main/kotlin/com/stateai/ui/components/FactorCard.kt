@@ -2,16 +2,19 @@ package com.stateai.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -34,25 +37,31 @@ fun FactorCard(icon: ImageVector, name: String, value: Double?, change: Double?,
         modifier = modifier
             .fillMaxWidth()
             .height(CARD_HEIGHT)
-            .background(StateAiColors.Surface2, RoundedCornerShape(StateAiDimens.RadiusCard + 5.dp))
-            .padding(horizontal = StateAiDimens.SpaceM),
+            .background(StateAiColors.Surface2, RoundedCornerShape(CARD_HEIGHT / 2))
+            .padding(start = StateAiDimens.SpaceS, end = StateAiDimens.SpaceM),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(icon, contentDescription = null, tint = StateAiColors.Text1, modifier = Modifier.size(ICON_SIZE))
-        Text(name, fontSize = StateAiDimens.Label, modifier = Modifier.weight(1f), maxLines = 2)
+        IconTile(icon)
+        Text(
+            name,
+            fontSize = StateAiDimens.Label,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.weight(1f),
+            maxLines = 2,
+        )
         Column(horizontalAlignment = Alignment.End) {
             Text(
                 text = value?.roundToInt()?.toString() ?: "–",
                 fontSize = VALUE_SIZE,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.SemiBold,
                 style = LocalTextStyle.current.tabular(),
             )
             change?.roundToInt()?.takeIf { it != 0 }?.let { delta ->
                 Text(
                     text = if (delta > 0) "+$delta" else "−${-delta}",
                     fontSize = StateAiDimens.Label,
-                    color = if (delta > 0) StateAiColors.Accent else StateAiColors.Text3,
+                    color = if (delta > 0) StateAiColors.Accent else DROP,
                     style = LocalTextStyle.current.tabular(),
                 )
             }
@@ -60,6 +69,19 @@ fun FactorCard(icon: ImageVector, name: String, value: Double?, change: Double?,
     }
 }
 
-private val CARD_HEIGHT = 48.dp
-private val ICON_SIZE = 15.dp
+/** The icon on a soft turquoise disc. */
+@Composable
+private fun IconTile(icon: ImageVector) {
+    Box(
+        Modifier.size(TILE_SIZE).background(StateAiColors.AccentSoft, CircleShape),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(icon, contentDescription = null, tint = StateAiColors.Accent, modifier = Modifier.size(ICON_SIZE))
+    }
+}
+
+private val CARD_HEIGHT = 46.dp
+private val TILE_SIZE = 28.dp
+private val ICON_SIZE = 14.dp
 private val VALUE_SIZE = 17.sp
+private val DROP = Color(0xFF7F92B5)

@@ -8,7 +8,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
-import androidx.wear.compose.material3.Button
+import androidx.wear.compose.material3.FilledTonalButton
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
@@ -25,7 +25,7 @@ fun HapticsDebugScreen() {
         ScalingLazyColumn(state = listState, contentPadding = contentPadding) {
             item { ListHeader { Text(stringResource(R.string.debug_haptics_title)) } }
             items(HapticEvent.entries) { event ->
-                Button(
+                FilledTonalButton(
                     onClick = { player.play(event) },
                     modifier = Modifier.fillMaxWidth(),
                     label = { Text(stringResource(event.labelRes())) },

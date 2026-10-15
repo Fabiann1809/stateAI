@@ -15,6 +15,7 @@ object StateAiIcons {
     val Plus = outline("M18 8v20M8 18h20")
     val Bars = outline("M10 28V16M18 28V8M26 28v-9")
     val Back = outline("M22 6l-10 12 10 12")
+    val Down = outline("M9 14l9 9 9-9")
     val List = outline("M9 11h18M9 18h18M9 25h18")
 
     val Focus = thin("M12 21a9 9 0 1 0 0-18a9 9 0 0 0 0 18ZM12 15a3 3 0 1 0 0-6a3 3 0 0 0 0 6Z")

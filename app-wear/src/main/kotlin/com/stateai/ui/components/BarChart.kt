@@ -7,6 +7,7 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -15,11 +16,11 @@ import androidx.compose.ui.unit.dp
 import com.stateai.ui.theme.StateAiColors
 
 /**
- * Accent bars with rounded tops, evenly spread over the width. Highlighted bars are fully opaque;
- * the others are dimmer, so the eye goes to "today" or "the best hour".
+ * Bars with rounded tops, evenly spread over the width. The highlighted one has the violet-to-turquoise
+ * gradient and the others are a quiet violet, so the eye goes to "today" or "the best hour".
  */
 @Composable
-fun BarChart(bars: List<Bar>, modifier: Modifier = Modifier, dimAlpha: Float = DEFAULT_DIM_ALPHA) {
+fun BarChart(bars: List<Bar>, modifier: Modifier = Modifier) {
     Canvas(modifier) {
         if (bars.isEmpty()) return@Canvas
         val slot = size.width / bars.size
@@ -31,10 +32,12 @@ fun BarChart(bars: List<Bar>, modifier: Modifier = Modifier, dimAlpha: Float = D
                 drawEmptyBar(left, width)
             } else {
                 val height = (size.height * value.coerceIn(0f, 1f)).coerceAtLeast(MIN_HEIGHT.toPx())
-                drawPath(
-                    path = topRounded(left, size.height - height, width, height),
-                    color = StateAiColors.Accent.copy(alpha = if (bar.highlighted) 1f else dimAlpha),
-                )
+                val path = topRounded(left, size.height - height, width, height)
+                if (bar.highlighted) {
+                    drawPath(path, Brush.verticalGradient(listOf(StateAiColors.Accent2, StateAiColors.Accent)))
+                } else {
+                    drawPath(path, StateAiColors.NoData)
+                }
             }
         }
     }
@@ -68,7 +71,6 @@ private fun DrawScope.topRounded(left: Float, top: Float, width: Float, height: 
 }
 
 private const val WIDTH_SHARE = 0.62f
-private const val DEFAULT_DIM_ALPHA = 0.62f
 private val MAX_WIDTH = 14.dp
 private val RADIUS = 6.dp
 private val MIN_HEIGHT = 2.dp

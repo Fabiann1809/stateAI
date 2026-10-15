@@ -38,7 +38,6 @@ fun HoursPage(hourly: HourlyFocus, isLearning: Boolean) {
         BarChart(
             bars = hourly.hours.map { Bar(it.share.toFloat(), highlighted = it.hour == best) },
             modifier = Modifier.size(width = CHART_WIDTH, height = CHART_HEIGHT),
-            dimAlpha = DIM_ALPHA,
         )
         HourLabels(hourly)
         BestHour(best, hourly.bestHourDays, isLearning)
@@ -85,4 +84,3 @@ private val CHART_WIDTH = 160.dp
 private val CHART_HEIGHT = 72.dp
 private val BEST_SIZE = 17.sp
 private const val LABEL_EVERY = 4
-private const val DIM_ALPHA = 0.4f

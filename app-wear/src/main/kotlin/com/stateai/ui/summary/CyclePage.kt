@@ -9,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
@@ -99,6 +101,13 @@ private fun CycleWave(detected: Boolean) {
                 x += 2f
             }
         }
+        val fill = Path().apply {
+            addPath(path)
+            lineTo(size.width, size.height)
+            lineTo(0f, size.height)
+            close()
+        }
+        drawPath(fill, Brush.verticalGradient(listOf(StateAiColors.Accent.copy(alpha = FILL_ALPHA), Color.Transparent)))
         drawPath(path, StateAiColors.Accent, style = Stroke(2.5.dp.toPx(), cap = StrokeCap.Round))
     }
 }
@@ -108,3 +117,4 @@ private val WAVE_HEIGHT = 28.dp
 private val VALUE_SIZE = 38.sp
 private val NONE_SIZE = 20.sp
 private const val WAVES = 3
+private const val FILL_ALPHA = 0.35f

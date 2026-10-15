@@ -1,136 +1,135 @@
 package com.stateai.ui.summary
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.wear.compose.material3.LocalTextStyle
 import androidx.wear.compose.material3.Text
 import com.stateai.R
 import com.stateai.domain.state.DisplayState
 import com.stateai.domain.summary.DaySummary
+import com.stateai.domain.summary.SessionReport
 import com.stateai.domain.summary.TimelinePoint
 import com.stateai.ui.common.toHoursMinutesText
-import com.stateai.ui.components.ChartPoint
-import com.stateai.ui.components.DotLineChart
 import com.stateai.ui.components.StateIndicator
 import com.stateai.ui.theme.StateAiColors
 import com.stateai.ui.theme.StateAiDimens
+import com.stateai.ui.theme.color
 import com.stateai.ui.theme.labelRes
+import com.stateai.ui.theme.tabular
 import java.time.ZoneId
-import kotlin.math.ceil
-import kotlin.math.floor
-import kotlin.time.Duration.Companion.ZERO
+import kotlin.time.Duration
 
-/** D4: today's states as points through the day, with a legend. Past states have three levels (decision 28). */
+/**
+ * D4: the day as a ribbon of colored blocks (one per ten minutes) with the start and end time, and
+ * under it the time spent in each state with a bar. Past states have three levels (decision 28).
+ */
 @Composable
 fun DayChartPage(summary: DaySummary?, points: List<TimelinePoint>) {
-    val known = points.filter { it.state != null }
-    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(3.dp)) {
-        PageTitle(stringResource(R.string.summary_today, (summary?.totalTime ?: ZERO).toHoursMinutesText()))
-        if (known.isEmpty()) {
-            MissingData(stringResource(R.string.summary_missing_data), Modifier.width(150.dp))
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceXs),
+        modifier = Modifier.width(CONTENT_WIDTH),
+    ) {
+        PageTitle(stringResource(R.string.summary_today, (summary?.totalTime ?: Duration.ZERO).toHoursMinutesText()))
+        if (points.none { it.state != null }) {
+            MissingData(stringResource(R.string.summary_missing_data))
             return@Column
         }
-        val focus = summary?.segments?.fold(ZERO) { total, segment -> total + segment.levelTime.low } ?: ZERO
-        Text(
-            text = stringResource(R.string.summary_focus_time, focus.toHoursMinutesText()),
-            fontSize = HEADER_SIZE,
-            fontWeight = FontWeight.Medium,
-        )
-        val axis = HourAxis.of(known)
-        DotLineChart(
-            points = known.map { ChartPoint(axis.fraction(it), requireNotNull(it.state)) },
-            gridX = axis.labels.indices.map { it / (axis.labels.size - 1f) },
-            modifier = Modifier.size(width = CHART_WIDTH, height = CHART_HEIGHT),
-        )
-        HourLabels(axis.labels)
-        Legend()
-        Text(
-            text = stringResource(R.string.summary_states_estimated),
-            fontSize = StateAiDimens.Label,
-            color = StateAiColors.Text3,
-        )
+        Ribbon(points)
+        TimeLabels(points.first(), points.last())
+        val times = timeByState(summary)
+        val longest = times.maxOfOrNull { it.second } ?: Duration.ZERO
+        Column(verticalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceS)) {
+            times.forEach { (state, time) -> StateRow(state, time, share = time / longest) }
+        }
+        PageTitle(stringResource(R.string.summary_states_estimated))
     }
 }
 
 @Composable
-private fun HourLabels(hours: List<Int>) {
-    Row(Modifier.width(CHART_WIDTH + LABEL_WIDTH), horizontalArrangement = Arrangement.SpaceBetween) {
-        hours.forEach { hour ->
-            Text(
-                text = stringResource(R.string.summary_hour, hour),
-                fontSize = StateAiDimens.Label,
-                color = StateAiColors.Text3,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.width(LABEL_WIDTH),
+private fun Ribbon(points: List<TimelinePoint>) {
+    Row(Modifier.fillMaxWidth().height(RIBBON_HEIGHT), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+        points.forEach { point ->
+            Box(
+                Modifier
+                    .weight(1f)
+                    .height(RIBBON_HEIGHT)
+                    .background(point.state?.color() ?: StateAiColors.NoData, RoundedCornerShape(BLOCK_RADIUS)),
             )
         }
     }
 }
 
-/** Two rows, like the design's 2 x 2 legend (past states have three levels). */
 @Composable
-private fun Legend() {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Row(horizontalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceM)) {
-            LegendItem(DisplayState.FOCUSED)
-            LegendItem(DisplayState.NORMAL)
-        }
-        LegendItem(DisplayState.OVERLOADED)
-    }
-}
-
-@Composable
-private fun LegendItem(state: DisplayState) {
-    StateIndicator(
-        state = state,
-        label = stringResource(state.labelRes()),
-        size = 9.dp,
-        fontSize = StateAiDimens.Label,
-        textColor = StateAiColors.Text2,
-    )
-}
-
-/** Whole hours around today's points, with three evenly spaced labels. */
-private class HourAxis(private val startMinute: Double, private val endMinute: Double, val labels: List<Int>) {
-    fun fraction(point: TimelinePoint): Float =
-        ((minuteOfDay(point) - startMinute) / (endMinute - startMinute)).toFloat().coerceIn(0f, 1f)
-
-    companion object {
-        fun of(points: List<TimelinePoint>): HourAxis {
-            val minutes = points.map(::minuteOfDay)
-            var start = floor(minutes.min() / MINUTES_PER_HOUR).toInt()
-            var end = ceil(minutes.max() / MINUTES_PER_HOUR).toInt()
-            if (end - start < MIN_HOURS) end = start + MIN_HOURS
-            if ((end - start) % 2 != 0) end += 1
-            if (end > LAST_HOUR) {
-                start -= end - LAST_HOUR
-                end = LAST_HOUR
-            }
-            return HourAxis(start * MINUTES_PER_HOUR, end * MINUTES_PER_HOUR, listOf(start, (start + end) / 2, end))
-        }
-
-        private fun minuteOfDay(point: TimelinePoint): Double {
+private fun TimeLabels(first: TimelinePoint, last: TimelinePoint) {
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        listOf(first, last).forEach { point ->
             val time = point.time.atZone(ZoneId.systemDefault())
-            return time.hour * MINUTES_PER_HOUR + time.minute
+            Text(
+                text = stringResource(R.string.summary_clock, time.hour, time.minute),
+                fontSize = StateAiDimens.Label,
+                color = StateAiColors.Text3,
+            )
         }
-
-        private const val MINUTES_PER_HOUR = 60.0
-        private const val MIN_HOURS = 2
-        private const val LAST_HOUR = 24
     }
 }
 
-private val CHART_WIDTH = 150.dp
-private val CHART_HEIGHT = 62.dp
-private val LABEL_WIDTH = 34.dp
-private val HEADER_SIZE = 14.sp
+@Composable
+private fun StateRow(state: DisplayState, time: Duration, share: Double) {
+    val color = state.color()
+    Column(verticalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceXs)) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            StateIndicator(
+                state = state,
+                label = stringResource(state.labelRes()),
+                size = 11.dp,
+                fontSize = StateAiDimens.Label,
+                textColor = StateAiColors.Text1,
+                modifier = Modifier.weight(1f),
+            )
+            Text(
+                text = time.toHoursMinutesText(),
+                fontSize = StateAiDimens.Body,
+                fontWeight = FontWeight.SemiBold,
+                color = color,
+                style = LocalTextStyle.current.tabular(),
+            )
+        }
+        Box(Modifier.fillMaxWidth().height(BAR_HEIGHT).background(StateAiColors.Surface, CircleShape)) {
+            Box(
+                Modifier
+                    .fillMaxWidth(share.toFloat().coerceIn(0f, 1f))
+                    .height(BAR_HEIGHT)
+                    .background(color, CircleShape),
+            )
+        }
+    }
+}
+
+/** Total time of each state across today's sessions; the states with no time are left out. */
+private fun timeByState(summary: DaySummary?): List<Pair<DisplayState, Duration>> {
+    val totals = summary?.segments.orEmpty().map { SessionReport.of(it).timeByState }
+    return DisplayState.entries.mapNotNull { state ->
+        val total = totals.fold(Duration.ZERO) { sum, byState -> sum + (byState[state] ?: Duration.ZERO) }
+        (state to total).takeIf { total.isPositive() }
+    }
+}
+
+private val CONTENT_WIDTH = 150.dp
+private val RIBBON_HEIGHT = 20.dp
+private val BLOCK_RADIUS = 5.dp
+private val BAR_HEIGHT = 4.dp

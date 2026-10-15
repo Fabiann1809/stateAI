@@ -1,16 +1,8 @@
 package com.stateai.ui.summary
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
@@ -20,7 +12,7 @@ import com.stateai.R
 import com.stateai.di.appContainer
 import com.stateai.domain.summary.changeSinceYesterday
 import com.stateai.ui.components.EnergyOverview
-import com.stateai.ui.components.PageIndicator
+import com.stateai.ui.components.VerticalPages
 import kotlinx.coroutines.flow.flowOf
 
 @Composable
@@ -47,27 +39,12 @@ fun SummaryRoute() {
     SummaryScreen(state)
 }
 
-/** Day summary as a carousel, one idea per page: how it went, why, and when it repeats. */
+/** Day summary as pages that scroll down, one idea per page: how it went, why, and when it repeats. */
 @Composable
 fun SummaryScreen(state: DaySummaryUiState) {
-    val pagerState = rememberPagerState(pageCount = { PAGE_CONTENT.size })
     ScreenScaffold(timeText = {}) {
-        Box(Modifier.fillMaxSize()) {
-            HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize()) { page ->
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { SummaryPage(page, state) }
-            }
-            PageIndicator(
-                count = PAGE_CONTENT.size,
-                current = pagerState.currentPage,
-                modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 8.dp),
-            )
-        }
+        VerticalPages(count = PAGE_CONTENT.size) { page -> PAGE_CONTENT[page](state) }
     }
-}
-
-@Composable
-private fun SummaryPage(page: Int, state: DaySummaryUiState) {
-    PAGE_CONTENT[page](state)
 }
 
 /** D1 to D8, from "how did it go" to "when does it repeat". */

@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
-import androidx.wear.compose.material3.Button
+import androidx.wear.compose.material3.FilledTonalButton
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
@@ -58,5 +58,5 @@ private fun DemoLoadResult?.labelRes(): Int = when (this) {
 
 @Composable
 private fun MenuButton(@StringRes label: Int, onClick: () -> Unit) {
-    Button(onClick = onClick, modifier = Modifier.fillMaxWidth(), label = { Text(stringResource(label)) })
+    FilledTonalButton(onClick = onClick, modifier = Modifier.fillMaxWidth(), label = { Text(stringResource(label)) })
 }

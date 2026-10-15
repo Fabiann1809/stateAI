@@ -6,7 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -23,23 +24,28 @@ import kotlin.math.sin
 fun ScoreGauge(score: Double?, modifier: Modifier = Modifier) {
     Canvas(modifier.fillMaxSize()) {
         val unit = size.width
+        val gradient = Brush.linearGradient(
+            colors = listOf(StateAiColors.Accent, StateAiColors.Accent2),
+            start = Offset(0f, unit),
+            end = Offset(unit, 0f),
+        )
         val center = Offset(unit / 2, unit * CENTER_Y)
         val radius = unit * RADIUS
         drawTicks(center, unit)
-        drawGaugeArc(center, radius, SWEEP, unit * TRACK_WIDTH, StateAiColors.Outline)
+        drawGaugeArc(center, radius, SWEEP, unit * TRACK_WIDTH, SolidColor(StateAiColors.Surface))
         score?.let { value ->
             val sweep = SWEEP * (value / MAX_SCORE).toFloat().coerceIn(0f, 1f)
-            if (sweep > 0f) drawGaugeArc(center, radius, sweep, unit * TRACK_WIDTH, StateAiColors.Accent)
+            if (sweep > 0f) drawGaugeArc(center, radius, sweep, unit * TRACK_WIDTH, gradient)
             val marker = pointAt(center, radius, START + sweep)
-            drawCircle(StateAiColors.Background, radius = unit * (MARKER + MARKER_RING), center = marker)
+            drawCircle(StateAiColors.AuroraMiddle, radius = unit * (MARKER + MARKER_RING), center = marker)
             drawCircle(StateAiColors.Text1, radius = unit * MARKER, center = marker)
         }
     }
 }
 
-private fun DrawScope.drawGaugeArc(center: Offset, radius: Float, sweep: Float, width: Float, color: Color) {
+private fun DrawScope.drawGaugeArc(center: Offset, radius: Float, sweep: Float, width: Float, brush: Brush) {
     drawArc(
-        color = color,
+        brush = brush,
         startAngle = START,
         sweepAngle = sweep,
         useCenter = false,
@@ -54,7 +60,7 @@ private fun DrawScope.drawTicks(center: Offset, unit: Float) {
         val major = index % MAJOR_EVERY == 0
         val angle = START + SWEEP * index / TICKS
         drawLine(
-            color = StateAiColors.Text3,
+            color = StateAiColors.Muted,
             start = pointAt(center, unit * TICK_INNER, angle),
             end = pointAt(center, unit * (if (major) TICK_MAJOR_OUTER else TICK_MINOR_OUTER), angle),
             strokeWidth = unit * (if (major) TICK_MAJOR_WIDTH else TICK_MINOR_WIDTH),

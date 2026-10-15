@@ -33,7 +33,8 @@ fun WeekPage(days: List<DayScore>) {
         Text(
             text = today?.toString() ?: " ",
             fontSize = TODAY_SIZE,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.SemiBold,
+            color = StateAiColors.Accent,
             textAlign = TextAlign.End,
             modifier = Modifier.width(CHART_WIDTH),
         )
