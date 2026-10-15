@@ -1,5 +1,8 @@
 package com.stateai.ui.home
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -7,13 +10,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -59,48 +67,60 @@ data class HomeActions(
 )
 
 /**
- * The main screen: the mascot is the protagonist (tap it and say what you will do), and below it
- * the way to the activity list, today's estimated energy and the day summary.
+ * The main screen: today's estimated energy on top, the mascot as the protagonist (tap it and say what
+ * you will do), and below it the way to the activity list and to the day summary.
  */
 @Composable
 fun HomeScreen(state: HomeUiState, actions: HomeActions) {
     val name = (state.mascotName as? MascotNameState.Known)?.name.orEmpty()
-    // No system time here: the mascot fills the top of the screen.
+    // No system time here: the energy pill and the mascot fill the top of the screen.
     ScreenScaffold(timeText = {}) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(2.dp),
+                verticalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceXs),
                 modifier = Modifier.padding(top = TOP_PADDING),
             ) {
+                state.energy?.let { EnergyPill(it) }
                 TalkingMascot(name, actions.onTalk, actions.onOpenDebug)
-                HomeShortcuts(state.energy, actions)
+                HomeShortcuts(actions)
             }
         }
     }
 }
 
+/** Today's energy as a small translucent pill: the silhouette and the percentage. */
+@Composable
+private fun EnergyPill(energy: EnergyBudget) {
+    EnergyBadge(
+        energy = energy,
+        color = StateAiColors.Accent,
+        height = PILL_SILHOUETTE,
+        fontSize = PILL_TEXT,
+        modifier = Modifier
+            .background(StateAiColors.Surface2, CircleShape)
+            .border(BorderStroke(1.dp, StateAiColors.Outline), CircleShape)
+            .padding(horizontal = PILL_PADDING, vertical = PILL_VERTICAL_PADDING),
+    )
+}
+
 /** Tapping the mascot opens the microphone once (never continuous); a long press opens debug tools. */
 @Composable
 private fun TalkingMascot(name: String, onTalk: () -> Unit, onLongPress: (() -> Unit)?) {
-    val hint = if (name.isEmpty()) {
-        stringResource(R.string.home_talk_hint)
-    } else {
-        stringResource(R.string.home_talk_hint_named, name)
-    }
+    val hint = talkHint(name)
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.combinedClickable(
-            onClickLabel = hint,
+            onClickLabel = hint.text,
             role = Role.Button,
             onLongClick = onLongPress,
             onClick = onTalk,
         ),
     ) {
-        AnimatedMascot(MascotExpression.REST, size = MASCOT_SIZE, contentDescription = hint)
+        AnimatedMascot(MascotExpression.REST, size = MASCOT_SIZE, contentDescription = hint.text)
         Text(
             text = hint,
-            fontSize = StateAiDimens.Label,
+            fontSize = HINT_SIZE,
             color = StateAiColors.Text2,
             textAlign = TextAlign.Center,
             maxLines = 2,
@@ -109,20 +129,41 @@ private fun TalkingMascot(name: String, onTalk: () -> Unit, onLongPress: (() -> 
     }
 }
 
+/** "Toca a Lumi para hablar", with the name of the mascot in bold. */
 @Composable
-private fun HomeShortcuts(energy: EnergyBudget?, actions: HomeActions) {
+private fun talkHint(name: String) = if (name.isEmpty()) {
+    buildAnnotatedString { append(stringResource(R.string.home_talk_hint)) }
+} else {
+    val full = stringResource(R.string.home_talk_hint_named, name)
+    buildAnnotatedString {
+        val start = full.indexOf(name)
+        append(full.substring(0, start))
+        withStyle(SpanStyle(fontWeight = FontWeight.SemiBold, color = StateAiColors.Text1)) { append(name) }
+        append(full.substring(start + name.length))
+    }
+}
+
+@Composable
+private fun HomeShortcuts(actions: HomeActions) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceXs),
+        horizontalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceM),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        RoundIconButton(StateAiIcons.List, stringResource(R.string.home_activities), actions.onOpenActivities)
-        energy?.let { EnergyBadge(it, color = StateAiColors.Accent, height = ENERGY_HEIGHT, fontSize = ENERGY_TEXT) }
+        RoundIconButton(
+            StateAiIcons.List,
+            stringResource(R.string.home_activities),
+            actions.onOpenActivities,
+            primary = true,
+        )
         RoundIconButton(StateAiIcons.Bars, stringResource(R.string.summary_open), actions.onOpenSummary)
     }
 }
 
-private val MASCOT_SIZE = 116.dp
+private val MASCOT_SIZE = 96.dp
 private val TOP_PADDING = 10.dp
 private val HINT_PADDING = 30.dp
-private val ENERGY_HEIGHT = 28.dp
-private val ENERGY_TEXT = 15.sp
+private val HINT_SIZE = 13.sp
+private val PILL_SILHOUETTE = 17.dp
+private val PILL_TEXT = 13.sp
+private val PILL_PADDING = 10.dp
+private val PILL_VERTICAL_PADDING = 3.dp

@@ -1,8 +1,8 @@
 package com.stateai.ui.newactivity
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -23,8 +22,7 @@ import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.ScalingLazyListScope
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
-import androidx.wear.compose.material3.Button
-import androidx.wear.compose.material3.ButtonDefaults
+import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
@@ -32,8 +30,11 @@ import com.stateai.R
 import com.stateai.di.appContainer
 import com.stateai.domain.activity.ActivityCategory
 import com.stateai.domain.activity.ActivityId
+import com.stateai.ui.common.icon
 import com.stateai.ui.common.labelRes
 import com.stateai.ui.common.rememberTextInput
+import com.stateai.ui.components.GradientButton
+import com.stateai.ui.home.ListCard
 import com.stateai.ui.theme.StateAiColors
 import com.stateai.ui.theme.StateAiDimens
 
@@ -89,8 +90,14 @@ private fun ScalingLazyListScope.categoryStep(onCategorySelected: (ActivityCateg
     }
     items(ActivityCategory.entries) { category ->
         SurfaceButton(onClick = { onCategorySelected(category) }) {
-            Text(stringResource(category.labelRes()), fontWeight = FontWeight.Medium, modifier = Modifier.weight(1f))
-            Box(Modifier.size(RADIO).border(1.5.dp, StateAiColors.NoData, CircleShape))
+            Icon(
+                category.icon(),
+                contentDescription = null,
+                tint = StateAiColors.Accent2,
+                modifier = Modifier.size(ICON),
+            )
+            Text(stringResource(category.labelRes()), fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
+            Box(Modifier.size(RADIO).border(1.5.dp, StateAiColors.Muted, CircleShape))
         }
     }
 }
@@ -110,10 +117,10 @@ private fun ScalingLazyListScope.nameStep(category: ActivityCategory, suggestedN
     }
     suggestedName?.let { name ->
         item {
-            Button(
+            GradientButton(
+                label = stringResource(R.string.new_activity_use_name, name),
                 onClick = { actions.onUseSuggested(name) },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text(stringResource(R.string.new_activity_use_name, name), fontWeight = FontWeight.Medium) },
             )
         }
     }
@@ -128,29 +135,23 @@ private fun ScalingLazyListScope.nameStep(category: ActivityCategory, suggestedN
         }
     }
     item {
-        Button(
-            onClick = actions.onWithoutName,
-            colors = surfaceColors(),
-            label = { Text(stringResource(R.string.new_activity_without_name), fontWeight = FontWeight.Medium) },
-        )
+        SurfaceButton(onClick = actions.onWithoutName) {
+            Text(stringResource(R.string.new_activity_without_name), fontWeight = FontWeight.SemiBold)
+        }
     }
 }
 
-/** Full-width pill in the elevated surface color with free content in a row. */
+/** Full-width translucent card with free content in a row. */
 @Composable
 private fun SurfaceButton(onClick: () -> Unit, content: @Composable RowScope.() -> Unit) {
-    Button(
+    ListCard(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
-        colors = surfaceColors(),
-    ) {
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, content = content)
-    }
+        container = StateAiColors.Surface2,
+        border = BorderStroke(1.dp, StateAiColors.Outline),
+        content = content,
+    )
 }
 
-@Composable
-private fun surfaceColors() =
-    ButtonDefaults.buttonColors(containerColor = StateAiColors.Surface2, contentColor = StateAiColors.Text1)
-
+private val ICON = 18.dp
 private val RADIO = 11.dp
 private val CURSOR_HEIGHT = 18.dp

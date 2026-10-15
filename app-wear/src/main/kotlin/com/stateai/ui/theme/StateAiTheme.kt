@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
 import androidx.wear.compose.material3.ColorScheme
 import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.Typography
 
 private val colorScheme = ColorScheme(
     primary = StateAiColors.Accent,
@@ -24,7 +25,7 @@ private val colorScheme = ColorScheme(
 /** Wear Material 3 themed with the stateAI tokens. */
 @Composable
 fun StateAiTheme(content: @Composable () -> Unit) {
-    MaterialTheme(colorScheme = colorScheme, content = content)
+    MaterialTheme(colorScheme = colorScheme, typography = Typography(defaultFontFamily = Lexend), content = content)
 }
 
 /** Same style with tabular figures, so timers and percentages do not jitter. */

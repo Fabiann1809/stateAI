@@ -22,6 +22,13 @@ object StateAiIcons {
     val Load = thin("M4 8h13a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2ZM22 11v2")
     val Consistency = thin("M4 4v6h6M20 20v-6h-6M5.5 15a8 8 0 0 0 13 3M18.5 9a8 8 0 0 0-13-3")
 
+    val DeepWork = thin("M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0-18ZM12 8a4 4 0 1 0 0 8a4 4 0 0 0 0-8Z")
+    val Study = thin("M3 8l9-4 9 4-9 4-9-4ZM7 10v5c0 1.8 2.2 3 5 3s5-1.2 5-3v-5")
+    val Reading = thin("M3 5h6a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H3ZM21 5h-6a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h7Z")
+    val Collab =
+        thin("M9 11a3 3 0 1 0 0-6a3 3 0 0 0 0 6ZM3 20a6 6 0 0 1 12 0M17 11a2.5 2.5 0 1 0 0-5M21 20a5 5 0 0 0-4-5")
+    val Other = thin("M12 4v4M12 16v4M4 12h4M16 12h4")
+
     private fun outline(pathData: String): ImageVector = icon(pathData, VIEWPORT, STROKE)
 
     /** 24-unit icons with a 2-unit stroke (factor cards). */

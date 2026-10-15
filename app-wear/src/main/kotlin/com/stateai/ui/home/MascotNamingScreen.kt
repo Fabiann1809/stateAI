@@ -12,16 +12,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material3.Button
-import androidx.wear.compose.material3.ButtonDefaults
-import androidx.wear.compose.material3.CompactButton
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import com.stateai.R
 import com.stateai.ui.common.rememberTextInput
+import com.stateai.ui.components.GradientButton
+import com.stateai.ui.components.TextAction
 import com.stateai.ui.mascot.AnimatedMascot
 import com.stateai.ui.mascot.MascotExpression
-import com.stateai.ui.theme.StateAiColors
 import com.stateai.ui.theme.StateAiDimens
 
 /** First use only: the person can give the mascot a name, or skip it ("Ahora no"). */
@@ -39,18 +37,11 @@ fun MascotNamingScreen(onNamed: (String) -> Unit) {
                 Text(
                     text = stringResource(R.string.mascot_name_question),
                     fontSize = StateAiDimens.Body,
-                    fontWeight = FontWeight.Medium,
+                    fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center,
                 )
-                Button(
-                    onClick = askName,
-                    label = { Text(stringResource(R.string.mascot_name_action), fontWeight = FontWeight.Medium) },
-                )
-                CompactButton(
-                    onClick = { onNamed("") },
-                    colors = ButtonDefaults.buttonColors(containerColor = StateAiColors.Surface2),
-                    label = { Text(stringResource(R.string.mascot_name_skip), color = StateAiColors.Text2) },
-                )
+                GradientButton(stringResource(R.string.mascot_name_action), askName)
+                TextAction(stringResource(R.string.mascot_name_skip), onClick = { onNamed("") })
             }
         }
     }

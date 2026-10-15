@@ -198,7 +198,7 @@ private fun ActiveSessionContent(state: SessionUiState, progress: SessionProgres
                 StateAiIcons.Check,
                 stringResource(R.string.session_stop),
                 actions.onStop,
-                tint = StateAiColors.Accent,
+                primary = true,
             )
         }
     }

@@ -3,10 +3,12 @@ package com.stateai.ui.common
 import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import com.stateai.R
 import com.stateai.domain.activity.Activity
 import com.stateai.domain.activity.ActivityCategory
+import com.stateai.ui.components.StateAiIcons
 
 @StringRes
 fun ActivityCategory.labelRes(): Int = when (this) {
@@ -23,3 +25,12 @@ fun activityTitle(context: Context, activity: Activity): String =
 
 @Composable
 fun Activity.title(): String = activityTitle(LocalContext.current, this)
+
+/** The outline icon of each category (the same in the activity list and when creating one). */
+fun ActivityCategory.icon(): ImageVector = when (this) {
+    ActivityCategory.DEEP_WORK -> StateAiIcons.DeepWork
+    ActivityCategory.STUDY -> StateAiIcons.Study
+    ActivityCategory.READING -> StateAiIcons.Reading
+    ActivityCategory.COLLAB -> StateAiIcons.Collab
+    ActivityCategory.OTHER -> StateAiIcons.Other
+}

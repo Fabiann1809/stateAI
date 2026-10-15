@@ -2,8 +2,8 @@
 <resources>
     <string name="app_name">stateAI</string>
 
-    <string name="home_talk_hint">Toca y dime qué vas a hacer</string>
-    <string name="home_talk_hint_named">Toca a %1$s y dile qué vas a hacer</string>
+    <string name="home_talk_hint">Toca para hablar</string>
+    <string name="home_talk_hint_named">Toca a %1$s para hablar</string>
     <string name="home_activities">Actividades</string>
     <string name="activities_title">¿Qué vas a hacer?</string>
     <string name="picker_empty">Crea tu primera actividad</string>
@@ -64,10 +64,15 @@
     <string name="pause_finish">Volver</string>
     <string name="rest_title">Descanso</string>
     <string name="rest_tip">Levántate, estírate y toma agua.</string>
-    <string name="suggestion_overload">Llevas un rato en sobrecarga. ¿Respiramos un minuto?</string>
-    <string name="suggestion_restless">Te noto inquieto. ¿Un descanso para moverte?</string>
+    <string name="suggestion_overload_title">Sobrecarga sostenida</string>
+    <string name="suggestion_overload">Tu pulso lleva un rato alto. ¿Respiramos un minuto?</string>
+    <string name="suggestion_restless_title">Te noto inquieto</string>
+    <string name="suggestion_restless">Mucho movimiento estos minutos. ¿Un descanso para moverte?</string>
+    <string name="suggestion_left_focus_title">Gran tramo de concentración</string>
     <string name="suggestion_left_focus">Llevas un buen rato concentrado. ¿Respiras un momento?</string>
-    <string name="suggestion_block_done">Cumpliste tu bloque de %1$d min. ¿Un descanso?</string>
+    <string name="suggestion_block_done_title">Bloque cumplido</string>
+    <string name="suggestion_block_done">Completaste tus %1$d min. ¿Un descanso?</string>
+    <string name="suggestion_long_session_title">Sesión larga</string>
     <string name="suggestion_long_session">Llevas %1$s seguido. ¿Un descanso corto?</string>
     <string name="suggestion_breathe">Respirar</string>
     <string name="suggestion_rest">Descansar</string>

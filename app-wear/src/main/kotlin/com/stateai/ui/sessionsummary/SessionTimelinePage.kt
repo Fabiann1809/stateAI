@@ -18,9 +18,8 @@ import androidx.wear.compose.material3.Text
 import com.stateai.R
 import com.stateai.domain.summary.SessionReport
 import com.stateai.ui.common.title
-import com.stateai.ui.components.RoundIconButton
+import com.stateai.ui.components.GradientButton
 import com.stateai.ui.components.SegmentedRing
-import com.stateai.ui.components.StateAiIcons
 import com.stateai.ui.theme.StateAiColors
 import com.stateai.ui.theme.StateAiDimens
 import com.stateai.ui.theme.tabular
@@ -55,12 +54,7 @@ fun SessionTimelinePage(report: SessionReport, onDone: () -> Unit) {
                     textAlign = TextAlign.Center,
                 )
             }
-            RoundIconButton(
-                icon = StateAiIcons.Check,
-                contentDescription = stringResource(R.string.summary_done),
-                onClick = onDone,
-                tint = StateAiColors.Accent,
-            )
+            GradientButton(stringResource(R.string.summary_done), onDone)
         }
     }
 }

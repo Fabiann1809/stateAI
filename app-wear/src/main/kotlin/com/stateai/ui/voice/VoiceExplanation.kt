@@ -10,10 +10,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
-import androidx.wear.compose.material3.Button
-import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
+import com.stateai.ui.components.GradientButton
+import com.stateai.ui.components.TextAction
 import com.stateai.ui.mascot.Mascot
 import com.stateai.ui.mascot.MascotExpression
 import com.stateai.ui.theme.StateAiColors
@@ -47,30 +47,11 @@ fun VoiceExplanation(title: String, body: String, accept: String, decline: Strin
                 Text(body, fontSize = StateAiDimens.Body, color = StateAiColors.Text2, textAlign = TextAlign.Center)
             }
             item {
-                Button(
-                    onClick = { onAnswer(true) },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text(accept, fontWeight = FontWeight.Medium) },
-                )
+                GradientButton(accept, onClick = { onAnswer(true) }, modifier = Modifier.fillMaxWidth())
             }
-            item {
-                DeclineButton(decline) { onAnswer(false) }
-            }
+            item { TextAction(decline, onClick = { onAnswer(false) }) }
         }
     }
-}
-
-@Composable
-private fun DeclineButton(label: String, onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = StateAiColors.Surface2,
-            contentColor = StateAiColors.Text1,
-        ),
-        label = { Text(label) },
-    )
 }
 
 private val MASCOT_SIZE = 56.dp

@@ -14,13 +14,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.wear.compose.material3.ButtonDefaults
-import androidx.wear.compose.material3.CompactButton
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import com.stateai.R
 import com.stateai.domain.activity.ActivityCategory
 import com.stateai.ui.common.labelRes
+import com.stateai.ui.components.GlassButton
 import com.stateai.ui.mascot.AnimatedMascot
 import com.stateai.ui.mascot.MascotExpression
 import com.stateai.ui.theme.StateAiColors
@@ -63,24 +62,12 @@ fun ConfirmCard(
                     color = StateAiColors.Accent,
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceS)) {
-                    SecondaryButton(stringResource(R.string.voice_change), onChange)
-                    SecondaryButton(stringResource(R.string.voice_cancel), onCancel)
+                    GlassButton(stringResource(R.string.voice_change), onChange)
+                    GlassButton(stringResource(R.string.voice_cancel), onCancel)
                 }
             }
         }
     }
-}
-
-@Composable
-private fun SecondaryButton(label: String, onClick: () -> Unit) {
-    CompactButton(
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = StateAiColors.Surface2,
-            contentColor = StateAiColors.Text1,
-        ),
-        label = { Text(label) },
-    )
 }
 
 private val MASCOT_SIZE = 52.dp

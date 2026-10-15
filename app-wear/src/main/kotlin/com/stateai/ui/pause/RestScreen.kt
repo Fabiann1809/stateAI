@@ -19,8 +19,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.wear.compose.material3.ButtonDefaults
-import androidx.wear.compose.material3.CompactButton
 import androidx.wear.compose.material3.LocalTextStyle
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
@@ -28,6 +26,7 @@ import com.stateai.R
 import com.stateai.di.appContainer
 import com.stateai.domain.haptics.HapticEvent
 import com.stateai.ui.common.toClockText
+import com.stateai.ui.components.GlassButton
 import com.stateai.ui.mascot.AnimatedMascot
 import com.stateai.ui.mascot.MascotExpression
 import com.stateai.ui.theme.StateAiColors
@@ -85,14 +84,7 @@ fun RestScreen(left: Duration, onBack: () -> Unit) {
                     color = StateAiColors.Text2,
                     textAlign = TextAlign.Center,
                 )
-                CompactButton(
-                    onClick = onBack,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = StateAiColors.Surface2,
-                        contentColor = StateAiColors.Text1,
-                    ),
-                    label = { Text(stringResource(R.string.pause_finish)) },
-                )
+                GlassButton(stringResource(R.string.pause_finish), onBack)
             }
         }
     }

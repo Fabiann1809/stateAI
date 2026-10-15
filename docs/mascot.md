@@ -1,29 +1,20 @@
 # Mascota
 
-La mascota es una llama turquesa. Sus cinco expresiones vienen de los SVG del diseño (área de
-256 x 256) y se importan como VectorDrawables con `scripts/mascot_to_vector.py`. No se redibuja nada:
-los círculos, elipses y rectángulos se convierten en trazados equivalentes, y las rotaciones y escalas
-del SVG en elementos `<group>`.
+Lumi es un pequeño robot celeste con una pantalla oscura como cara. Se dibuja directamente en un
+`Canvas` (`Mascot.kt`) a partir de los SVG del rediseño (área de 256 x 256): cuerpo, sombra, reflejo,
+orejas, brazos, pantalla y cara. Los trazados de `LumiLook.kt` son los del diseño, sin redibujar nada.
 
-```sh
-python scripts/mascot_to_vector.py <carpeta con reposo.svg, escuchando.svg, ...>
-```
+Lo que cambia entre expresiones es el ángulo de los brazos y de las orejas, los ojos, la boca, las
+mejillas y las chispas:
 
-Cada expresión se divide en tres capas que comparten el área y se superponen exactamente, para que la
-punta pueda balancearse por su cuenta:
+| Nombre en el diseño | Nombre en el código | Brazos | Ojos | Boca | Uso |
+|---|---|---|---|---|---|
+| Tranquilo | `REST` | rectos | píldoras | sonrisa suave | Pantalla de Inicio, en espera |
+| Sorprendido | `LISTENING` | abiertos | píldoras altas | círculo | Micrófono abierto |
+| Concentrado | `THINKING` | algo cerrados | rasgados | línea | Interpretando lo que se dijo |
+| Feliz | `HAPPY` | alzados | píldoras, con mejillas | sonrisa grande | Sesión confirmada, descanso |
+| Cansado | `TIRED` | caídos, orejas bajas | arcos cerrados | línea corta | Dibujada, todavía no se usa |
 
-| Capa | Grupos del SVG | Drawable |
-|---|---|---|
-| Cuerpo | `cuerpo` | `mascot_<expression>_body` |
-| Punta | `punta` (pivote 128, 100) | `mascot_<expression>_tip` |
-| Cara | `reflejo`, `mejillas`, `ojos`, `parpados`, `brillos`, `boca` | `mascot_<expression>_face` |
-
-| Nombre en el diseño | Nombre en el código | Uso |
-|---|---|---|
-| Reposo | `rest` | Pantalla de Inicio, en espera |
-| Escuchando | `listening` | Micrófono abierto |
-| Pensando | `thinking` | Interpretando lo que se dijo |
-| Contenta | `happy` | Sesión confirmada |
-| Cansada | `tired` | Importada, todavía no se usa |
-
-La mascota nunca refleja la energía (para eso está la silueta); solo cambia de expresión.
+`AnimatedMascot` parpadea de vez en cuando y respira despacio; no se mueve en modo ambiente ni con
+"reducir movimiento". La mascota nunca refleja la energía (para eso está la silueta); solo cambia de
+expresión.
