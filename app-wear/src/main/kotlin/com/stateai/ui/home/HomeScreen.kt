@@ -10,11 +10,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.SpanStyle
@@ -117,7 +122,11 @@ private fun TalkingMascot(name: String, onTalk: () -> Unit, onLongPress: (() -> 
             onClick = onTalk,
         ),
     ) {
-        AnimatedMascot(MascotExpression.REST, size = MASCOT_SIZE, contentDescription = hint.text)
+        Box(contentAlignment = Alignment.BottomCenter) {
+            Box(Modifier.size(GLOW_SIZE).drawBehind { drawSoftDisc(LUMI_GLOW) }.align(Alignment.Center))
+            Box(Modifier.size(width = SHADOW_WIDTH, height = SHADOW_HEIGHT).drawBehind { drawSoftDisc(FLOOR_SHADOW) })
+            AnimatedMascot(MascotExpression.REST, size = MASCOT_SIZE, contentDescription = hint.text)
+        }
         Text(
             text = hint,
             fontSize = HINT_SIZE,
@@ -160,6 +169,17 @@ private fun HomeShortcuts(actions: HomeActions) {
 }
 
 private val MASCOT_SIZE = 96.dp
+private val GLOW_SIZE = 140.dp
+private val SHADOW_WIDTH = 60.dp
+private val SHADOW_HEIGHT = 8.dp
+
+/** A soft turquoise halo behind the mascot and the shadow it casts on the floor. */
+private val LUMI_GLOW = listOf(Color(0x5945DAF7), Color(0x1FB884FF), Color.Transparent)
+private val FLOOR_SHADOW = listOf(Color(0x73000000), Color.Transparent)
+
+private fun DrawScope.drawSoftDisc(colors: List<Color>) {
+    drawRect(Brush.radialGradient(colors, center, radius = size.width / 2))
+}
 private val TOP_PADDING = 10.dp
 private val HINT_PADDING = 30.dp
 private val HINT_SIZE = 13.sp

@@ -16,6 +16,12 @@ object StateAiIcons {
     val Bars = outline("M10 28V16M18 28V8M26 28v-9")
     val Back = outline("M22 6l-10 12 10 12")
     val Down = outline("M9 14l9 9 9-9")
+    val Mic =
+        icon(
+            "M18 5a5 5 0 0 1 5 5v8a5 5 0 0 1-10 0v-8a5 5 0 0 1 5-5zM8 17a10 10 0 0 0 20 0M18 27v5",
+            VIEWPORT,
+            MIC_STROKE,
+        )
     val List = outline("M9 11h18M9 18h18M9 25h18")
 
     val Focus = thin("M12 21a9 9 0 1 0 0-18a9 9 0 0 0 0 18ZM12 15a3 3 0 1 0 0-6a3 3 0 0 0 0 6Z")
@@ -50,6 +56,7 @@ object StateAiIcons {
 
     private const val VIEWPORT = 36f
     private const val STROKE = 4f
+    private const val MIC_STROKE = 3.2f
     private const val THIN_VIEWPORT = 24f
     private const val THIN_STROKE = 2f
 }

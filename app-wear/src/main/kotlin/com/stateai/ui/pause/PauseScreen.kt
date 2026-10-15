@@ -24,14 +24,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.material3.Icon
+import androidx.wear.compose.material3.LocalTextStyle
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import com.stateai.R
@@ -93,6 +98,7 @@ fun PauseScreen(scale: Float, inhaling: Boolean, energy: EnergyBudget?, onFinish
                 text = stringResource(if (inhaling) R.string.pause_inhale else R.string.pause_exhale),
                 fontSize = WORD_SIZE,
                 fontWeight = FontWeight.SemiBold,
+                style = LocalTextStyle.current.copy(shadow = WORD_SHADOW),
             )
             BackAction(onFinished, Modifier.align(Alignment.BottomCenter).padding(bottom = BACK_BOTTOM))
         }
@@ -105,6 +111,13 @@ private fun BreathingCircle(scale: Float) {
         Modifier
             .size(CIRCLE_SIZE)
             .scale(scale)
+            .drawBehind {
+                val radius = size.minDimension * GLOW_RADIUS
+                drawCircle(
+                    Brush.radialGradient(listOf(StateAiColors.AccentGlow, Color.Transparent), center, radius),
+                    radius,
+                )
+            }
             .background(
                 Brush.radialGradient(
                     colorStops = arrayOf(
@@ -114,7 +127,7 @@ private fun BreathingCircle(scale: Float) {
                 ),
                 CircleShape,
             )
-            .border(2.dp, StateAiColors.Accent2, CircleShape),
+            .border(1.dp, StateAiColors.Accent2, CircleShape),
     )
 }
 
@@ -138,7 +151,9 @@ private const val MAX_SCALE = 1.6f
 private const val CIRCLE_CENTER = 0.6f
 private const val CIRCLE_EDGE = 0.35f
 private const val SILHOUETTE_ALPHA = 0.5f
-private val CIRCLE_SIZE = 95.dp
+private val CIRCLE_SIZE = 90.dp
+private const val GLOW_RADIUS = 0.9f
+private val WORD_SHADOW = Shadow(Color(0x99040F1F), Offset(0f, 3f), 18f)
 private val SILHOUETTE_HEIGHT = 165.dp
 private val WORD_SIZE = 23.sp
 private val BACK_BOTTOM = 10.dp

@@ -30,6 +30,7 @@ import com.stateai.domain.activity.Activity
 import com.stateai.ui.common.icon
 import com.stateai.ui.common.labelRes
 import com.stateai.ui.common.title
+import com.stateai.ui.components.GradientButton
 import com.stateai.ui.components.StateAiIcons
 import com.stateai.ui.theme.StateAiColors
 import com.stateai.ui.theme.StateAiDimens
@@ -72,35 +73,19 @@ fun ActivityCard(activity: Activity, suggested: Boolean, onClick: () -> Unit) {
     }
 }
 
-/** "Nueva", disabled with a short message once there are 10 active activities. */
+/** "Nueva" as a centered pill; once there are 10 active activities it is replaced by a short message. */
 @Composable
 fun NewActivityButton(enabled: Boolean, onClick: () -> Unit) {
-    ListCard(
-        onClick = onClick,
-        enabled = enabled,
-        container = StateAiColors.Surface2,
-        border = BorderStroke(1.dp, StateAiColors.Outline),
-    ) {
-        Icon(
-            StateAiIcons.Plus,
-            contentDescription = null,
-            tint = if (enabled) StateAiColors.Accent else StateAiColors.Muted,
-            modifier = Modifier.size(ICON_SIZE),
-        )
-        Column {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+        if (enabled) {
+            GradientButton(stringResource(R.string.picker_new), onClick, icon = StateAiIcons.Plus)
+        } else {
             Text(
-                text = stringResource(R.string.picker_new),
-                fontWeight = FontWeight.SemiBold,
-                fontSize = TITLE_SIZE,
-                color = if (enabled) StateAiColors.Text1 else StateAiColors.Text3,
+                stringResource(R.string.picker_limit_reached),
+                fontSize = StateAiDimens.Label,
+                color = StateAiColors.Text3,
+                modifier = Modifier.padding(vertical = StateAiDimens.SpaceM),
             )
-            if (!enabled) {
-                Text(
-                    stringResource(R.string.picker_limit_reached),
-                    fontSize = StateAiDimens.Label,
-                    color = StateAiColors.Text3,
-                )
-            }
         }
     }
 }

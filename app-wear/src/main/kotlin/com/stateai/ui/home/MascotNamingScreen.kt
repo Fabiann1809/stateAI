@@ -36,7 +36,7 @@ fun MascotNamingScreen(onNamed: (String) -> Unit) {
                 AnimatedMascot(MascotExpression.HAPPY, size = MASCOT_SIZE)
                 Text(
                     text = stringResource(R.string.mascot_name_question),
-                    fontSize = StateAiDimens.Body,
+                    fontSize = StateAiDimens.Title,
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center,
                 )
@@ -47,4 +47,4 @@ fun MascotNamingScreen(onNamed: (String) -> Unit) {
     }
 }
 
-private val MASCOT_SIZE = 64.dp
+private val MASCOT_SIZE = 76.dp

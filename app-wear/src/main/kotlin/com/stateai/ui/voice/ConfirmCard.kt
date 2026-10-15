@@ -1,14 +1,22 @@
 package com.stateai.ui.voice
 
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -52,15 +60,11 @@ fun ConfirmCard(
                 Text(
                     text = activity,
                     fontSize = ACTIVITY_SIZE,
-                    fontWeight = FontWeight.Medium,
+                    fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center,
                     maxLines = 2,
                 )
-                Text(
-                    text = stringResource(R.string.voice_confirm_countdown, secondsLeft),
-                    fontSize = StateAiDimens.Label,
-                    color = StateAiColors.Accent,
-                )
+                Countdown(secondsLeft)
                 Row(horizontalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceS)) {
                     GlassButton(stringResource(R.string.voice_change), onChange)
                     GlassButton(stringResource(R.string.voice_cancel), onCancel)
@@ -70,5 +74,45 @@ fun ConfirmCard(
     }
 }
 
+/** The seconds left, in a soft capsule with a small ring that empties as they pass. */
+@Composable
+private fun Countdown(secondsLeft: Int) {
+    val fraction = secondsLeft.toFloat() / VoiceViewModel.COUNTDOWN_SECONDS
+    Row(
+        modifier = Modifier
+            .background(StateAiColors.AccentSoft, CircleShape)
+            .padding(start = RING_PADDING, end = TEXT_PADDING, top = RING_PADDING, bottom = RING_PADDING),
+        horizontalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceS),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Canvas(Modifier.size(RING_SIZE)) {
+            val stroke = RING_STROKE.toPx()
+            val inset = stroke / 2
+            val arcSize = Size(size.width - stroke, size.height - stroke)
+            drawArc(StateAiColors.Surface, 0f, FULL_TURN, false, Offset(inset, inset), arcSize, style = Stroke(stroke))
+            drawArc(
+                color = StateAiColors.Accent,
+                startAngle = -90f,
+                sweepAngle = FULL_TURN * fraction,
+                useCenter = false,
+                topLeft = Offset(inset, inset),
+                size = arcSize,
+                style = Stroke(stroke, cap = StrokeCap.Round),
+            )
+        }
+        Text(
+            text = stringResource(R.string.voice_confirm_countdown, secondsLeft),
+            fontSize = StateAiDimens.Label,
+            fontWeight = FontWeight.Medium,
+            color = StateAiColors.Accent,
+        )
+    }
+}
+
+private const val FULL_TURN = 360f
 private val MASCOT_SIZE = 52.dp
-private val ACTIVITY_SIZE = 16.sp
+private val ACTIVITY_SIZE = 17.sp
+private val RING_SIZE = 18.dp
+private val RING_STROKE = 2.dp
+private val RING_PADDING = 3.dp
+private val TEXT_PADDING = 10.dp

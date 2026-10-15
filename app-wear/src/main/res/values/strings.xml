@@ -141,13 +141,15 @@
     <string name="discovery_no_difference">Sin diferencia clara</string>
     <string name="discovery_no_difference_detail">Valoras parecido tus sesiones a cualquier hora</string>
     <string name="session_end_title">¿Terminar sesión?</string>
+    <string name="session_end_elapsed">Llevas %1$s</string>
+    <string name="session_end_continue">Seguir</string>
     <string name="mascot_name_question">¿Cómo se llamará tu mascota?</string>
     <string name="mascot_name_action">Ponerle nombre</string>
     <string name="mascot_name_skip">Ahora no</string>
     <string name="mascot_name_label">Nombre de la mascota</string>
     <string name="new_activity_use_name">Usar «%1$s»</string>
     <string name="voice_listening">Te escucho…</string>
-    <string name="voice_thinking">Pensando…</string>
+    <string name="voice_thinking">Pensando</string>
     <string name="voice_text_label">¿Qué vas a hacer?</string>
     <string name="voice_confirm_title">¿Empezamos?</string>
     <string name="voice_activity_label">%1$s: %2$s</string>

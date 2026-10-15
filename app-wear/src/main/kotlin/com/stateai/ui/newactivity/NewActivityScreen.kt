@@ -34,6 +34,8 @@ import com.stateai.ui.common.icon
 import com.stateai.ui.common.labelRes
 import com.stateai.ui.common.rememberTextInput
 import com.stateai.ui.components.GradientButton
+import com.stateai.ui.components.RoundIconButton
+import com.stateai.ui.components.StateAiIcons
 import com.stateai.ui.home.ListCard
 import com.stateai.ui.theme.StateAiColors
 import com.stateai.ui.theme.StateAiDimens
@@ -131,8 +133,15 @@ private fun ScalingLazyListScope.nameStep(category: ActivityCategory, suggestedN
                 color = StateAiColors.Text2,
                 modifier = Modifier.weight(1f),
             )
-            Box(Modifier.size(width = 1.5.dp, height = CURSOR_HEIGHT).border(1.dp, StateAiColors.Accent))
         }
+    }
+    item {
+        RoundIconButton(
+            StateAiIcons.Mic,
+            stringResource(R.string.new_activity_add_name),
+            actions.onAddName,
+            primary = true,
+        )
     }
     item {
         SurfaceButton(onClick = actions.onWithoutName) {
@@ -154,4 +163,3 @@ private fun SurfaceButton(onClick: () -> Unit, content: @Composable RowScope.() 
 
 private val ICON = 18.dp
 private val RADIO = 11.dp
-private val CURSOR_HEIGHT = 18.dp

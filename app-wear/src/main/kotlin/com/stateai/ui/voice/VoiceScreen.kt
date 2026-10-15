@@ -61,9 +61,17 @@ private fun VoiceContent(
         VoiceUiState.AskMicrophone -> MicrophoneExplanation(onMicrophone)
         is VoiceUiState.Ready, VoiceUiState.Listening ->
             VoiceStatus(MascotExpression.LISTENING, stringResource(R.string.voice_listening))
-        VoiceUiState.Thinking -> VoiceStatus(MascotExpression.THINKING, stringResource(R.string.voice_thinking))
+        VoiceUiState.Thinking -> VoiceStatus(
+            MascotExpression.THINKING,
+            stringResource(R.string.voice_thinking),
+            thinking = true,
+        )
         is VoiceUiState.Confirm -> ConfirmCard(state.category, state.name, state.secondsLeft, onChange, onCancel)
-        is VoiceUiState.Failed -> VoiceStatus(MascotExpression.REST, stringResource(state.failure.messageRes()))
+        is VoiceUiState.Failed -> VoiceStatus(
+            MascotExpression.REST,
+            stringResource(state.failure.messageRes()),
+            compact = true,
+        )
         else -> VoiceStatus(MascotExpression.REST, "")
     }
 }

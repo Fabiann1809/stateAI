@@ -85,16 +85,15 @@ fun SessionRoute(activityId: ActivityId, onPause: () -> Unit, onRest: () -> Unit
     )
     var confirmingEnd by remember { mutableStateOf(false) }
     // Back never ends a session by accident: it asks first (the session keeps running meanwhile).
-    BackHandler { confirmingEnd = true }
+    BackHandler { confirmingEnd = !confirmingEnd }
     SessionScreen(state = state, isAmbient = LocalIsAmbient.current, actions = actions)
-    EndSessionDialog(
-        visible = confirmingEnd,
-        onConfirm = {
-            confirmingEnd = false
-            actions.onStop()
-        },
-        onDismiss = { confirmingEnd = false },
-    )
+    if (confirmingEnd) {
+        EndSessionScreen(
+            elapsed = state.progress?.elapsed?.toClockText().orEmpty(),
+            onContinue = { confirmingEnd = false },
+            onFinish = actions.onStop,
+        )
+    }
 }
 
 /** User actions available during a session. */

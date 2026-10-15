@@ -149,7 +149,7 @@ class VoiceViewModel(private val deps: VoiceDependencies) : ViewModel() {
         state.value = VoiceUiState.Failed(failure)
     }
 
-    private companion object {
+    internal companion object {
         const val LISTEN_TIMEOUT_MILLIS = 12_000L
         const val THINKING_MILLIS = 700L
         const val COUNTDOWN_SECONDS = 3
