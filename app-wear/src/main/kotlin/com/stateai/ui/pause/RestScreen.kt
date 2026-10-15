@@ -27,6 +27,7 @@ import com.stateai.di.appContainer
 import com.stateai.domain.haptics.HapticEvent
 import com.stateai.ui.common.toClockText
 import com.stateai.ui.components.GlassButton
+import com.stateai.ui.components.ProgressRing
 import com.stateai.ui.mascot.AnimatedMascot
 import com.stateai.ui.mascot.MascotExpression
 import com.stateai.ui.theme.StateAiColors
@@ -58,13 +59,14 @@ fun RestRoute(onFinished: () -> Unit, length: Duration = REST_LENGTH) {
         container.haptics.sessionPlayer.play(HapticEvent.BLOCK_START)
         onFinished()
     }
-    RestScreen(left, onFinished)
+    RestScreen(left, length, onFinished)
 }
 
 @Composable
-fun RestScreen(left: Duration, onBack: () -> Unit) {
+fun RestScreen(left: Duration, length: Duration, onBack: () -> Unit) {
     ScreenScaffold(timeText = {}) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            ProgressRing((left / length).toFloat(), color = StateAiColors.Focused)
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceXs),

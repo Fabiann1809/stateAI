@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -91,7 +92,7 @@ fun PauseScreen(scale: Float, inhaling: Boolean, energy: EnergyBudget?, onFinish
             Text(
                 text = stringResource(if (inhaling) R.string.pause_inhale else R.string.pause_exhale),
                 fontSize = WORD_SIZE,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.SemiBold,
             )
             BackAction(onFinished, Modifier.align(Alignment.BottomCenter).padding(bottom = BACK_BOTTOM))
         }
@@ -104,8 +105,16 @@ private fun BreathingCircle(scale: Float) {
         Modifier
             .size(CIRCLE_SIZE)
             .scale(scale)
-            .background(StateAiColors.Accent.copy(alpha = CIRCLE_FILL), CircleShape)
-            .border(1.dp, StateAiColors.Accent.copy(alpha = CIRCLE_BORDER), CircleShape),
+            .background(
+                Brush.radialGradient(
+                    colorStops = arrayOf(
+                        0f to StateAiColors.Accent.copy(alpha = CIRCLE_CENTER),
+                        1f to StateAiColors.Accent2.copy(alpha = CIRCLE_EDGE),
+                    ),
+                ),
+                CircleShape,
+            )
+            .border(2.dp, StateAiColors.Accent2, CircleShape),
     )
 }
 
@@ -126,8 +135,8 @@ private fun BackAction(onClick: () -> Unit, modifier: Modifier = Modifier) {
 
 private const val MIN_SCALE = 1f
 private const val MAX_SCALE = 1.6f
-private const val CIRCLE_FILL = 0.25f
-private const val CIRCLE_BORDER = 0.55f
+private const val CIRCLE_CENTER = 0.6f
+private const val CIRCLE_EDGE = 0.35f
 private const val SILHOUETTE_ALPHA = 0.5f
 private val CIRCLE_SIZE = 95.dp
 private val SILHOUETTE_HEIGHT = 165.dp

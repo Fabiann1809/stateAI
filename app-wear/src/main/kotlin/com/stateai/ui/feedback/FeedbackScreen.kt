@@ -53,8 +53,7 @@ fun FeedbackScreen(onAnswer: (Feedback) -> Unit, onSkip: () -> Unit) {
                 Text(
                     stringResource(R.string.feedback_title),
                     fontSize = StateAiDimens.Title,
-                    fontWeight = FontWeight.Medium,
-                    color = StateAiColors.Text2,
+                    fontWeight = FontWeight.SemiBold,
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(3.dp)) {
                     Feedback.entries.sortedBy { it.rating }.forEach { feedback ->

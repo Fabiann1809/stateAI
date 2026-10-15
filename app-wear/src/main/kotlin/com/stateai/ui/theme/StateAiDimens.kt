@@ -11,7 +11,7 @@ object StateAiDimens {
     val SpaceL = 16.dp
     val RadiusCard = 15.dp
     val TouchTarget = 48.dp
-    val RingStroke = 4.dp
+    val RingStroke = 5.dp
 
     val Display = 44.sp
     val Title = 16.sp

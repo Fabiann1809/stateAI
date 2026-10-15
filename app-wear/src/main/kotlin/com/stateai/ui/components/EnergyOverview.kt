@@ -55,7 +55,7 @@ private fun EnergyDetails(energy: EnergyBudget, displayState: DisplayState?) {
         Text(
             text = stringResource(R.string.percent, energy.level.roundToInt()),
             fontSize = PERCENT_SIZE,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.SemiBold,
             style = LocalTextStyle.current.tabular(),
         )
         Text(stringResource(band.labelRes()), fontSize = StateAiDimens.Label, color = band.textColor())

@@ -13,4 +13,6 @@ fun EnergyBand.labelRes(): Int = when (this) {
 }
 
 /** Low energy is the only band with its own (soft pink) color; the others stay neutral. */
-fun EnergyBand.textColor(): Color = if (this == EnergyBand.LOW) StateAiColors.Exhausted else StateAiColors.Text2
+fun EnergyBand.textColor(): Color = if (this == EnergyBand.LOW) StateAiColors.Exhausted else NEUTRAL_BAND
+
+private val NEUTRAL_BAND = Color(0xFFB5C6E0)
