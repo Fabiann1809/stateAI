@@ -8,7 +8,6 @@
 
 Un coach de concentración para relojes inteligentes Wear OS. Todo corre en el reloj: sin app de celular, sin servidor, sin cuentas y sin nube.
 
-> Estado: la app está completa en el emulador (fases 0 a 8 y 10 de [`docs/SPEC.md`](docs/SPEC.md), con el diseño Aurora). La Fase 9 (validación en un reloj real) está pendiente: necesita el dispositivo.
 
 ## Capturas
 
