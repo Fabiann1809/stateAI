@@ -8,8 +8,6 @@
 
 A focus coach for Wear OS smartwatches. Everything runs on the watch: no phone app, no backend, no accounts, no cloud.
 
-> Status: the app is feature complete on the emulator (phases 0 to 8 and 10 of [`docs/SPEC.md`](docs/SPEC.md), with the Aurora look). Phase 9 (real watch validation) is pending: it needs hardware.
-
 ## Screenshots
 
 Wear OS Large Round emulator, simulated sensors.
