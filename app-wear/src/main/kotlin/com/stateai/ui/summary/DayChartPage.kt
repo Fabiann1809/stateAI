@@ -103,9 +103,11 @@ private fun StateRow(state: DisplayState, time: Duration, share: Double) {
             )
             Text(
                 text = time.toHoursMinutesText(),
-                fontSize = StateAiDimens.Body,
+                fontSize = StateAiDimens.Label,
                 fontWeight = FontWeight.SemiBold,
                 color = color,
+                maxLines = 1,
+                softWrap = false,
                 style = LocalTextStyle.current.tabular(),
             )
         }
@@ -129,7 +131,7 @@ private fun timeByState(summary: DaySummary?): List<Pair<DisplayState, Duration>
     }
 }
 
-private val CONTENT_WIDTH = 150.dp
+private val CONTENT_WIDTH = 172.dp
 private val RIBBON_HEIGHT = 20.dp
 private val BLOCK_RADIUS = 5.dp
 private val BAR_HEIGHT = 4.dp
