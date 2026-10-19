@@ -1,5 +1,7 @@
 # stateAI
 
+**English** · [Español](README.es.md)
+
 [![CI](https://github.com/Fabiann1809/stateAI/actions/workflows/ci.yml/badge.svg)](https://github.com/Fabiann1809/stateAI/actions/workflows/ci.yml)
 
 **stateAI learns at which times of the day you perform best and tells you how much estimated energy you have left to use them.**
