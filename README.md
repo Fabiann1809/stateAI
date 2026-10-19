@@ -6,7 +6,20 @@
 
 A focus coach for Wear OS smartwatches. Everything runs on the watch: no phone app, no backend, no accounts, no cloud.
 
-> Status: early development. The project is built phase by phase following [`docs/SPEC.md`](docs/SPEC.md).
+> Status: the app is feature complete on the emulator (phases 0 to 8 and 10 of [`docs/SPEC.md`](docs/SPEC.md), with the Aurora look). Phase 9 (real watch validation) is pending: it needs hardware.
+
+## Screenshots
+
+Wear OS Large Round emulator, simulated sensors.
+
+| Home | Activities | Session | Pause suggestion |
+|---|---|---|---|
+| ![Home](docs/media/home.png) | ![Activities](docs/media/activities.png) | ![Session](docs/media/session.png) | ![Suggestion](docs/media/suggestion.png) |
+
+| Guided breathing | Session feedback | Day score | Your day |
+|---|---|---|---|
+| ![Breathing](docs/media/breathing.png) | ![Feedback](docs/media/feedback.png) | ![Score](docs/media/summary-1.png) | ![Day](docs/media/summary-day.png) |
+
 
 ## Why
 
@@ -15,8 +28,10 @@ Pomodoro-style apps use fixed times and ignore whether you are calm, loaded or r
 1. Asks "what are you going to do?" and keeps a learned profile per activity.
 2. Estimates your **activation level** from heart rate, an HR variability proxy and movement.
 3. Learns over the days which time slots work best for you and whether you have a focus cycle.
-4. Nudges you with **haptic micro-pulses** to breathe or pause, without looking at the screen.
-5. Shows an **estimated energy** battery and a daily score broken down into its parts.
+4. Nudges you with **haptic micro-pulses** and a card on screen to breathe or rest, and learns which nudges you accept so it stays quiet about the ones you always decline.
+5. Asks for a **1 to 5 rating** after each session and shows at which time of day you rate your sessions best.
+6. Shows an **estimated energy** battery and a daily score broken down into its parts.
+7. Has a voice-first home with a mascot, Lumi: tap it and say what you are going to do.
 
 ## Limitations and scientific honesty
 
