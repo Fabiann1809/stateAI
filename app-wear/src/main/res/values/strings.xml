@@ -157,11 +157,10 @@
     <string name="voice_change">Cambiar</string>
     <string name="voice_cancel">Cancelar</string>
     <string name="voice_use_list">Usar la lista</string>
-    <string name="voice_mic_title">¿Uso el micrófono?</string>
-    <string name="voice_mic_body">Solo escucho cuando me tocas, nunca de fondo. No se guarda audio.</string>
+    <string name="voice_mic_title">¿Usar el micrófono?</string>
     <string name="voice_mic_accept">Permitir</string>
     <string name="voice_consent_title">Reconocimiento de voz</string>
-    <string name="voice_consent_body">Para entenderte, el reconocedor del sistema puede enviar tu voz a un servidor (por ejemplo, de Google). stateAI no guarda audio: solo usa el texto un momento.</string>
+    <string name="voice_consent_body">Tu voz puede enviarse a un servidor para entenderte.</string>
     <string name="voice_consent_accept">Aceptar</string>
     <string name="voice_failure_no_permission">Sin micrófono no puedo escucharte. Elige en la lista.</string>
     <string name="voice_failure_no_recognizer">Este reloj no tiene reconocimiento de voz. Elige en la lista.</string>

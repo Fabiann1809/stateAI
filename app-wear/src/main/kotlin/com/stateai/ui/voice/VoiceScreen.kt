@@ -105,7 +105,7 @@ private fun ConsentExplanation(onAnswer: (Boolean) -> Unit) = VoiceExplanation(
 @Composable
 private fun MicrophoneExplanation(onAnswer: (Boolean) -> Unit) = VoiceExplanation(
     title = stringResource(R.string.voice_mic_title),
-    body = stringResource(R.string.voice_mic_body),
+    body = null,
     accept = stringResource(R.string.voice_mic_accept),
     decline = stringResource(R.string.voice_use_list),
     onAnswer = onAnswer,
