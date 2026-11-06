@@ -15,10 +15,12 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material3.Text
@@ -38,17 +40,23 @@ import kotlin.math.sin
 @Composable
 fun CyclePage(insight: CycleInsight?) {
     val detected = insight?.result as? CycleResult.Detected
+    // Small watches (about 200 dp) have less room: a flatter wave and a smaller value.
+    val compact = LocalConfiguration.current.screenHeightDp < COMPACT_HEIGHT_DP
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceS),
+        verticalArrangement = Arrangement.spacedBy(if (compact) COMPACT_GAP else StateAiDimens.SpaceS),
         modifier = Modifier.width(CONTENT_WIDTH),
     ) {
         PageTitle(stringResource(R.string.cycle_title))
-        CycleWave(detected != null)
+        CycleWave(detected != null, if (compact) COMPACT_WAVE_HEIGHT else WAVE_HEIGHT)
         if (detected != null) {
             val minutes = detected.periodMinutes.roundToInt()
-            Text(stringResource(R.string.cycle_value, minutes), fontSize = VALUE_SIZE, fontWeight = FontWeight.Medium)
-            Detail(stringResource(R.string.cycle_detected, minutes))
+            Text(
+                text = stringResource(R.string.cycle_value, minutes),
+                fontSize = if (compact) COMPACT_VALUE_SIZE else VALUE_SIZE,
+                fontWeight = FontWeight.Medium,
+            )
+            Detail(stringResource(R.string.cycle_detected))
         } else {
             Text(
                 text = stringResource(R.string.cycle_none),
@@ -78,8 +86,8 @@ private fun Detail(text: String) {
 
 /** A calm sine wave when there is a cycle; a dashed flat line when there is not. */
 @Composable
-private fun CycleWave(detected: Boolean) {
-    Canvas(Modifier.size(width = CONTENT_WIDTH, height = WAVE_HEIGHT)) {
+private fun CycleWave(detected: Boolean, height: Dp) {
+    Canvas(Modifier.size(width = CONTENT_WIDTH, height = height)) {
         val middle = size.height / 2
         if (!detected) {
             drawLine(
@@ -114,7 +122,11 @@ private fun CycleWave(detected: Boolean) {
 
 private val CONTENT_WIDTH = 150.dp
 private val WAVE_HEIGHT = 28.dp
+private val COMPACT_WAVE_HEIGHT = 20.dp
+private val COMPACT_GAP = 4.dp
+private const val COMPACT_HEIGHT_DP = 210
 private val VALUE_SIZE = 38.sp
+private val COMPACT_VALUE_SIZE = 32.sp
 private val NONE_SIZE = 20.sp
 private const val WAVES = 3
 private const val FILL_ALPHA = 0.35f
