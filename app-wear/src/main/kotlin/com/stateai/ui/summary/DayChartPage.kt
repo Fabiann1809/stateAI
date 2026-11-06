@@ -13,9 +13,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material3.LocalTextStyle
 import androidx.wear.compose.material3.Text
 import com.stateai.R
@@ -39,35 +43,50 @@ import kotlin.time.Duration
  */
 @Composable
 fun DayChartPage(summary: DaySummary?, points: List<TimelinePoint>) {
+    val sizes = dayChartSizes()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceXs),
-        modifier = Modifier.width(CONTENT_WIDTH),
+        verticalArrangement = Arrangement.spacedBy(sizes.gap),
+        modifier = Modifier.width(sizes.width),
     ) {
         PageTitle(stringResource(R.string.summary_today, (summary?.totalTime ?: Duration.ZERO).toHoursMinutesText()))
         if (points.none { it.state != null }) {
             MissingData(stringResource(R.string.summary_missing_data))
             return@Column
         }
-        Ribbon(points)
-        TimeLabels(points.first(), points.last())
+        Ribbon(points, sizes.ribbon)
+        TimeLabels(points.first(), points.last(), sizes.font)
         val times = timeByState(summary)
         val longest = times.maxOfOrNull { it.second } ?: Duration.ZERO
-        Column(verticalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceS)) {
-            times.forEach { (state, time) -> StateRow(state, time, share = time / longest) }
+        Column(verticalArrangement = Arrangement.spacedBy(sizes.rowGap)) {
+            times.forEach { (state, time) -> StateRow(state, time, share = time / longest, fontSize = sizes.font) }
         }
         PageTitle(stringResource(R.string.summary_states_estimated))
     }
 }
 
+/** Sizes of the day page. Small watches (about 200 dp) get a narrower, lighter page that clears the page dots. */
+private data class DayChartSizes(val width: Dp, val gap: Dp, val rowGap: Dp, val ribbon: Dp, val font: TextUnit)
+
 @Composable
-private fun Ribbon(points: List<TimelinePoint>) {
-    Row(Modifier.fillMaxWidth().height(RIBBON_HEIGHT), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+private fun dayChartSizes(): DayChartSizes {
+    val config = LocalConfiguration.current
+    if (config.screenHeightDp >= COMPACT_HEIGHT_DP) {
+        val normalGap = StateAiDimens.SpaceXs
+        return DayChartSizes(CONTENT_WIDTH, normalGap, StateAiDimens.SpaceS, RIBBON_HEIGHT, StateAiDimens.Label)
+    }
+    val width = minOf(CONTENT_WIDTH, (config.screenWidthDp - SIDE_MARGINS_DP).dp)
+    return DayChartSizes(width, COMPACT_GAP, COMPACT_ROW_GAP, COMPACT_RIBBON_HEIGHT, COMPACT_FONT)
+}
+
+@Composable
+private fun Ribbon(points: List<TimelinePoint>, height: Dp) {
+    Row(Modifier.fillMaxWidth().height(height), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
         points.forEach { point ->
             Box(
                 Modifier
                     .weight(1f)
-                    .height(RIBBON_HEIGHT)
+                    .height(height)
                     .background(point.state?.color() ?: StateAiColors.NoData, RoundedCornerShape(BLOCK_RADIUS)),
             )
         }
@@ -75,13 +94,13 @@ private fun Ribbon(points: List<TimelinePoint>) {
 }
 
 @Composable
-private fun TimeLabels(first: TimelinePoint, last: TimelinePoint) {
+private fun TimeLabels(first: TimelinePoint, last: TimelinePoint, fontSize: TextUnit) {
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         listOf(first, last).forEach { point ->
             val time = point.time.atZone(ZoneId.systemDefault())
             Text(
                 text = stringResource(R.string.summary_clock, time.hour, time.minute),
-                fontSize = StateAiDimens.Label,
+                fontSize = fontSize,
                 color = StateAiColors.Text3,
             )
         }
@@ -89,7 +108,7 @@ private fun TimeLabels(first: TimelinePoint, last: TimelinePoint) {
 }
 
 @Composable
-private fun StateRow(state: DisplayState, time: Duration, share: Double) {
+private fun StateRow(state: DisplayState, time: Duration, share: Double, fontSize: TextUnit) {
     val color = state.color()
     Column(verticalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceXs)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -97,13 +116,13 @@ private fun StateRow(state: DisplayState, time: Duration, share: Double) {
                 state = state,
                 label = stringResource(state.labelRes()),
                 size = 11.dp,
-                fontSize = StateAiDimens.Label,
+                fontSize = fontSize,
                 textColor = StateAiColors.Text1,
                 modifier = Modifier.weight(1f),
             )
             Text(
                 text = time.toHoursMinutesText(),
-                fontSize = StateAiDimens.Label,
+                fontSize = fontSize,
                 fontWeight = FontWeight.SemiBold,
                 color = color,
                 maxLines = 1,
@@ -132,6 +151,12 @@ private fun timeByState(summary: DaySummary?): List<Pair<DisplayState, Duration>
 }
 
 private val CONTENT_WIDTH = 172.dp
+private const val COMPACT_HEIGHT_DP = 210
+private const val SIDE_MARGINS_DP = 50
+private val COMPACT_FONT = 11.sp
+private val COMPACT_RIBBON_HEIGHT = 12.dp
+private val COMPACT_ROW_GAP = 5.dp
+private val COMPACT_GAP = 4.dp
 private val RIBBON_HEIGHT = 20.dp
 private val BLOCK_RADIUS = 5.dp
 private val BAR_HEIGHT = 4.dp

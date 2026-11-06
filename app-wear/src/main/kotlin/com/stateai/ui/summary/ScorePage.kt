@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material3.LocalTextStyle
@@ -57,17 +59,28 @@ fun ScorePage(score: ScoreBreakdown?) {
                 )
             }
         }
-        Box(Modifier.align(Alignment.TopCenter).padding(top = unit * DISCLAIMER_TOP, start = 40.dp, end = 40.dp)) {
-            Text(
-                text = stringResource(R.string.summary_disclaimer),
-                fontSize = StateAiDimens.Label,
-                color = StateAiColors.Text3,
-                textAlign = TextAlign.Center,
-            )
-        }
+        Disclaimer(Modifier.align(Alignment.TopCenter), unit)
+    }
+}
+
+/** Small watches have no room for four lines at the usual size: smaller text, a little higher. */
+@Composable
+private fun Disclaimer(modifier: Modifier, unit: Dp) {
+    val compact = LocalConfiguration.current.screenHeightDp < COMPACT_HEIGHT_DP
+    val top = unit * (if (compact) COMPACT_DISCLAIMER_TOP else DISCLAIMER_TOP)
+    Box(modifier.padding(top = top, start = 20.dp, end = 20.dp)) {
+        Text(
+            text = stringResource(R.string.summary_disclaimer),
+            fontSize = if (compact) COMPACT_DISCLAIMER_SIZE else StateAiDimens.Label,
+            color = StateAiColors.Text3,
+            textAlign = TextAlign.Center,
+        )
     }
 }
 
 private const val VALUE_TOP = 0.2f
 private const val DISCLAIMER_TOP = 0.64f
+private const val COMPACT_DISCLAIMER_TOP = 0.6f
+private const val COMPACT_HEIGHT_DP = 210
+private val COMPACT_DISCLAIMER_SIZE = 11.sp
 private val VALUE_SIZE = 50.sp

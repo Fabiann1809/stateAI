@@ -104,7 +104,7 @@
     <string name="score_title">Puntuación del día</string>
     <string name="summary_estimated">estimado</string>
     <string name="score_description">Puntuación estimada %1$d de 100</string>
-    <string name="summary_disclaimer">Estimado a partir de tu pulso y movimiento. No es un dato médico.</string>
+    <string name="summary_disclaimer">Estimación, no dato médico.</string>
     <string name="summary_no_sessions">Aún no hay sesiones hoy</string>
     <string name="summary_missing_data">Faltan datos para mostrar esto</string>
     <string name="summary_factors">Factores</string>

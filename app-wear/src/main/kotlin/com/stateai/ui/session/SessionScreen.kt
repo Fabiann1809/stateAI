@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -180,16 +181,7 @@ private fun ActiveSessionContent(state: SessionUiState, progress: SessionProgres
         )
         Spacer(Modifier.height(StateAiDimens.SpaceXs))
         SessionStatusRow(state.status, displayState)
-        state.energy?.let { energy ->
-            EnergyBadge(energy, color = displayState?.color() ?: StateAiColors.Accent)
-            if (energy.isLow) {
-                Text(
-                    text = stringResource(R.string.energy_low_short),
-                    fontSize = StateAiDimens.Label,
-                    color = StateAiColors.Text2,
-                )
-            }
-        }
+        EnergyUnderTimer(state.energy, displayState)
         Spacer(Modifier.height(StateAiDimens.SpaceXs))
         Row(horizontalArrangement = Arrangement.spacedBy(BUTTON_SPACING)) {
             RoundIconButton(StateAiIcons.Pause, stringResource(R.string.session_pause), actions.onPause)
@@ -200,6 +192,20 @@ private fun ActiveSessionContent(state: SessionUiState, progress: SessionProgres
                 primary = true,
             )
         }
+    }
+}
+
+/** Energy badge under the timer. On small watches it lives only on the page to the left: no room here. */
+@Composable
+private fun EnergyUnderTimer(energy: EnergyBudget?, displayState: DisplayState?) {
+    if (energy == null || LocalConfiguration.current.screenHeightDp < COMPACT_HEIGHT_DP) return
+    EnergyBadge(energy, color = displayState?.color() ?: StateAiColors.Accent)
+    if (energy.isLow) {
+        Text(
+            text = stringResource(R.string.energy_low_short),
+            fontSize = StateAiDimens.Label,
+            color = StateAiColors.Text2,
+        )
     }
 }
 
@@ -220,6 +226,7 @@ private fun AmbientSessionContent(progress: SessionProgress, displayState: Displ
     }
 }
 
+private const val COMPACT_HEIGHT_DP = 210
 private val BUTTON_SPACING = 11.dp
 private val INDICATOR_BOTTOM = 8.dp
 private val AMBIENT_TIMER = 48.sp

@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,7 +43,8 @@ fun FactorCard(icon: ImageVector, name: String, value: Double?, change: Double?,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        IconTile(icon)
+        // On small watches the icon would squeeze the name into breaking words in the middle.
+        if (LocalConfiguration.current.screenWidthDp >= ICON_MIN_SCREEN_DP) IconTile(icon)
         Text(
             name,
             fontSize = StateAiDimens.Label,
@@ -80,6 +82,7 @@ private fun IconTile(icon: ImageVector) {
     }
 }
 
+private const val ICON_MIN_SCREEN_DP = 210
 private val CARD_HEIGHT = 46.dp
 private val TILE_SIZE = 28.dp
 private val ICON_SIZE = 14.dp

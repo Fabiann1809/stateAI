@@ -11,15 +11,21 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.SpanStyle
@@ -27,6 +33,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -79,15 +86,21 @@ data class HomeActions(
 fun HomeScreen(state: HomeUiState, actions: HomeActions) {
     val name = (state.mascotName as? MascotNameState.Known)?.name.orEmpty()
     // No system time here: the energy pill and the mascot fill the top of the screen.
+    // Smaller watches (about 200 dp tall) have less room than the emulator: shrink the mascot to fit.
+    val mascotSize = (LocalConfiguration.current.screenHeightDp - FIXED_HEIGHT_DP).dp
+        .coerceIn(MASCOT_MIN_SIZE, MASCOT_SIZE)
     ScreenScaffold(timeText = {}) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+            // Scrollable as a fallback, so the buttons are always reachable.
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceXs),
-                modifier = Modifier.padding(top = TOP_PADDING),
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(top = TOP_PADDING, bottom = BOTTOM_PADDING),
             ) {
                 state.energy?.let { EnergyPill(it) }
-                TalkingMascot(name, actions.onTalk, actions.onOpenDebug)
+                TalkingMascot(name, mascotSize, actions.onTalk, actions.onOpenDebug)
                 HomeShortcuts(actions)
             }
         }
@@ -111,8 +124,9 @@ private fun EnergyPill(energy: EnergyBudget) {
 
 /** Tapping the mascot opens the microphone once (never continuous); a long press opens debug tools. */
 @Composable
-private fun TalkingMascot(name: String, onTalk: () -> Unit, onLongPress: (() -> Unit)?) {
+private fun TalkingMascot(name: String, mascotSize: Dp, onTalk: () -> Unit, onLongPress: (() -> Unit)?) {
     val hint = talkHint(name)
+    val glowSize = mascotSize * GLOW_SCALE
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.combinedClickable(
@@ -122,10 +136,22 @@ private fun TalkingMascot(name: String, onTalk: () -> Unit, onLongPress: (() -> 
             onClick = onTalk,
         ),
     ) {
-        Box(contentAlignment = Alignment.BottomCenter) {
-            Box(Modifier.size(GLOW_SIZE).drawBehind { drawSoftDisc(LUMI_GLOW) }.align(Alignment.Center))
-            Box(Modifier.size(width = SHADOW_WIDTH, height = SHADOW_HEIGHT).drawBehind { drawSoftDisc(FLOOR_SHADOW) })
-            AnimatedMascot(MascotExpression.REST, size = MASCOT_SIZE, contentDescription = hint.text)
+        Box(
+            contentAlignment = Alignment.BottomCenter,
+            // The halo is only painted: it must not take layout space above the mascot.
+            modifier = Modifier.drawBehind {
+                val glow = glowSize.toPx()
+                translate(left = (size.width - glow) / 2, top = (size.height - glow) / 2) {
+                    drawSoftDisc(LUMI_GLOW, Size(glow, glow))
+                }
+            },
+        ) {
+            Box(
+                Modifier
+                    .size(width = SHADOW_WIDTH, height = SHADOW_HEIGHT)
+                    .drawBehind { drawSoftDisc(FLOOR_SHADOW, size) },
+            )
+            AnimatedMascot(MascotExpression.REST, size = mascotSize, contentDescription = hint.text)
         }
         Text(
             text = hint,
@@ -169,7 +195,11 @@ private fun HomeShortcuts(actions: HomeActions) {
 }
 
 private val MASCOT_SIZE = 96.dp
-private val GLOW_SIZE = 140.dp
+private val MASCOT_MIN_SIZE = 64.dp
+private const val GLOW_SCALE = 1.45f
+
+/** Height taken by everything on the home screen except the mascot (pill, hint, buttons, margins). */
+private const val FIXED_HEIGHT_DP = 128
 private val SHADOW_WIDTH = 60.dp
 private val SHADOW_HEIGHT = 8.dp
 
@@ -177,10 +207,13 @@ private val SHADOW_HEIGHT = 8.dp
 private val LUMI_GLOW = listOf(Color(0x5945DAF7), Color(0x1FB884FF), Color.Transparent)
 private val FLOOR_SHADOW = listOf(Color(0x73000000), Color.Transparent)
 
-private fun DrawScope.drawSoftDisc(colors: List<Color>) {
-    drawRect(Brush.radialGradient(colors, center, radius = size.width / 2))
+private fun DrawScope.drawSoftDisc(colors: List<Color>, area: Size) {
+    val middle = Offset(area.width / 2, area.height / 2)
+    drawRect(Brush.radialGradient(colors, middle, radius = area.width / 2), size = area)
 }
+
 private val TOP_PADDING = 10.dp
+private val BOTTOM_PADDING = 12.dp
 private val HINT_PADDING = 30.dp
 private val HINT_SIZE = 13.sp
 private val PILL_SILHOUETTE = 17.dp

@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -41,14 +42,17 @@ import com.stateai.ui.theme.tabular
  */
 @Composable
 fun DiscoveryPage(discovery: Discovery) {
+    // The badge sits near the round edge: on small watches the spacing and the circles shrink to keep it clear.
+    val compact = LocalConfiguration.current.screenHeightDp < COMPACT_HEIGHT_DP
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceS),
+        verticalArrangement = Arrangement.spacedBy(if (compact) COMPACT_GAP else StateAiDimens.SpaceS),
         modifier = Modifier.width(CONTENT_WIDTH),
     ) {
         Badge()
         when (discovery) {
-            is Discovery.BetterMoment -> BetterMoment(discovery)
+            is Discovery.BetterMoment ->
+                BetterMoment(discovery, scoreSize = if (compact) COMPACT_SCORE_SIZE else SCORE_SIZE)
             is Discovery.NoClearDifference ->
                 Message(R.string.discovery_no_difference, R.string.discovery_no_difference_detail)
             is Discovery.NotEnoughData ->
@@ -81,7 +85,7 @@ private fun Badge() {
 }
 
 @Composable
-private fun BetterMoment(found: Discovery.BetterMoment) {
+private fun BetterMoment(found: Discovery.BetterMoment, scoreSize: Dp) {
     Text(
         text = stringResource(R.string.discovery_headline, stringResource(found.category.labelRes())),
         fontSize = HEADLINE_SIZE,
@@ -90,8 +94,8 @@ private fun BetterMoment(found: Discovery.BetterMoment) {
         maxLines = 2,
     )
     Row(horizontalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceL)) {
-        Score(found.average, stringResource(found.part.labelRes()), better = true)
-        Score(found.otherAverage, stringResource(R.string.discovery_rest), better = false)
+        Score(found.average, stringResource(found.part.labelRes()), better = true, size = scoreSize)
+        Score(found.otherAverage, stringResource(R.string.discovery_rest), better = false, size = scoreSize)
     }
     val confidence = when (found.confidence) {
         DiscoveryConfidence.PROVISIONAL -> R.string.discovery_provisional
@@ -107,12 +111,12 @@ private fun BetterMoment(found: Discovery.BetterMoment) {
 
 /** An average rating in a circle: the better moment is filled with the gradient, the rest is glass. */
 @Composable
-private fun Score(average: Double, label: String, better: Boolean) {
+private fun Score(average: Double, label: String, better: Boolean, size: Dp) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceXs),
     ) {
-        val circle = Modifier.size(SCORE_SIZE)
+        val circle = Modifier.size(size)
         Box(
             modifier = if (better) {
                 circle
@@ -176,6 +180,9 @@ private val HEADLINE_SIZE = 13.sp
 private val MESSAGE_SIZE = 17.sp
 private val SCORE_TEXT = 18.sp
 private val SCORE_SIZE: Dp = 46.dp
+private val COMPACT_SCORE_SIZE: Dp = 38.dp
+private val COMPACT_GAP: Dp = 3.dp
+private const val COMPACT_HEIGHT_DP = 210
 private val SCORE_GLOW: Dp = 12.dp
 private val BADGE_GLOW: Dp = 8.dp
 private val BADGE_PADDING: Dp = 9.dp

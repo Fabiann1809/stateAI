@@ -3,11 +3,13 @@ package com.stateai.ui.summary
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -28,7 +30,13 @@ import com.stateai.ui.theme.StateAiDimens
  */
 @Composable
 fun HoursPage(hourly: HourlyFocus, isLearning: Boolean) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    // On small watches the title and the note would hit the round edge: lower chart, a bit of room above.
+    val compact = LocalConfiguration.current.screenHeightDp < COMPACT_HEIGHT_DP
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = Modifier.padding(top = if (compact) COMPACT_TOP else 0.dp),
+    ) {
         PageTitle(stringResource(R.string.hours_title))
         val best = hourly.bestHour
         if (hourly.hours.isEmpty()) {
@@ -37,7 +45,7 @@ fun HoursPage(hourly: HourlyFocus, isLearning: Boolean) {
         }
         BarChart(
             bars = hourly.hours.map { Bar(it.share.toFloat(), highlighted = it.hour == best) },
-            modifier = Modifier.size(width = CHART_WIDTH, height = CHART_HEIGHT),
+            modifier = Modifier.size(width = CHART_WIDTH, height = if (compact) COMPACT_CHART_HEIGHT else CHART_HEIGHT),
         )
         HourLabels(hourly)
         BestHour(best, hourly.bestHourDays, isLearning)
@@ -65,22 +73,37 @@ private fun HourLabels(hourly: HourlyFocus) {
 @Composable
 private fun BestHour(best: Int?, days: Int, isLearning: Boolean) {
     if (best == null) {
-        Text(stringResource(R.string.summary_learning), fontSize = StateAiDimens.Label, color = StateAiColors.Text2)
+        LearningNote()
         return
     }
     Text(stringResource(R.string.hours_best, best, best + 1), fontSize = BEST_SIZE, fontWeight = FontWeight.Medium)
+    if (isLearning) {
+        LearningNote()
+    } else {
+        Text(
+            text = pluralStringResource(R.plurals.days_support, days, days),
+            fontSize = StateAiDimens.Label,
+            color = StateAiColors.Text2,
+        )
+    }
+}
+
+/** "Learning your patterns…", centered and kept inside the chart width so the round edge does not cut it. */
+@Composable
+private fun LearningNote() {
     Text(
-        text = if (isLearning) {
-            stringResource(R.string.summary_learning)
-        } else {
-            pluralStringResource(R.plurals.days_support, days, days)
-        },
+        text = stringResource(R.string.summary_learning),
         fontSize = StateAiDimens.Label,
         color = StateAiColors.Text2,
+        textAlign = TextAlign.Center,
+        modifier = Modifier.width(CHART_WIDTH),
     )
 }
 
 private val CHART_WIDTH = 160.dp
 private val CHART_HEIGHT = 72.dp
+private val COMPACT_CHART_HEIGHT = 56.dp
+private val COMPACT_TOP = 8.dp
+private const val COMPACT_HEIGHT_DP = 210
 private val BEST_SIZE = 17.sp
 private const val LABEL_EVERY = 4
