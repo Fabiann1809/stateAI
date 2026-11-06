@@ -1,15 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Lumi's head (ears, body, screen and face), centered in the adaptive-icon safe zone. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <path
-        android:fillColor="#00000000"
-        android:strokeColor="#FF4FD1C5"
-        android:strokeWidth="6"
-        android:pathData="M54,30 A24,24 0 1,1 53.99,30" />
-    <path
-        android:fillColor="#FF4FD1C5"
-        android:pathData="M54,44 A10,10 0 1,1 53.99,44 Z" />
+    <group
+        android:pivotX="128"
+        android:pivotY="128.5"
+        android:scaleX="0.34"
+        android:scaleY="0.34"
+        android:translateX="-74"
+        android:translateY="-74.5">
+        <path
+            android:fillColor="#AEE2F7"
+            android:pathData="M64,92C66,72 78,56 88,57C95,58 100,63 106,69C90,72 76,80 64,92Z" />
+        <path
+            android:fillColor="#AEE2F7"
+            android:pathData="M192,92C190,72 178,56 168,57C161,58 156,63 150,69C166,72 180,80 192,92Z" />
+        <path
+            android:fillColor="#AEE2F7"
+            android:pathData="M128,64C160,64 189,70 198,100C205,125 206,152 196,172C186,192 158,200 128,200C98,200 70,192 60,172C50,152 51,125 58,100C67,70 96,64 128,64Z" />
+        <path
+            android:fillColor="#7ED3F6"
+            android:pathData="M60,172C70,192 98,200 128,200C158,200 186,192 196,172C180,183 156,187 128,187C100,187 76,183 60,172Z" />
+        <path
+            android:fillColor="#E8F6FF"
+            android:pathData="M98,73a30,4.5 0 1,0 60,0a30,4.5 0 1,0 -60,0Z" />
+        <path
+            android:fillColor="#0F1B2D"
+            android:pathData="M98,81H159A30,30 0 0 1 189,111V140A30,30 0 0 1 159,170H98A30,30 0 0 1 68,140V111A30,30 0 0 1 98,81Z" />
+        <path
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="4"
+            android:strokeLineCap="round"
+            android:pathData="M171,91Q179,92 182,102" />
+        <path
+            android:fillColor="#00CFF7"
+            android:pathData="M103,105A7,7 0 0 1 110,112V128A7,7 0 0 1 103,135A7,7 0 0 1 96,128V112A7,7 0 0 1 103,105Z" />
+        <path
+            android:fillColor="#00CFF7"
+            android:pathData="M153,105A7,7 0 0 1 160,112V128A7,7 0 0 1 153,135A7,7 0 0 1 146,128V112A7,7 0 0 1 153,105Z" />
+        <path
+            android:strokeColor="#00CFF7"
+            android:strokeWidth="6"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round"
+            android:pathData="M118,140Q128,148 138,140" />
+    </group>
 </vector>
