@@ -19,6 +19,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -31,6 +32,7 @@ import com.stateai.domain.session.SuggestionReason
 import com.stateai.ui.common.toHoursMinutesText
 import com.stateai.ui.components.GlassButton
 import com.stateai.ui.components.GradientButton
+import com.stateai.ui.components.TextAction
 import com.stateai.ui.mascot.AnimatedMascot
 import com.stateai.ui.mascot.MascotExpression
 import com.stateai.ui.theme.StateAiColors
@@ -44,6 +46,7 @@ import com.stateai.ui.theme.StateAiDimens
 fun SuggestionCard(suggestion: Suggestion, onAccept: (PauseKind) -> Unit, onDismiss: () -> Unit) {
     val pause = suggestion.reason.pause
     val acceptLabel = if (pause == PauseKind.BREATHE) R.string.suggestion_breathe else R.string.suggestion_rest
+    val compact = LocalConfiguration.current.screenHeightDp < COMPACT_HEIGHT_DP
     val pop = remember { Animatable(POP_START) }
     LaunchedEffect(Unit) { pop.animateTo(1f, spring(dampingRatio = Spring.DampingRatioMediumBouncy)) }
     Box(Modifier.fillMaxSize().reasonGlow(glow(suggestion.reason)), contentAlignment = Alignment.Center) {
@@ -54,7 +57,7 @@ fun SuggestionCard(suggestion: Suggestion, onAccept: (PauseKind) -> Unit, onDism
         ) {
             AnimatedMascot(
                 MascotExpression.REST,
-                size = MASCOT_SIZE,
+                size = if (compact) COMPACT_MASCOT_SIZE else MASCOT_SIZE,
                 modifier = Modifier.graphicsLayer {
                     scaleX = pop.value
                     scaleY = pop.value
@@ -69,15 +72,22 @@ fun SuggestionCard(suggestion: Suggestion, onAccept: (PauseKind) -> Unit, onDism
             )
             Text(
                 text = message(suggestion),
-                fontSize = StateAiDimens.Body,
+                fontSize = if (compact) StateAiDimens.Label else StateAiDimens.Body,
                 fontWeight = FontWeight.SemiBold,
                 textAlign = TextAlign.Center,
-                maxLines = 4,
+                maxLines = if (compact) COMPACT_LINES else LINES,
             )
             GradientButton(stringResource(acceptLabel), onClick = { onAccept(pause) })
-            GlassButton(stringResource(R.string.suggestion_dismiss), onDismiss)
+            DismissButton(compact, onDismiss)
         }
     }
+}
+
+/** "Ahora no" is a quiet text action on small watches, where the glass pill would not fit. */
+@Composable
+private fun DismissButton(compact: Boolean, onClick: () -> Unit) {
+    val label = stringResource(R.string.suggestion_dismiss)
+    if (compact) TextAction(label, onClick) else GlassButton(label, onClick)
 }
 
 @StringRes
@@ -129,4 +139,8 @@ private const val GLOW_CENTER_Y = 0.22f
 private const val STRONG_GLOW = 0.38f
 private const val SOFT_GLOW = 0.32f
 private val MASCOT_SIZE = 52.dp
+private val COMPACT_MASCOT_SIZE = 30.dp
+private const val COMPACT_HEIGHT_DP = 210
+private const val LINES = 4
+private const val COMPACT_LINES = 3
 private val SIDE_PADDING = 24.dp

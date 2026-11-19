@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -25,6 +26,7 @@ import androidx.wear.compose.material3.Text
 import com.stateai.R
 import com.stateai.di.appContainer
 import com.stateai.domain.haptics.HapticEvent
+import com.stateai.ui.ambient.LocalIsAmbient
 import com.stateai.ui.common.toClockText
 import com.stateai.ui.components.GlassButton
 import com.stateai.ui.components.ProgressRing
@@ -64,31 +66,62 @@ fun RestRoute(onFinished: () -> Unit, length: Duration = REST_LENGTH) {
 
 @Composable
 fun RestScreen(left: Duration, length: Duration, onBack: () -> Unit) {
+    val ambient = LocalIsAmbient.current
+    val compact = LocalConfiguration.current.screenHeightDp < COMPACT_HEIGHT_DP
     ScreenScaffold(timeText = {}) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            ProgressRing((left / length).toFloat(), color = StateAiColors.Focused)
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceXs),
-                modifier = Modifier.padding(horizontal = SIDE_PADDING),
-            ) {
-                AnimatedMascot(MascotExpression.HAPPY, size = MASCOT_SIZE)
-                Text(stringResource(R.string.rest_title), fontSize = StateAiDimens.Body, color = StateAiColors.Text2)
-                Text(
-                    text = left.toClockText(),
-                    fontSize = TIMER_SIZE,
-                    fontWeight = FontWeight.Medium,
-                    style = LocalTextStyle.current.tabular(),
-                )
-                Text(
-                    text = stringResource(R.string.rest_tip),
-                    fontSize = StateAiDimens.Label,
-                    color = StateAiColors.Text2,
-                    textAlign = TextAlign.Center,
-                )
-                GlassButton(stringResource(R.string.pause_finish), onBack)
+            if (ambient) {
+                AmbientRest(left)
+            } else {
+                ProgressRing((left / length).toFloat(), color = StateAiColors.Focused)
+                ActiveRest(left, compact, onBack)
             }
         }
+    }
+}
+
+@Composable
+private fun ActiveRest(left: Duration, compact: Boolean, onBack: () -> Unit) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceXs),
+        modifier = Modifier.padding(horizontal = SIDE_PADDING),
+    ) {
+        AnimatedMascot(MascotExpression.HAPPY, size = if (compact) COMPACT_MASCOT_SIZE else MASCOT_SIZE)
+        Text(stringResource(R.string.rest_title), fontSize = StateAiDimens.Body, color = StateAiColors.Text2)
+        Text(
+            text = left.toClockText(),
+            fontSize = if (compact) COMPACT_TIMER_SIZE else TIMER_SIZE,
+            fontWeight = FontWeight.Medium,
+            style = LocalTextStyle.current.tabular(),
+        )
+        // The tip is the first thing to go on small watches: the button must stay reachable.
+        if (!compact) {
+            Text(
+                text = stringResource(R.string.rest_tip),
+                fontSize = StateAiDimens.Label,
+                color = StateAiColors.Text2,
+                textAlign = TextAlign.Center,
+            )
+        }
+        GlassButton(stringResource(R.string.pause_finish), onBack)
+    }
+}
+
+/** Ambient version: gray text only, no ring, mascot or button, so nothing saturated stays lit. */
+@Composable
+private fun AmbientRest(left: Duration) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceS),
+    ) {
+        Text(stringResource(R.string.rest_title), fontSize = StateAiDimens.Body, color = StateAiColors.Ambient)
+        Text(
+            text = left.toClockText(),
+            fontSize = AMBIENT_TIMER_SIZE,
+            color = StateAiColors.Ambient,
+            style = LocalTextStyle.current.tabular(),
+        )
     }
 }
 
@@ -97,3 +130,7 @@ private val TICK = 1.seconds
 private val MASCOT_SIZE = 56.dp
 private val SIDE_PADDING = 28.dp
 private val TIMER_SIZE = 34.sp
+private val COMPACT_TIMER_SIZE = 28.sp
+private val AMBIENT_TIMER_SIZE = 44.sp
+private val COMPACT_MASCOT_SIZE = 40.dp
+private const val COMPACT_HEIGHT_DP = 210
