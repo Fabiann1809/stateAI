@@ -1,3 +1,7 @@
+<div align="center">
+
+<img src="docs/media/logo.svg" alt="Lumi, the stateAI mascot" width="140" />
+
 # stateAI
 
 **English** · [Español](README.es.md)
@@ -7,6 +11,29 @@
 **stateAI learns at which times of the day you perform best and tells you how much estimated energy you have left to use them.**
 
 A focus coach for Wear OS smartwatches. Everything runs on the watch: no phone app, no backend, no accounts, no cloud.
+
+![Kotlin](https://img.shields.io/badge/Kotlin-2.4-7F52FF?logo=kotlin&logoColor=white)
+![Jetpack Compose](https://img.shields.io/badge/Compose_for_Wear_OS-4285F4?logo=jetpackcompose&logoColor=white)
+![Wear OS](https://img.shields.io/badge/Wear_OS_4+-4285F4?logo=wearos&logoColor=white)
+![Room](https://img.shields.io/badge/Room-3DDC84?logo=android&logoColor=white)
+![LiteRT](https://img.shields.io/badge/LiteRT_(TFLite)-FF6F00?logo=tensorflow&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.12+-3776AB?logo=python&logoColor=white)
+![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?logo=scikitlearn&logoColor=white)
+![Gradle](https://img.shields.io/badge/Gradle-02303A?logo=gradle&logoColor=white)
+
+</div>
+
+## Tech stack
+
+| Area | Technology |
+|---|---|
+| Language and UI | Kotlin 2.4, Jetpack Compose for Wear OS (Material 3), Lexend font |
+| Platform | Wear OS 4+ (`minSdk` 33), Health Services, foreground service with Ongoing Activity |
+| Storage | Room (sessions, learned profiles) and DataStore (baseline, preferences), all on the watch |
+| Machine learning | scikit-learn model trained on synthetic data, exported to LiteRT (TFLite) and run on the watch |
+| Offline tooling | Python 3.12+, numpy, pandas, pytest, ruff |
+| Build and quality | Gradle with convention plugins, detekt, ktlint, GitHub Actions CI |
+| Architecture | Multi-module, pure-Kotlin domain tested on the JVM, manual dependency injection |
 
 ## Screenshots
 
@@ -65,6 +92,24 @@ silence, and every voice failure falls back to it.
 - **Everything else stays local.** Heart rate, movement, states, energy and learning never leave the
   watch, with or without voice. There is no backend and no account.
 - The emulator has no speech recognizer, so debug builds use typed text in its place.
+
+## Technical decisions
+
+The full log has 36 entries in [`docs/decisions.md`](docs/decisions.md) (in Spanish). The ones that shape the project:
+
+| Decision | Why |
+|---|---|
+| **3 activation levels, not "deep focus" or "exhaustion".** The screen's fourth state, "Agotado", is derived from overload plus restlessness or low energy. | Health Services gives heart rate only, with no RR intervals, so a fourth real class would not be reliable. |
+| **Pure-Kotlin domain that owns its interfaces** (`SensorSource`, repositories, `HapticPlayer`); Android modules implement them. | Every rule is unit-tested on the JVM, and the simulator and the real sensors are interchangeable. |
+| **Manual dependency injection** with an `AppContainer`, no Hilt. | Lighter builds and code that is easier to read for an app this size. |
+| **`minSdk` 33 (Wear OS 4)**. | Wear OS 3 is outdated, and Wear OS 4 is where the Health Services sensor panel works with synthetic data. |
+| **Cycles are discovered, not assumed.** A Schuster periodogram with a session-shifting permutation test, and both halves of the history must agree. | Session start times repeat every day, so session effects (like the end-of-block nudge) would look like cycles. |
+| **Rules by default, ML model as a demonstration.** The model decides only with probability ≥ 0.5; otherwise, or on any failure, the rules decide. The classifier is chosen at build time. | A model trained on synthetic data mostly re-learns the generator. The value is the Python → TFLite → Kotlin pipeline with verified parity, plus a safe fallback. |
+| **Synthetic generator and end-to-end simulation use a different mechanism from the rule engine.** | Reduces circularity: the system should not "discover" what the generator put in. |
+| **Suggest, never impose.** Pause cards are always dismissible, and the app learns which nudges you accept, silencing the ones you decline (never the overload alert). | Fewer unwanted interruptions without inventing new ones. |
+| **Voice is optional and private first.** On-device recognizer, then the system one only with consent, then typed text in debug builds, then the list. | The private option comes first, the cloud only with consent, and the emulator stays testable. |
+| **Lumi is drawn in `Canvas`**, not as vector drawables per expression. | Blinking and breathing animations without three VectorDrawable layers per expression. |
+| **Only summaries are stored, never the raw signal.** | Privacy, and a small database that migrates automatically. |
 
 ## Project structure
 

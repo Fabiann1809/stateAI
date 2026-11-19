@@ -1,3 +1,7 @@
+<div align="center">
+
+<img src="docs/media/logo.svg" alt="Lumi, la mascota de stateAI" width="140" />
+
 # stateAI
 
 [English](README.md) · **Español**
@@ -7,6 +11,29 @@
 **stateAI aprende en qué momentos del día rindes mejor y te dice cuánta energía estimada te queda para aprovecharlos.**
 
 Un coach de concentración para relojes inteligentes Wear OS. Todo corre en el reloj: sin app de celular, sin servidor, sin cuentas y sin nube.
+
+![Kotlin](https://img.shields.io/badge/Kotlin-2.4-7F52FF?logo=kotlin&logoColor=white)
+![Jetpack Compose](https://img.shields.io/badge/Compose_for_Wear_OS-4285F4?logo=jetpackcompose&logoColor=white)
+![Wear OS](https://img.shields.io/badge/Wear_OS_4+-4285F4?logo=wearos&logoColor=white)
+![Room](https://img.shields.io/badge/Room-3DDC84?logo=android&logoColor=white)
+![LiteRT](https://img.shields.io/badge/LiteRT_(TFLite)-FF6F00?logo=tensorflow&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.12+-3776AB?logo=python&logoColor=white)
+![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?logo=scikitlearn&logoColor=white)
+![Gradle](https://img.shields.io/badge/Gradle-02303A?logo=gradle&logoColor=white)
+
+</div>
+
+## Tecnologías
+
+| Área | Tecnología |
+|---|---|
+| Lenguaje e interfaz | Kotlin 2.4, Jetpack Compose para Wear OS (Material 3), tipografía Lexend |
+| Plataforma | Wear OS 4+ (`minSdk` 33), Health Services, servicio en primer plano con Ongoing Activity |
+| Almacenamiento | Room (sesiones y perfiles aprendidos) y DataStore (línea base y preferencias), todo en el reloj |
+| Aprendizaje automático | Modelo de scikit-learn entrenado con datos sintéticos, exportado a LiteRT (TFLite) y ejecutado en el reloj |
+| Herramientas offline | Python 3.12+, numpy, pandas, pytest, ruff |
+| Compilación y calidad | Gradle con plugins de convención, detekt, ktlint, CI en GitHub Actions |
+| Arquitectura | Multimódulo, dominio en Kotlin puro probado en la JVM, inyección de dependencias manual |
 
 ## Capturas
 
@@ -66,6 +93,24 @@ estudiar en silencio, y cualquier fallo de voz te lleva a ella.
   aprendizaje nunca salen del reloj, con o sin voz. No hay servidor ni cuenta.
 - El emulador no tiene reconocedor de voz, así que las compilaciones de depuración usan texto
   escrito en su lugar.
+
+## Decisiones técnicas
+
+El registro completo tiene 36 entradas en [`docs/decisions.md`](docs/decisions.md). Las que dan forma al proyecto:
+
+| Decisión | Motivo |
+|---|---|
+| **3 niveles de activación, no "concentración profunda" ni "agotamiento".** El cuarto estado de la pantalla, "Agotado", se deriva de sobrecarga más inquietud o poca energía. | Health Services entrega solo el pulso, sin intervalos RR, así que una cuarta clase real no sería fiable. |
+| **Dominio en Kotlin puro que es dueño de sus interfaces** (`SensorSource`, repositorios, `HapticPlayer`); los módulos de Android las implementan. | Todas las reglas se prueban en la JVM, y el simulador y los sensores reales son intercambiables. |
+| **Inyección de dependencias manual** con un `AppContainer`, sin Hilt. | Compilación más ligera y código más fácil de leer para una app de este tamaño. |
+| **`minSdk` 33 (Wear OS 4)**. | Wear OS 3 está desfasado, y Wear OS 4 es donde funciona el panel de sensores de Health Services con datos sintéticos. |
+| **Los ciclos se descubren, no se suponen.** Periodograma de Schuster con un test de permutación que desplaza sesiones, y las dos mitades del historial deben coincidir. | Las horas de inicio de las sesiones se repiten cada día, así que sus efectos (como el aviso de fin de bloque) parecerían ciclos. |
+| **Reglas por defecto, modelo de ML como demostración.** El modelo decide solo con probabilidad ≥ 0,5; si no, o ante cualquier fallo, deciden las reglas. El clasificador se elige al compilar. | Un modelo entrenado con datos sintéticos casi solo reaprende el generador. El valor es el pipeline Python → TFLite → Kotlin con paridad verificada y un respaldo seguro. |
+| **El generador sintético y la simulación de extremo a extremo usan un mecanismo distinto al del motor de reglas.** | Reduce la circularidad: el sistema no debe "descubrir" lo que puso el generador. |
+| **Sugerir, nunca imponer.** Las tarjetas de pausa siempre se pueden rechazar, y la app aprende qué avisos aceptas y calla los que rechazas (nunca la alerta de sobrecarga). | Menos interrupciones no deseadas sin inventar otras nuevas. |
+| **La voz es opcional y privada primero.** Reconocedor local, luego el del sistema solo con consentimiento, luego texto escrito en depuración, luego la lista. | La opción privada va primero, la nube solo con consentimiento, y el emulador sigue siendo comprobable. |
+| **Lumi se dibuja en `Canvas`**, no con VectorDrawables por expresión. | Permite parpadear y respirar sin tres capas de VectorDrawable por expresión. |
+| **Solo se guardan resúmenes, nunca la señal cruda.** | Privacidad y una base de datos pequeña que migra sola. |
 
 ## Estructura del proyecto
 
