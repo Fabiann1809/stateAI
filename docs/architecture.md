@@ -1,5 +1,7 @@
 # Arquitectura
 
+**Español** · [English](en/architecture.md)
+
 ## Módulos y dependencias
 
 ```

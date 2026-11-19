@@ -1,5 +1,7 @@
 # Registro de decisiones
 
+**Español** · [English](en/decisions.md)
+
 Decisiones que `SPEC.md` no especifica del todo, registradas para poder revisarlas más adelante. Las más recientes van al final.
 
 | # | Decisión | Motivo |

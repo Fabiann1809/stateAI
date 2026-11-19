@@ -95,7 +95,7 @@ silence, and every voice failure falls back to it.
 
 ## Technical decisions
 
-The full log has 36 entries in [`docs/decisions.md`](docs/decisions.md) (in Spanish). The ones that shape the project:
+The full log has 36 entries in [`docs/en/decisions.md`](docs/en/decisions.md); the architecture is in [`docs/en/architecture.md`](docs/en/architecture.md). The rest of `docs/` is in Spanish. The ones that shape the project:
 
 | Decision | Why |
 |---|---|
