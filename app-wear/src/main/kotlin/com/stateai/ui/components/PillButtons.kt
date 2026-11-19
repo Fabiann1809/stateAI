@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material3.Icon
@@ -65,7 +66,7 @@ fun GradientButton(label: String, onClick: () -> Unit, modifier: Modifier = Modi
 
 /** A secondary action: a translucent pill with a hairline border. */
 @Composable
-fun GlassButton(label: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun GlassButton(label: String, onClick: () -> Unit, modifier: Modifier = Modifier, horizontalPadding: Dp = PADDING) {
     Box(
         modifier = modifier
             .height(SECONDARY_HEIGHT)
@@ -74,10 +75,10 @@ fun GlassButton(label: String, onClick: () -> Unit, modifier: Modifier = Modifie
             .background(StateAiColors.Surface2)
             .border(BorderStroke(BORDER, StateAiColors.Outline), CircleShape)
             .clickable(role = Role.Button, onClick = onClick)
-            .padding(horizontal = PADDING),
+            .padding(horizontal = horizontalPadding),
         contentAlignment = Alignment.Center,
     ) {
-        Text(label, color = StateAiColors.Text1, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+        Text(label, color = StateAiColors.Text1, fontSize = 13.sp, fontWeight = FontWeight.Medium, maxLines = 1)
     }
 }
 

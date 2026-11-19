@@ -66,8 +66,8 @@ fun ConfirmCard(
                 )
                 Countdown(secondsLeft)
                 Row(horizontalArrangement = Arrangement.spacedBy(StateAiDimens.SpaceS)) {
-                    GlassButton(stringResource(R.string.voice_change), onChange)
-                    GlassButton(stringResource(R.string.voice_cancel), onCancel)
+                    GlassButton(stringResource(R.string.voice_change), onChange, horizontalPadding = BUTTON_PADDING)
+                    GlassButton(stringResource(R.string.voice_cancel), onCancel, horizontalPadding = BUTTON_PADDING)
                 }
             }
         }
@@ -116,3 +116,5 @@ private val RING_SIZE = 18.dp
 private val RING_STROKE = 2.dp
 private val RING_PADDING = 3.dp
 private val TEXT_PADDING = 10.dp
+
+private val BUTTON_PADDING = 14.dp
